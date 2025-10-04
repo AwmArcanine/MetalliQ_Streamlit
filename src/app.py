@@ -220,74 +220,94 @@ def show_welcome_page():
 
     st.markdown("""
     <style>
-    .grid-wrap {
+    .feature-grid-wrap {
+        display: flex;
+        justify-content: center;
+        margin-top: 1.2em;
+        margin-bottom: 2em;
+    }
+    .feature-grid {
         display: grid;
-        grid-template-columns: repeat(3, minmax(260px, 1fr));
-        gap: 2.2rem 2.1rem;
-        max-width: 1250px;
-        margin: 1.3em auto 0 auto;
-        padding-bottom: .5em;
-        justify-items: center;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 2rem 2rem;
+        max-width: 1110px;
+        width: 100%;
     }
-    .grid-card {
-    background: linear-gradient(140deg, #2be2fe 77%, #1c7ae0 134%);
-    border-radius: 19px;
-    min-width: 260px;
-    max-width: 346px;
-    box-shadow: 0 4px 22px 0 #0099fc1b, 0 0px 1.5px 4px #29bbff13;
-    padding: 1.18em 1.2em 1.02em 1.18em;
-    text-align: left;
-    border: 1.6px solid #1cf3ff17;
-    display: flex; flex-direction: row; gap: 1.09em; align-items: flex-start;
-    transition: box-shadow .14s, transform .13s;
+    .feature-grid-card {
+        background: linear-gradient(135deg, #2be2fe 80%, #1c7ae0 130%);
+        border-radius: 1.6rem;
+        min-width: 0;
+        box-shadow: 0 5px 28px #0099fc13;
+        padding: 1.3em 1.55em 1.10em 1.51em;
+        text-align: left;
+        border: 1.7px solid #1cf3ff1a;
+        display: flex;
+        flex-direction: row;
+        gap: 1.13em;
+        align-items: flex-start;
+        transition: box-shadow .14s, transform .12s;
     }
-    .grid-card:hover {
-        box-shadow: 0 8px 38px #13e5ff49;
-        transform: translateY(-5px) scale(1.017);
-        background: linear-gradient(119deg, #12c8ed 85%, #23b6f7 138%);
-        border: 1.7px solid #27e3fa33;
+    .feature-grid-card:hover {
+        box-shadow: 0 8px 32px #13e5ff3a;
+        transform: translateY(-4px) scale(1.018);
+        background: linear-gradient(119deg, #12c8ed 88%, #23b6f7 125%);
+        border: 1.8px solid #27e3fa41;
     }
     .card-emoji {
-        font-size: 2.16rem;
-        margin-right: .31em;
-        margin-top: .12em;
+        font-size: 2rem;
+        margin-top: 0.1em;
     }
-    .card-content { display:flex; flex-direction:column;}
+    .card-content {
+        display: flex;
+        flex-direction: column;
+    }
     .card-title {
         font-weight: 820;
         color: #e8ffff;
-        font-size: 1.16rem;
-        margin-bottom: 0.12em;
+        font-size: 1.13rem;
+        margin-bottom: 0.15em;
         letter-spacing: .01px;
     }
     .card-desc {
         color: #f3fcff;
-        font-size: 1.01rem;
+        font-size: .98rem;
         font-weight:519;
         letter-spacing:.002em;
     }
-    @media (max-width: 1100px) {
-        .grid-wrap {grid-template-columns: repeat(2, minmax(260px, 1fr));}
+    @media (max-width: 1000px) {
+        .feature-grid { grid-template-columns: 1fr 1fr; max-width: 99vw;}
     }
-    @media (max-width: 800px) {
-        .grid-wrap {grid-template-columns: 1fr;}
+    @media (max-width: 700px) {
+        .feature-grid { grid-template-columns: 1fr; }
     }
     </style>
+    <div class="feature-grid-wrap">
+        <div class="feature-grid">
     """, unsafe_allow_html=True)
 
-    st.markdown('<div class="grid-wrap">', unsafe_allow_html=True)
-    for feat in features:
-        card = f"""
-        <div class="grid-card">
-            <span class="card-emoji">{feat["emoji"]}</span>
+    for f in [
+        {"title": "ISO 14044 LCA Wizard", "desc": "Industry-standard workflow for metals, alloys, and steel.", "emoji": "🧭"},
+        {"title": "AI Autofill & Explain", "desc": "Automatic data input and smart LCA result explanations for engineers.", "emoji": "🤖"},
+        {"title": "Circularity & Eco-Labels", "desc": "Evaluate for circular economy, eco-labels, and maximize sustainability compliance.", "emoji": "♻️"},
+        {"title": "Interactive Visuals", "desc": "Animated Sankey diagrams, timelines, and deep analytics for transparency.", "emoji": "📊"},
+        {"title": "Comprehensive Reports", "desc": "Automated PDF reporting for certifications, auditing, and quality checks.", "emoji": "📄"},
+        {"title": "Cloud AI Integration", "desc": "Seamless Google AI Studio and third-party workflow support.", "emoji": "☁️"},
+    ]:
+        st.markdown(f"""
+        <div class="feature-grid-card">
+            <span class="card-emoji">{f["emoji"]}</span>
             <div class="card-content">
-                <div class="card-title">{feat["title"]}</div>
-                <div class="card-desc">{feat["desc"]}</div>
+                <div class="card-title">{f["title"]}</div>
+                <div class="card-desc">{f["desc"]}</div>
             </div>
         </div>
-        """
-        st.markdown(card, unsafe_allow_html=True)
-    st.markdown("</div>", unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
+
+    st.markdown("""
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
 
 
     st.markdown("""
