@@ -8,15 +8,11 @@ from admin_dashboard import show_admin_dashboard, users_df, datasets_df, ai_mode
 from Compare_Scenarios import compare_scenarios_page
 from view_reports import view_reports_page
 from streamlit_lottie import st_lottie
-import requests
+import json
 
-def load_lottieurl(url):
-    r = requests.get(url)
-    if r.status_code != 200:
-        return None
-    return r.json()
+with open("src/Welcome Animation.json", "r") as f:  # Update path if needed
+    lottie_json = json.load(f)
 
-lottie_json = load_lottieurl("https://assets2.lottiefiles.com/packages/lf20_vfzu3j2p.json")  # Example
 st_lottie(lottie_json, height=200)
 
 # ==== MetalliQ Universal Theme & Sidebar Styles ====
