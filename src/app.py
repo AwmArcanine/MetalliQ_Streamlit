@@ -275,7 +275,7 @@ def show_welcome_page():
         letter-spacing:.002em;
     }
     @media (max-width: 1000px) {
-        .feature-grid { grid-template-columns: 1fr 1fr; max-width: 99vw;}
+        .feature-grid { grid-template-columns: 1fr 1fr; max-width: 40vw;}
     }
     @media (max-width: 700px) {
         .feature-grid { grid-template-columns: 1fr; }
