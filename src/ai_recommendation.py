@@ -15,12 +15,17 @@ def display_ai_recommendations(ai_data,extra_context=None):
             "AI Suggestion: Consider higher-grade blending, alternative sourcing, or process optimization for improved sustainability."
         )
         # Electric Vehicle Charging Suggestion
-        transports = extra_context.get("transports", [])
-        if any(t.get("fuel", "").lower() == "electric" for t in transports):
-            st.info(
-                "🔌 Sustainable Transport: Electric transport detected in your supply chain. "
-                "AI Suggestion: Source charging from renewables (solar/wind), adopt smart charging schedules, and avoid high-carbon grid hours for maximal sustainability impact."
-            )
+        st.markdown("#### Energy-Efficient Charging Recommendations")
+        st.markdown(
+            """
+            - Install solar-powered EV charging stations to maximize renewable energy use.
+            - Use smart chargers with demand-response capability to charge during off-peak hours.
+            - Source grid electricity from certified green power (solar, wind, hydro).
+            - Monitor charging station efficiency and optimize placement for reduced transmission loss.
+            - Regularly audit charging infrastructure for leaks, inefficiency, and outdated hardware.
+            - Offer real-time charging usage analytics to employees to encourage optimal charging behaviors.
+            """
+        )
 
     # 1. AI Summary (highlight)
     if "summary" in ai_data:

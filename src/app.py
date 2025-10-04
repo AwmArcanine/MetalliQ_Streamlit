@@ -8,7 +8,7 @@ from admin_dashboard import show_admin_dashboard, users_df, datasets_df, ai_mode
 from Compare_Scenarios import compare_scenarios_page
 from view_reports import view_reports_page
 from streamlit_lottie import st_lottie
-import json
+
 
 # ==== MetalliQ Universal Theme & Sidebar Styles ====
 st.markdown("""
@@ -87,6 +87,7 @@ def sidebar_navigation(active):
     return selected.split(" ", 1)[1]
 
 def show_welcome_page():
+    import json
     with open("src/Welcome_Animation.json", "r") as f:  # Update path if needed
         lottie_json = json.load(f)
 
