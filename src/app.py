@@ -7,7 +7,17 @@ from results_page import results_page
 from admin_dashboard import show_admin_dashboard, users_df, datasets_df, ai_models_df
 from Compare_Scenarios import compare_scenarios_page
 from view_reports import view_reports_page
-import time
+from streamlit_lottie import st_lottie
+import requests
+
+def load_lottieurl(url):
+    r = requests.get(url)
+    if r.status_code != 200:
+        return None
+    return r.json()
+
+lottie_json = load_lottieurl("https://assets2.lottiefiles.com/packages/lf20_vfzu3j2p.json")  # Example
+st_lottie(lottie_json, height=200)
 
 # ==== MetalliQ Universal Theme & Sidebar Styles ====
 st.markdown("""
@@ -86,26 +96,111 @@ def sidebar_navigation(active):
     return selected.split(" ", 1)[1]
 
 def show_welcome_page():
-    st.image("src/metalliq_logo.jpg", width=150px)  # Use your generated image file
-
-    st.title("MetalliQ LCA Platform")
-    st.subheader("AI-Driven Life Cycle Assessment for Metallurgy")
+    # Animated background with mesh gradients (CSS)
     st.markdown("""
-    Welcome to **MetalliQ** – your comprehensive platform for performing advanced Life Cycle Assessment (LCA) of metals, steel, and alloys. Optimize your product footprint, drive sustainability, and ensure compliance, all through an intuitive, AI-powered interface.
-    """)
+    <style>
+    .stApp {
+        background: linear-gradient(120deg,#101d2b 0%,#1b3255 59%,#0ac9e8 100%);
+        background-attachment: fixed;
+        min-height: 100vh;
+        animation: gradientMove 12s ease-in-out infinite alternate;
+        transition: background 2s;
+    }
+    @keyframes gradientMove {
+        0% {background-position: 0% 50%;}
+        100% {background-position: 100% 50%;}
+    }
+    .card-container {
+        display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content:center; margin-top:2rem; margin-bottom:2.5rem;
+    }
+    .feature-card {
+        background: rgba(24,30,48,0.95);
+        border-radius: 19px;
+        box-shadow: 0 10px 38px rgba(61,200,255,0.18), 0 2px 5px 2.5px rgba(0,200,245,0.09);
+        min-width: 260px; max-width: 330px;
+        padding: 1.45rem 1.16rem 1.2rem 1.16rem;
+        color: #eafeff;
+        font-size:1.09rem;
+        margin-bottom: 1.4rem;
+        transition: transform .17s, box-shadow .17s;
+        border: 1.1px solid #1fa0ff33;
+    }
+    .feature-card:hover {
+        transform: translateY(-10px) scale(1.035);
+        box-shadow: 0 22px 42px rgba(0,220,255,0.19);
+    }
+    .card-title {
+        color:#38dbff;font-size:1.17rem;margin-bottom:0.33rem;font-weight:600;letter-spacing:.4px;
+    }
+    .start-btn {
+        background:linear-gradient(90deg,#16a6ff 44%,#12dde4 100%);
+        border:none; border-radius:29px; color:#fff;
+        font-size:1.28rem; padding:0.8rem 3.3rem;
+        font-weight:700; box-shadow:0 1.5px 12px rgba(18,220,255,0.19);
+        cursor:pointer; letter-spacing:.5px; margin-top:1.3rem; margin-bottom:1.6rem;
+        transition: all 0.11s;
+    }
+    .start-btn:hover {
+        box-shadow:0 2px 16px rgba(30,190,255,.27);
+        transform: scale(1.055);
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
-    st.header("Key Features")
+    st.image("src/metalliq_logo.jpg", use_container_width=True)
+
+    st.markdown(
+        "<h1 style='margin-bottom:0.13em;font-size:2.35rem;font-family:sans-serif;font-weight:880;letter-spacing:0.2px;'>MetalliQ LCA Platform</h1>",
+        unsafe_allow_html=True)
+    st.markdown(
+        "<div style='font-size:1.18rem; color:#41c7d3;font-weight:600;margin-bottom:0.23em;'>AI-Driven Life Cycle Assessment for Metallurgy</div>",
+        unsafe_allow_html=True)
+    st.markdown(
+        """<div style='margin-bottom:1.2em; color:#eafeff;'>Welcome to <b style='color:#41c7d3'>MetalliQ</b> – your comprehensive platform for advanced Life Cycle Assessment (LCA) of metals, steel, and alloys. Optimize your product footprint, drive sustainability, and ensure compliance, all through an intuitive, AI-powered interface.</div>""",
+        unsafe_allow_html=True)
+
+    st.markdown("<h3 style='margin-top:0.5em;color:#38dbff;'>Key Features</h3>", unsafe_allow_html=True)
+
     st.markdown("""
-    - ISO 14044-compliant LCA wizard  
-    - AI-based pre-fill and results explanation  
-    - Circularity and eco-label evaluation  
-    - Interactive Sankey and other charts  
-    - Detailed reporting for the metallurgy industry  
-    - Seamless integration with Google AI Studio  
-    """)
+    <div class="card-container">
+        <div class="feature-card">
+            <div class="card-title">ISO 14044 LCA Wizard</div>
+            <div>Industry-standard workflow for metals, alloys, and steel.</div>
+        </div>
+        <div class="feature-card">
+            <div class="card-title">AI Autofill & Explain</div>
+            <div>Automatic data input and smart LCA result explanations for engineers.</div>
+        </div>
+        <div class="feature-card">
+            <div class="card-title">Circularity & Eco-Labels</div>
+            <div>Evaluate for circular economy, eco-labels, and maximize sustainability compliance.</div>
+        </div>
+        <div class="feature-card">
+            <div class="card-title">Interactive Visuals</div>
+            <div>Animated Sankey diagrams, timelines, and deep analytics for transparency.</div>
+        </div>
+        <div class="feature-card">
+            <div class="card-title">Comprehensive Reports</div>
+            <div>Automated PDF reporting for certifications, auditing, and quality checks.</div>
+        </div>
+        <div class="feature-card">
+            <div class="card-title">Cloud AI Integration</div>
+            <div>Seamless Google AI Studio and third-party workflow support.</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
-    if st.button("Start Platform"):
-        st.session_state.show_login = True  # Custom session flag for navigation
+    st.markdown("""
+    <div style="text-align:center;">
+        <form action="#">
+            <button class="start-btn" type="submit">Start Platform 🚀</button>
+        </form>
+    </div>
+    """, unsafe_allow_html=True)
+
+    if st.button("Start Platform", key="realstartbutton"):
+        st.session_state.show_login = True
+
 
 
 # -------------------- LOGIN PAGE (pure card, no bar/header shown) ---------------------
