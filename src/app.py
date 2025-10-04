@@ -85,6 +85,29 @@ def sidebar_navigation(active):
     st.sidebar.markdown("---")
     return selected.split(" ", 1)[1]
 
+def show_welcome_page():
+    st.image("metalliq_logo.jpg", use_column_width=True)  # Use your generated image file
+
+    st.title("MetalliQ LCA Platform")
+    st.subheader("AI-Driven Life Cycle Assessment for Metallurgy")
+    st.markdown("""
+    Welcome to **MetalliQ** – your comprehensive platform for performing advanced Life Cycle Assessment (LCA) of metals, steel, and alloys. Optimize your product footprint, drive sustainability, and ensure compliance, all through an intuitive, AI-powered interface.
+    """)
+
+    st.header("Key Features")
+    st.markdown("""
+    - ISO 14044-compliant LCA wizard  
+    - AI-based pre-fill and results explanation  
+    - Circularity and eco-label evaluation  
+    - Interactive Sankey and other charts  
+    - Detailed reporting for the metallurgy industry  
+    - Seamless integration with Google AI Studio  
+    """)
+
+    if st.button("Start Platform"):
+        st.session_state.show_login = True  # Custom session flag for navigation
+
+
 # -------------------- LOGIN PAGE (pure card, no bar/header shown) ---------------------
 def login_page():
     st.markdown("""
@@ -147,6 +170,11 @@ def login_page():
         st.rerun()
 
 def main_app():
+    if "show_login" not in st.session_state:
+        st.session_state.show_login = False
+    if not st.session_state.show_login:
+        show_welcome_page()
+        return
     if "workspaces" not in st.session_state:
         st.session_state["workspaces"] = ["John's Workspace", "Project Phoenix"]
     if "current_workspace" not in st.session_state:
