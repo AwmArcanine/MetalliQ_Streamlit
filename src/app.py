@@ -97,9 +97,8 @@ def sidebar_navigation(active):
 def show_welcome_page():
     import streamlit as st
     import json
-    from streamlit_lottie import st_lottie
 
-    # Custom global background gradient
+    # --------- Background & Heading Styles ----------
     st.markdown("""
     <style>
     body, .stApp {
@@ -114,87 +113,17 @@ def show_welcome_page():
         font-weight:900; letter-spacing:.23px; text-align:center; margin:0.2em 0 0.18em 0;
     }
     .main-desc { font-size:1.17rem; color:#41c7d3; font-weight:600; text-align:center; margin-top:-.18em; margin-bottom:.09em;}
-    .feature-head { color:#23d6ff;text-align:center;font-size:1.33rem;font-weight:800;margin-top:1.2em;margin-bottom:.45em;}
     .center-desc{
         color:#eafeff;text-align:center;max-width:680px;margin:0 auto 1.1em auto;font-size:1.05rem;
     }
-    .features-flex-row {
-        width:100vw;
-        display:flex;
-        flex-wrap:wrap;
-        justify-content:center;
-        gap:2.8rem 2.1rem;
-        margin-top:.9em;
-    }
-    .feature-card {
-        background: linear-gradient(130deg, #1c7ae0 97%, #41f6ff12 115%);
-        border-radius: 19px;
-        min-width: 305px;
-        max-width: 350px;
-        flex: 1 1 326px;
-        box-shadow: 0 4px 22px 0 #0cb1ff12, 0 0px 1.5px 4px #29bbff11;
-        margin-bottom: 14px;
-        padding: 1.15em 1.2em 1.05em 1.36em;
-        text-align: left;
-        border: 1.5px solid #1cf3ff22;
-        display: flex; flex-direction: row; gap: 1.13em; align-items: flex-start;
-        transition: box-shadow .15s, transform .15s;
-    }
-    .feature-card:hover {
-        box-shadow: 0 2px 32px #13e5ff51;
-        transform: translateY(-4px) scale(1.022);
-        background: linear-gradient(120deg, #29bafc 85%, #41f6ff3a 115%);
-        border: 1.5px solid #27e3fa55;
-    }
-    .card-emoji {
-        font-size: 2.14rem;
-        margin-right: .36em;
-    }
-    .card-content { display:flex; flex-direction:column;}
-    .card-title {
-        font-weight: 800;
-        color: #e8ffff;
-        font-size: 1.18rem;
-        margin-bottom: 0.15em;
-        letter-spacing: .03px;
-    }
-    .card-desc {
-        color: #eafafd;
-        font-size: 1.03rem;
-        font-weight:510;
-        letter-spacing:.004em;
-    }
-    @media (max-width: 900px) {
-        .features-flex-row {flex-direction:column;align-items:center;gap:1.2rem;}
-        .feature-card {max-width:92vw;}
-    }
-    .welcome-card-btn {
-        display:inline-block;
-        background:linear-gradient(92deg,#16a6ff 44%,#1173b8 100%);
-        color:#fff !important;
-        padding:.7em 2.8em;
-        border-radius:19px;
-        border:none;
-        font-size:1.1rem;
-        font-weight:800;
-        box-shadow:0 1.5px 12px rgba(18,220,255,0.14);
-        cursor:pointer;
-        letter-spacing:.04rem;
-        margin-top:1.15em;
-        margin-bottom:1.55em;
-        transition:all .13s;
-    }
-    .welcome-card-btn:hover {
-        box-shadow:0 2px 16px rgba(30,190,255,.18);
-        background:linear-gradient(92deg,#19a5ec 44%,#1e65d1 100%);
-        color:#f2ffff !important;
-    }
+    .feature-head { color:#23d6ff;text-align:center;font-size:1.33rem;font-weight:800;margin-top:1.2em;margin-bottom:.45em;}
     </style>
     """, unsafe_allow_html=True)
 
-    # Lottie animation (bot)
+    # --------- Optional: Lottie Animation (skip if not needed) ----------
     with open("src/Welcome_Animation.json", "r") as f:
         lottie_json = json.load(f)
+    from streamlit_lottie import st_lottie
     st_lottie(lottie_json, height=105, key="welcome_lottie")
 
     st.markdown("<div class='main-head'>MetalliQ LCA Platform</div>", unsafe_allow_html=True)
@@ -206,118 +135,98 @@ def show_welcome_page():
         "</div>",
         unsafe_allow_html=True
     )
-    # ... previous content and head styles, lottie, etc.
 
     st.markdown("<div class='feature-head'>Key Features</div>", unsafe_allow_html=True)
-    features = [
-        {"title": "ISO 14044 LCA Wizard", "desc": "Industry-standard workflow for metals, alloys, and steel.", "emoji": "🧭"},
-        {"title": "AI Autofill & Explain", "desc": "Automatic data input and smart LCA result explanations for engineers.", "emoji": "🤖"},
-        {"title": "Circularity & Eco-Labels", "desc": "Evaluate for circular economy, eco-labels, and maximize sustainability compliance.", "emoji": "♻️"},
-        {"title": "Interactive Visuals", "desc": "Animated Sankey diagrams, timelines, and deep analytics for transparency.", "emoji": "📊"},
-        {"title": "Comprehensive Reports", "desc": "Automated PDF reporting for certifications, auditing, and quality checks.", "emoji": "📄"},
-        {"title": "Cloud AI Integration", "desc": "Seamless Google AI Studio and third-party workflow support.", "emoji": "☁️"},
-    ]
 
+    # --------- GRID CARDS SECTION (3 columns x 2 rows) ----------
     st.markdown("""
     <style>
-    .feature-grid-wrap {
-        display: flex;
-        justify-content: center;
-        margin-top: 1.2em;
-        margin-bottom: 2em;
-    }
-    .feature-grid {
+    .key-features-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 2rem 2rem;
-        max-width: 1110px;
-        width: 100%;
+        gap: 2.3rem 2.3rem;
+        justify-content: center;
+        margin: 1.7em auto 2.1em auto;
+        max-width: 950px;
     }
-    .feature-grid-card {
-        background: linear-gradient(135deg, #2be2fe 80%, #1c7ae0 130%);
-        border-radius: 1.6rem;
+    .feature-card {
+        background: linear-gradient(130deg, #1fd8ff 72%, #46e0ff 110%);
+        border-radius: 23px;
+        box-shadow: 0 4px 24px #21eefd17;
+        padding: 2.14rem 1.12rem 1.15rem 1.12rem;
+        text-align: center;
+        height: 185px;
         min-width: 0;
-        box-shadow: 0 5px 28px #0099fc13;
-        padding: 1.3em 1.55em 1.10em 1.51em;
-        text-align: left;
-        border: 1.7px solid #1cf3ff1a;
-        display: flex;
-        flex-direction: row;
-        gap: 1.13em;
-        align-items: flex-start;
-        transition: box-shadow .14s, transform .12s;
-    }
-    .feature-grid-card:hover {
-        box-shadow: 0 8px 32px #13e5ff3a;
-        transform: translateY(-4px) scale(1.018);
-        background: linear-gradient(119deg, #12c8ed 88%, #23b6f7 125%);
-        border: 1.8px solid #27e3fa41;
-    }
-    .card-emoji {
-        font-size: 2rem;
-        margin-top: 0.1em;
-    }
-    .card-content {
+        width: 240px;
         display: flex;
         flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        transition: transform .15s, box-shadow .15s;
     }
-    .card-title {
-        font-weight: 820;
-        color: #e8ffff;
-        font-size: 1.13rem;
-        margin-bottom: 0.15em;
-        letter-spacing: .01px;
+    .feature-card:hover {
+        transform: translateY(-7px) scale(1.045);
+        box-shadow: 0 14px 39px #23d7f42c;
+        background: linear-gradient(106deg, #11c1ee 90%, #2fd9f9 120%);
     }
-    .card-desc {
-        color: #f3fcff;
-        font-size: .98rem;
-        font-weight:519;
-        letter-spacing:.002em;
-    }
-    @media (max-width: 1000px) {
-        .feature-grid { grid-template-columns: 1fr 1fr; max-width: 40vw;}
-    }
-    @media (max-width: 700px) {
-        .feature-grid { grid-template-columns: 1fr; }
-    }
+    .card-icon { font-size: 2.22rem; margin-bottom: .7em; }
+    .card-title { font-weight:800;font-size:1.14rem;margin-bottom:.30em;color:#195880;}
+    .card-desc { font-size:.97rem;color:#134062;font-weight:520;}
+    @media (max-width:900px) {.key-features-grid {grid-template-columns:1fr 1fr;}}
+    @media (max-width:600px) {.key-features-grid {grid-template-columns:1fr;}}
     </style>
-    <div class="feature-grid-wrap">
-        <div class="feature-grid">
+    <div class="key-features-grid">
     """, unsafe_allow_html=True)
 
-    for f in [
-        {"title": "ISO 14044 LCA Wizard", "desc": "Industry-standard workflow for metals, alloys, and steel.", "emoji": "🧭"},
-        {"title": "AI Autofill & Explain", "desc": "Automatic data input and smart LCA result explanations for engineers.", "emoji": "🤖"},
-        {"title": "Circularity & Eco-Labels", "desc": "Evaluate for circular economy, eco-labels, and maximize sustainability compliance.", "emoji": "♻️"},
-        {"title": "Interactive Visuals", "desc": "Animated Sankey diagrams, timelines, and deep analytics for transparency.", "emoji": "📊"},
-        {"title": "Comprehensive Reports", "desc": "Automated PDF reporting for certifications, auditing, and quality checks.", "emoji": "📄"},
-        {"title": "Cloud AI Integration", "desc": "Seamless Google AI Studio and third-party workflow support.", "emoji": "☁️"},
-    ]:
+    features = [
+        {"icon": "🧭", "title": "ISO 14044 LCA Wizard", "desc": "Industry-standard workflow for metals, alloys, and steel."},
+        {"icon": "🤖", "title": "AI Autofill & Explain", "desc": "Automatic data input and smart LCA result explanations for engineers."},
+        {"icon": "♻️", "title": "Circularity & Eco-Labels", "desc": "Evaluate for circular economy, eco-labels, and maximize sustainability compliance."},
+        {"icon": "📊", "title": "Interactive Visuals", "desc": "Animated Sankey diagrams, timelines, and deep analytics for transparency."},
+        {"icon": "📄", "title": "Comprehensive Reports", "desc": "Automated PDF reporting for certifications, auditing, and quality checks."},
+        {"icon": "☁️", "title": "Cloud AI Integration", "desc": "Seamless Google AI Studio and third-party workflow support."}
+    ]
+    for f in features:
         st.markdown(f"""
-        <div class="feature-grid-card">
-            <span class="card-emoji">{f["emoji"]}</span>
-            <div class="card-content">
-                <div class="card-title">{f["title"]}</div>
-                <div class="card-desc">{f["desc"]}</div>
-            </div>
+        <div class="feature-card">
+            <div class="card-icon">{f['icon']}</div>
+            <div class="card-title">{f['title']}</div>
+            <div class="card-desc">{f['desc']}</div>
         </div>
         """, unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
 
+    # ---------- Centered Start Button below grid ----------
     st.markdown("""
-        </div>
-    </div>
+    <style>
+    .welcome-card-btn {
+        display:inline-block;
+        background:linear-gradient(92deg,#16a6ff 44%,#1173b8 100%);
+        color:#fff !important;
+        padding:.9em 2.8em;
+        border-radius:23px;
+        border:none;
+        font-size:1.19rem;
+        font-weight:800;
+        box-shadow:0 1.5px 18px #18d0ff21;
+        cursor:pointer;
+        letter-spacing:.03rem;
+        margin-top:2.1em;
+        margin-bottom:1.7em;
+        transition:all .13s;
+    }
+    .welcome-card-btn:hover {
+        box-shadow:0 2px 22px #30cbfd31;
+        background:linear-gradient(92deg,#19a5ec 44%,#1e65d1 100%);
+        color:#eaffff !important;
+    }
+    </style>
     """, unsafe_allow_html=True)
 
-
-
-    st.markdown("""
-    <div style="text-align:center;">
-        <button class="welcome-card-btn" onclick="window.location.href='#'">Start Platform 🚀</button>
-    </div>
-    """, unsafe_allow_html=True)
-    if st.button("Start Platform", key="realstartbutton"):
-        st.session_state.show_login = True
-
+    c1, c2, c3 = st.columns([3, 2, 3])
+    with c2:
+        if st.button("Start Platform 🚀", key="realstartbutton"):
+            st.session_state.show_login = True
 
 
 def login_page():
@@ -363,6 +272,13 @@ def login_page():
         margin-bottom: 1.3rem;
         font-weight: 500;
     }
+    .login-btn-row {
+        display: flex;
+        gap: 1.1em;
+        justify-content: center;
+        margin-top: 1.1em;
+        margin-bottom: .42em;
+    }
     .stButton>button, .styled-login-btn {
         padding: .64rem 1.7rem;
         background: linear-gradient(96deg,#1eb3ff 20%,#1590d7 90%);
@@ -370,7 +286,6 @@ def login_page():
         border: none !important;
         font-size: 1.06rem;
         font-weight: 700;
-        margin-top: .13em;
         border-radius: 16px;
         transition: background .18s, box-shadow .17s; 
         margin-bottom: .43em;
@@ -386,30 +301,32 @@ def login_page():
 
     col1, col2, col3 = st.columns([2, 4, 2])
     with col2:
+        user = st.button("Sign In as User (John Doe)", key="user-btn")
+        admin = st.button("Sign In as Admin (Sarah Singh)", key="admin-btn")
         st.markdown("""
             <div class="centered-login-card">
                 <div class="login-logo">🏛️</div>
                 <div class="login-title">MetalliQ</div>
                 <div class="login-sub">AI-Powered Metals Sustainability</div>
                 <div class="login-desc">Sign in to the official portal</div>
-            """, unsafe_allow_html=True)
-        # Modern styled buttons
-        user = st.button("Sign In as User (John Doe)", key="user-btn")
-        admin = st.button("Sign In as Admin (Sarah Singh)", key="admin-btn")
-        st.markdown("</div>", unsafe_allow_html=True)
-
-    if user:
-        st.session_state.logged_in = True
-        st.session_state.role = "Investigator"
-        st.session_state.name = "John Doe"
-        st.session_state['page'] = 'Dashboard'
-        st.rerun()
-    if admin:
-        st.session_state.logged_in = True
-        st.session_state.role = "Admin"
-        st.session_state.name = "Sarah Singh"
-        st.session_state['page'] = 'Dashboard'
-        st.rerun()
+                <div class="login-btn-row">
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+        if user:
+            st.session_state.logged_in = True
+            st.session_state.role = "Investigator"
+            st.session_state.name = "John Doe"
+            st.session_state['page'] = 'Dashboard'
+            st.rerun()
+        if admin:
+            st.session_state.logged_in = True
+            st.session_state.role = "Admin"
+            st.session_state.name = "Sarah Singh"
+            st.session_state['page'] = 'Dashboard'
+            st.rerun()
 
 def main_app():
     if "show_login" not in st.session_state:
