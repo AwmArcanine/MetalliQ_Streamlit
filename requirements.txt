@@ -6,3 +6,5 @@ plotly
 scikit-learn
 openpyxl
 python-dotenv
+streamlit-lottie
+requests
