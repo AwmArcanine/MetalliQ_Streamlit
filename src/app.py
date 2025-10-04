@@ -12,28 +12,47 @@ from streamlit_lottie import st_lottie
 
 # ==== MetalliQ Universal Theme & Sidebar Styles ====
 st.markdown("""
-<style>
-body { background: #f8f9fb !important; }
-[data-testid="stSidebar"] {
-    background: linear-gradient(180deg,#132c43 7%,#15447a 94%) !important;
-    color: #ffffff !important;
-}
-.st-emotion-cache-1v0mbdj p, .st-emotion-cache-1v0mbdj, .st-emotion-cache-10trblm {
-    color: #ecdfff !important;
-}
-button, .stButton button {
-    border-radius: 8px !important;
-    background: #1366b3 !important;
-    color: #fff !important;
-    font-weight: 700;
-    letter-spacing: .01em;
-}
-h1, h2, h3, h4, h5, h6 { color: #1366b3 !important; }
-.st-emotion-cache-6qob1r, .sidebar-label { color:#fff !important; }
-.st-emotion-cache-nahz7x .st-bz { background: #15447a !important; color:#fff !important; border-radius:12px;}
-span[data-testid="stSidebarNav"] > div > ul > li > a { color:#f8f9fb !important; font-weight:500 !important;}
-</style>
-""", unsafe_allow_html=True)
+    <style>
+    /* Universal sidebar text: make white, bigger, bold everywhere */
+    section[data-testid="stSidebar"] * {
+        color: #f9fafd !important;
+        font-weight: 800 !important;
+        font-size: 1.1em !important;
+        text-shadow: 0 2px 6px #0a223933;
+    }
+
+    /* For all headings (including h2, h3, h6), make larger and even bolder */
+    section[data-testid="stSidebar"] h1,
+    section[data-testid="stSidebar"] h2,
+    section[data-testid="stSidebar"] h3,
+    section[data-testid="stSidebar"] h4,
+    section[data-testid="stSidebar"] h5,
+    section[data-testid="stSidebar"] h6
+    {
+        color: #fff !important;
+        font-weight: 900 !important;
+        font-size: 1.25em !important;
+        letter-spacing: .015em;
+    }
+
+    /* Sidebar radio/active labels: white, bold, larger even when selected */
+    section[data-testid="stSidebar"] .st-emotion-cache-1b7j0ig,
+    section[data-testid="stSidebar"] .st-emotion-cache-1b7j0ig * {
+        background: linear-gradient(90deg, #484b8f 50%, #2a2956 110%);
+        color: #fff !important;
+        font-weight: 900 !important;
+        font-size: 1.15em !important;
+        border-radius: 17px;
+    }
+
+    /* Disabled/inactive sidebar text, kept light but slightly desaturated */
+    section[data-testid="stSidebar"] [aria-disabled="true"] {
+        color: #c2d1ff !important;
+        opacity: 0.85 !important;
+        font-weight: 600 !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
 # -------------------- Sidebar Logo + Workspace Switcher ----------------------
 def workspace_selector():
@@ -275,13 +294,6 @@ def main_app():
 
     # --- Only show the MetalliQ header bar after login
     name = st.session_state.get('name', "John Doe")
-    st.markdown(
-        f"<div style='width:97%;margin:35px auto 5px auto;height:62px;background:linear-gradient(92deg,#1173b8 62%,#15447a 125%);color:#fff;"
-        f"border-radius:0 0 22px 22px;display:flex;align-items:center;padding-left:34px;font-size:1.51rem;font-weight:800;letter-spacing:-.2px;'>"
-        f"MetalliQ: AI-Powered Metals Sustainability <span style='font-weight:400;font-size:1.09rem;margin-left:29px;opacity:.87;'>Welcome, {name}</span></div>",
-        unsafe_allow_html=True
-    )
-    st.write("") # Spacing
 
     workspace = workspace_selector()
     page = st.session_state.get('page', "Dashboard")
@@ -292,6 +304,16 @@ def main_app():
     st.sidebar.markdown(f"<div style='margin-bottom:18px;'>Active workspace: <b>{workspace}</b></div>", unsafe_allow_html=True)
 
     if nav_page == "Dashboard":
+        st.markdown(
+        f"<div style='width:97%;margin:10px auto 5px auto;height:54px;"
+        f"background:linear-gradient(92deg,#1173b8 62%,#15447a 125%);color:#fff;"
+        f"border-radius:0 0 22px 22px;display:flex;align-items:center;padding-left:34px;"
+        f"font-size:1.43rem;font-weight:800;letter-spacing:-.2px;'>"
+        f"MetalliQ: AI-Powered Metals Sustainability"
+        f"<span style='font-weight:400;font-size:1.08rem;margin-left:29px;opacity:.86;'>Welcome, {name}</span></div>",
+        unsafe_allow_html=True
+        )
+        st.write("") 
         if st.session_state.get('role') == "Admin":
             user_info = {
                 "active_users": 33,

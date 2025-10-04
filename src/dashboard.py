@@ -65,6 +65,24 @@ body {
 """, unsafe_allow_html=True)
 
 def dashboard_page(workspace=None):
+    col1, col2 = st.columns([8, 2])
+    with col2:
+        st.markdown("""
+        <style>
+        .css-1lsmgbg [data-testid="baseButton-primary"] {
+            background: linear-gradient(90deg,#1c9ae5 60%,#1689c4 100%) !important;
+            border-radius: 9px !important;
+            font-size: 1.14rem;
+            font-weight: 800;
+            box-shadow: 0 2px 10px #048be219;
+            margin-top: .33rem;
+            margin-bottom: .4rem;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+        if st.button("+ New Study", key="dashboard_new_study", use_container_width=True):
+            st.session_state["page"] = "Create Study"
+            st.rerun()
     results = st.session_state.get('simulation_results')
 
     # ----------- MOCK DATA -------------
