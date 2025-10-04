@@ -143,7 +143,7 @@ def show_welcome_page():
     </style>
     """, unsafe_allow_html=True)
 
-    st.image("src/metalliq_logo.jpg", use_container_width=True)
+    st.image("src/metalliq_logo.jpg", width=80)
 
     st.markdown(
         "<h1 style='margin-bottom:0.13em;font-size:2.35rem;font-family:sans-serif;font-weight:880;letter-spacing:0.2px;'>MetalliQ LCA Platform</h1>",
