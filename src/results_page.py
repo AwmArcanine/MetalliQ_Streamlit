@@ -92,6 +92,7 @@ def results_page(results, ai_text):
         st.write(f"**Intended Audience:** {gs.get('Intended Audience', '')}")
         st.write(f"**Comparative Assertion for Public:** {gs.get('Comparative Assertion for Public', '')}")
     st.markdown("---")
+
     # Data Quality + Uncertainty
     dq = results.get('data_quality', {
         "Reliability Score": 5,
@@ -116,72 +117,6 @@ def results_page(results, ai_text):
         st.markdown(f"<div style='font-size:1.1em;margin-top:4px;color:#1769a0;'>Result Uncertainty <b>{dq.get('Result Uncertainty', '')}</b></div>", unsafe_allow_html=True)
     st.markdown("---")
 
-    # Responsive Extended Circularity Metrics Card Grid
-
-    extcirc = results.get('extended_circularity_metrics', {
-        "Resource Efficiency": "92%",
-        "Extended Product Life": "110%",
-        "Reuse Potential": "40/50",
-        "Material Recovery": "90%",
-        "Closed–Loop Potential": "75%",
-        "Recycling Content": "10%",
-        "Landfill Rate": "8%",
-        "Energy Recovery": "2%"
-    })
-
-    st.markdown("""
-    <style>
-    .metric-card {
-        background: #f8fafc;
-        border-radius: 13px;
-        padding: 28px 0 18px 0;
-        box-shadow: 0 2px 12px #c3d3e35c;
-        text-align: center;
-        margin-bottom: 20px;
-        min-width: 180px;
-        min-height: 96px;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-    }
-    .metric-label {
-        color: #6f7887;
-        font-size: 1.13em;
-        font-weight: 600;
-        margin-bottom: 7px;
-        white-space: pre-line;
-    }
-    .metric-value {
-        color: #003866;
-        font-size: 2em;
-        font-weight: 800;
-        letter-spacing: 0.6px;
-        margin-bottom: 1px;
-    }
-    </style>
-    """, unsafe_allow_html=True)
-
-    st.markdown("### Extended Circularity Metrics")
-
-    labels = list(extcirc.keys())
-    values = list(extcirc.values())
-
-    # Choose 3 or 4 columns per row based on screen, keeps spacing optimal
-    cols_per_row = 4  # Try 3 if still squished, or use st.columns dynamically
-    for i in range(0, len(labels), cols_per_row):
-        cols = st.columns(cols_per_row)
-        for j, col in enumerate(cols):
-            idx = i + j
-            if idx < len(labels):
-                col.markdown(f'''
-                    <div class='metric-card'>
-                        <div class='metric-label'>{labels[idx]}</div>
-                        <div class='metric-value'>{values[idx]}</div>
-                    </div>
-                ''', unsafe_allow_html=True)
-
-    st.divider()
-
     # Supply Chain Hotspots
     st.markdown("<div style='font-weight:700;font-size:1.10rem;margin-top:1.65em;margin-bottom:5px;'>Supply Chain Hotspots</div>", unsafe_allow_html=True)
     for h in es["Supply Chain Hotspots"]:
@@ -202,6 +137,7 @@ def results_page(results, ai_text):
             </div>""", unsafe_allow_html=True
         )
     st.markdown("---")
+
 
     # Production Metrics
     st.markdown(
@@ -224,43 +160,7 @@ def results_page(results, ai_text):
     )
     st.markdown("---")
 
-    # ---------- IMPACT METRICS GRID ----------
-
-    impact_data = [
-    ("Global Warming Potential", 2293, "kg CO₂-eq"),
-    ("Energy Demand", 26454, "MJ"),
-    ("Water Consumption", 4.7, "m³"),
-    ("Acidification Potential", 4.1, "kg SO₂-eq"),
-    ("Eutrophication Potential", 1.15, "kg PO₄-eq"),
-    ("Ozone Depletion Potential", 0.00229, "kg CFC-11 eq"),
-    ("Photochemical Ozone Creation", 2.29, "kg NMVOC-eq"),
-    ("Particulate Matter Formation", 0.76, "kg PM2.5-eq"),
-    ("Abiotic Depletion (Fossil)", 29100, "MJ"),
-    ("Abiotic Depletion (Elements)", 0.01, "kg Sb-eq"),
-    ("Human Toxicity (Cancer)", 0.23, "CTUh"),
-    ("Human Toxicity (Non-Cancer)", 2.29, "CTUh"),
-    ("Freshwater Ecotoxicity", 22.88, "CTUe"),
-    ("Ionizing Radiation", 0.00458, "kBq U235-eq"),
-    ("Land Use", 228.77, "m²·year")
-    ]
-    df = pd.DataFrame(impact_data, columns=["Impact Metric", "Value", "Unit"])
-    st.markdown("#### Detailed Impact Assessment")
-    st.dataframe(df, hide_index=True)
-    st.markdown("---")
-
-    # [Retain all your original expander/Plotly/logic below (Sankey, AI, etc.)]
-    # Sankey Diagram, Material Flow
-    with st.expander("Process Life Cycle - Sankey Diagram"):
-        mf = results.get('material_flow_analysis')
-        if mf:
-            fig = go.Figure(go.Sankey(
-                node=dict(label=mf['labels']),
-                link=dict(source=mf['source'], target=mf['target'], value=mf['value'])
-            ))
-            st.plotly_chart(fig, use_container_width=True)
-        else:
-            st.write("No material flow data available.")
-    st.markdown("---")
+    #Process Lifecycle
 
     st.markdown(
         """
@@ -353,6 +253,174 @@ def results_page(results, ai_text):
         st.markdown(ai_text if ai_text else "No AI interpretation available.")
     st.markdown("---")
 
+    # Sankey Diagram, Material Flow
+    with st.expander("Process Life Cycle - Sankey Diagram"):
+        mf = results.get('material_flow_analysis')
+        if mf:
+            fig = go.Figure(go.Sankey(
+                node=dict(label=mf['labels']),
+                link=dict(source=mf['source'], target=mf['target'], value=mf['value'])
+            ))
+            st.plotly_chart(fig, use_container_width=True)
+        else:
+            st.write("No material flow data available.")
+    st.markdown("---")
+
+    #Circularity Analysis
+    # --- Circularity Analysis Card ---
+    circ_metrics = results.get("circularity_analysis", {
+        "Circularity Rate": 50,
+        "Recyclability Rate": 90,
+        "Recovery Efficiency": 92,
+        "Secondary Material Content": 10
+    })
+    st.markdown("""
+    <div style='background:#f8fafc;border-radius:16px;padding:28px 28px 18px 28px;box-shadow:0 2px 16px #c3d3e33c;margin-bottom:30px;'>
+        <h3 style="font-size:1.23rem;">Circularity Analysis</h3>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # Dounut Gauge for Circularity Rate
+    fig = go.Figure(go.Indicator(
+        mode="gauge+number",
+        value=circ_metrics["Circularity Rate"],
+        number={"suffix": "%", "font": {"size":44, "color": "#16507e", "family": "Roboto"}},
+        gauge={
+            "axis": {"range": [0, 100], "tickwidth": 2},
+            "bar": {"color": "#1765b6", "thickness": 0.23},
+            "bgcolor": "#e7edf3",
+            "borderwidth": 0,
+            "steps": [
+                {"range": [0, 100], "color": "#e7edf3"}
+            ]
+        },
+        domain={"x": [0, 1], "y": [0, 1]}
+    ))
+    fig.update_layout(
+        width=320, height=240,
+        margin=dict(l=0, r=0, t=10, b=5),
+        paper_bgcolor='rgba(0,0,0,0)'
+    )
+    c1, c2 = st.columns([0.47, 0.53])
+    with c1:
+        st.plotly_chart(fig, use_container_width=True)
+
+    with c2:
+        st.markdown(
+            f"""
+    <div style="margin-top:22px;">
+    <div style="font-size:1em;margin-bottom:5px;">
+        Recyclability Rate
+        <span style="float:right;font-weight:800;color:#2369a8;">{circ_metrics["Recyclability Rate"]}%</span>
+    </div>
+    <div style="background:#e7edf3;border-radius:9px;height:13px; margin-bottom:18px;">
+        <div style="background:#225c85;width:{circ_metrics["Recyclability Rate"]}%;height:13px;border-radius:9px;"></div>
+    </div>
+
+    <div style="font-size:1em;margin-bottom:5px;">
+        Recovery Efficiency
+        <span style="float:right;font-weight:800;color:#2369a8;">{circ_metrics["Recovery Efficiency"]}%</span>
+    </div>
+    <div style="background:#e7edf3;border-radius:9px;height:13px;margin-bottom:18px;">
+        <div style="background:#1765b6;width:{circ_metrics["Recovery Efficiency"]}%;height:13px;border-radius:9px;"></div>
+    </div>
+
+    <div style="font-size:1em;margin-bottom:5px;">
+        Secondary Material Content
+        <span style="float:right;font-weight:800;color:#85888a;">{circ_metrics["Secondary Material Content"]}%</span>
+    </div>
+    <div style="background:#e7edf3;border-radius:9px;height:13px;margin-bottom:5px;">
+        <div style="background:linear-gradient(90deg,#b0b3b5,#78797c 85%);width:{circ_metrics["Secondary Material Content"]}%;height:13px;border-radius:9px;"></div>
+    </div>
+    </div>
+    """,
+            unsafe_allow_html=True,
+        )
+
+
+    # Responsive Extended Circularity Metrics Card Grid
+
+    extcirc = results.get('extended_circularity_metrics', {
+        "Resource Efficiency": "92%",
+        "Extended Product Life": "110%",
+        "Reuse Potential": "40/50",
+        "Material Recovery": "90%",
+        "Closed–Loop Potential": "75%",
+        "Recycling Content": "10%",
+        "Landfill Rate": "8%",
+        "Energy Recovery": "2%"
+    })
+
+    st.markdown("""
+    <style>
+    .metric-card {
+        background: #f8fafc;
+        border-radius: 13px;
+        padding: 28px 0 18px 0;
+        box-shadow: 0 2px 12px #c3d3e35c;
+        text-align: center;
+        margin-bottom: 20px;
+        min-width: 180px;
+        min-height: 96px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    .metric-label {
+        color: #6f7887;
+        font-size: 1.13em;
+        font-weight: 600;
+        margin-bottom: 7px;
+        white-space: pre-line;
+    }
+    .metric-value {
+        color: #003866;
+        font-size: 2em;
+        font-weight: 800;
+        letter-spacing: 0.6px;
+        margin-bottom: 1px;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    st.markdown("### Extended Circularity Metrics")
+
+    labels = list(extcirc.keys())
+    values = list(extcirc.values())
+
+    # Choose 3 or 4 columns per row based on screen, keeps spacing optimal
+    cols_per_row = 4  # Try 3 if still squished, or use st.columns dynamically
+    for i in range(0, len(labels), cols_per_row):
+        cols = st.columns(cols_per_row)
+        for j, col in enumerate(cols):
+            idx = i + j
+            if idx < len(labels):
+                col.markdown(f'''
+                    <div class='metric-card'>
+                        <div class='metric-label'>{labels[idx]}</div>
+                        <div class='metric-value'>{values[idx]}</div>
+                    </div>
+                ''', unsafe_allow_html=True)
+
+    st.divider()
+
+
+    # GWP Contribution Pie Chart
+    gwp_contrib = results.get('gwp_contribution_analysis', {})
+    if gwp_contrib:
+        df_gwp = pd.DataFrame(list(gwp_contrib.items()), columns=["Category", "Value"])
+        fig = px.pie(df_gwp, names='Category', values='Value', title='GWP Contribution Analysis')
+        st.plotly_chart(fig, use_container_width=True)
+    st.markdown("---")
+
+    # Energy Breakdown
+    energy_breakdown = results.get('energy_source_breakdown', {})
+    if energy_breakdown:
+        df_energy = pd.DataFrame(list(energy_breakdown.items()), columns=["Energy Source", "Value"])
+        fig = px.bar(df_energy, x='Energy Source', y='Value', title='Energy Source Breakdown')
+        st.plotly_chart(fig, use_container_width=True)
+    st.markdown("---")
+
     # Key Impact Profiles and Chart
     kip = results.get('key_impact_profiles', {})
     if kip:
@@ -372,20 +440,28 @@ def results_page(results, ai_text):
         st.write("No Key Impact Profiles data to display.")
     st.markdown("---")
 
-    # GWP Contribution Pie Chart
-    gwp_contrib = results.get('gwp_contribution_analysis', {})
-    if gwp_contrib:
-        df_gwp = pd.DataFrame(list(gwp_contrib.items()), columns=["Category", "Value"])
-        fig = px.pie(df_gwp, names='Category', values='Value', title='GWP Contribution Analysis')
-        st.plotly_chart(fig, use_container_width=True)
-    st.markdown("---")
+        # ---------- IMPACT METRICS GRID ----------
 
-    # Energy Breakdown
-    energy_breakdown = results.get('energy_source_breakdown', {})
-    if energy_breakdown:
-        df_energy = pd.DataFrame(list(energy_breakdown.items()), columns=["Energy Source", "Value"])
-        fig = px.bar(df_energy, x='Energy Source', y='Value', title='Energy Source Breakdown')
-        st.plotly_chart(fig, use_container_width=True)
+    impact_data = [
+    ("Global Warming Potential", 2293, "kg CO₂-eq"),
+    ("Energy Demand", 26454, "MJ"),
+    ("Water Consumption", 4.7, "m³"),
+    ("Acidification Potential", 4.1, "kg SO₂-eq"),
+    ("Eutrophication Potential", 1.15, "kg PO₄-eq"),
+    ("Ozone Depletion Potential", 0.00229, "kg CFC-11 eq"),
+    ("Photochemical Ozone Creation", 2.29, "kg NMVOC-eq"),
+    ("Particulate Matter Formation", 0.76, "kg PM2.5-eq"),
+    ("Abiotic Depletion (Fossil)", 29100, "MJ"),
+    ("Abiotic Depletion (Elements)", 0.01, "kg Sb-eq"),
+    ("Human Toxicity (Cancer)", 0.23, "CTUh"),
+    ("Human Toxicity (Non-Cancer)", 2.29, "CTUh"),
+    ("Freshwater Ecotoxicity", 22.88, "CTUe"),
+    ("Ionizing Radiation", 0.00458, "kBq U235-eq"),
+    ("Land Use", 228.77, "m²·year")
+    ]
+    df = pd.DataFrame(impact_data, columns=["Impact Metric", "Value", "Unit"])
+    st.markdown("#### Detailed Impact Assessment")
+    st.dataframe(df, hide_index=True)
     st.markdown("---")
 
     # Uncertainty Distributions
@@ -399,8 +475,15 @@ def results_page(results, ai_text):
     st.markdown("---")
 
     # AI-Powered Insights/Recommendations
+    extra_context = {
+    "ore_conc": results.get('ore_conc'),
+    "transports": [
+        results.get('transport_stage_1', {}),
+        results.get('transport_stage_2', {})
+    ]
+    }
     if ai_text:
-        ai_recommendation.display_ai_recommendations(ai_text)
+        ai_recommendation.display_ai_recommendations(ai_text,extra_context)
     st.markdown("---")
     
     # Scenario Comparison Table and Chart

@@ -1,9 +1,26 @@
 import streamlit as st
 import pandas as pd
 
-def display_ai_recommendations(ai_data):
+def display_ai_recommendations(ai_data,extra_context=None):
     """Display AI-powered insights and recommendations styled like MetalliQ UI demo."""
     st.header("AI-Powered Insights & Recommendations")
+
+    # 0. Extra post-LCA context (ore grade, EV charging)
+    if extra_context:
+        # Low Ore Grade Warning
+        if "ore_conc" in extra_context and extra_context["ore_conc"] is not None and extra_context["ore_conc"] < 25:
+            st.warning(
+                f"⚠️ Low ore grade detected: {extra_context['ore_conc']}% metal ore concentration. "
+                "Processing low-grade ores uses much more energy and increases mining waste. "
+                "AI Suggestion: Consider higher-grade blending, alternative sourcing, or process optimization for improved sustainability."
+            )
+        # Electric Vehicle Charging Suggestion
+        transports = extra_context.get("transports", [])
+        if any(t.get("fuel", "").lower() == "electric" for t in transports):
+            st.info(
+                "🔌 Sustainable Transport: Electric transport detected in your supply chain. "
+                "AI Suggestion: Source charging from renewables (solar/wind), adopt smart charging schedules, and avoid high-carbon grid hours for maximal sustainability impact."
+            )
 
     # 1. AI Summary (highlight)
     if "summary" in ai_data:
