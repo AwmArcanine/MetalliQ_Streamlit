@@ -86,7 +86,7 @@ def sidebar_navigation(active):
     return selected.split(" ", 1)[1]
 
 def show_welcome_page():
-    st.image("src/metalliq_logo.jpg", use_column_width=True)  # Use your generated image file
+    st.image("src/metalliq_logo.jpg", use_container_width=True,width=150)  # Use your generated image file
 
     st.title("MetalliQ LCA Platform")
     st.subheader("AI-Driven Life Cycle Assessment for Metallurgy")
