@@ -10,7 +10,7 @@ from view_reports import view_reports_page
 from streamlit_lottie import st_lottie
 import json
 
-with open("src/Welcome Animation.json", "r") as f:  # Update path if needed
+with open("src/Welcome_Animation.json", "r") as f:  # Update path if needed
     lottie_json = json.load(f)
 
 st_lottie(lottie_json, height=200)
