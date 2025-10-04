@@ -283,7 +283,7 @@ def results_page(results, ai_text):
     # Dounut Gauge for Circularity Rate
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
-        value = circ_metrics.get("Circularity Rate", 0),
+        value = circ_metrics.get("Circularity Rate", 50),
         number={"suffix": "%", "font": {"size":44, "color": "#16507e", "family": "Roboto"}},
         gauge={
             "axis": {"range": [0, 100], "tickwidth": 2},
@@ -297,7 +297,7 @@ def results_page(results, ai_text):
         domain={"x": [0, 1], "y": [0, 1]}
     ))
     fig.update_layout(
-        width=320, height=240,
+        width=320, height=300,
         margin=dict(l=0, r=0, t=10, b=5),
         paper_bgcolor='rgba(0,0,0,0)'
     )
