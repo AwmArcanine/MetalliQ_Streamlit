@@ -12,47 +12,39 @@ from streamlit_lottie import st_lottie
 
 # ==== MetalliQ Universal Theme & Sidebar Styles ====
 st.markdown("""
-    <style>
-    /* Universal sidebar text: make white, bigger, bold everywhere */
-    section[data-testid="stSidebar"] * {
-        color: #f9fafd !important;
-        font-weight: 800 !important;
-        font-size: 1.1em !important;
-        text-shadow: 0 2px 6px #0a223933;
-    }
+<style>
+section[data-testid="stSidebar"] * {
+    color: #f2f8fc !important;
+    font-weight: 700 !important;
+    font-size: 1.06em !important;
+    letter-spacing: .005em;
+    text-shadow: none !important;
+}
+section[data-testid="stSidebar"] h1,
+section[data-testid="stSidebar"] h2,
+section[data-testid="stSidebar"] h3,
+section[data-testid="stSidebar"] h4,
+section[data-testid="stSidebar"] h5,
+section[data-testid="stSidebar"] h6 {
+    font-size: 1.13em !important;
+    font-weight: 800 !important;
+    color: #fff !important;
+}
+section[data-testid="stSidebar"] .st-emotion-cache-1b7j0ig,
+section[data-testid="stSidebar"] .st-emotion-cache-1b7j0ig * {
+    color: #fff !important;
+    font-weight: 800 !important;
+    font-size: 1.09em !important;
+    border-radius: 13px;
+}
+section[data-testid="stSidebar"] [aria-disabled="true"] {
+    color: #c7d0df !important;
+    opacity: 0.75 !important;
+    font-weight: 600 !important;
+}
+</style>
+""", unsafe_allow_html=True)
 
-    /* For all headings (including h2, h3, h6), make larger and even bolder */
-    section[data-testid="stSidebar"] h1,
-    section[data-testid="stSidebar"] h2,
-    section[data-testid="stSidebar"] h3,
-    section[data-testid="stSidebar"] h4,
-    section[data-testid="stSidebar"] h5,
-    section[data-testid="stSidebar"] h6
-    {
-        color: #fff !important;
-        font-weight: 900 !important;
-        font-size: 1.25em !important;
-        letter-spacing: .015em;
-    }
-
-    /* Sidebar radio/active labels: white, bold, larger even when selected */
-    section[data-testid="stSidebar"] .st-emotion-cache-1b7j0ig,
-    section[data-testid="stSidebar"] .st-emotion-cache-1b7j0ig * {
-        background: linear-gradient(90deg, #484b8f 50%, #2a2956 110%);
-        color: #fff !important;
-        font-weight: 900 !important;
-        font-size: 1.15em !important;
-        border-radius: 17px;
-    }
-
-    /* Disabled/inactive sidebar text, kept light but slightly desaturated */
-    section[data-testid="stSidebar"] [aria-disabled="true"] {
-        color: #c2d1ff !important;
-        opacity: 0.85 !important;
-        font-weight: 600 !important;
-    }
-    </style>
-    """, unsafe_allow_html=True)
 
 # -------------------- Sidebar Logo + Workspace Switcher ----------------------
 def workspace_selector():
