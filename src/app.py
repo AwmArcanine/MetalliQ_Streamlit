@@ -95,26 +95,72 @@ def sidebar_navigation(active):
 
 # -------- Welcome Page (centered text, not whole block) -------------
 def show_welcome_page():
+    import streamlit as st
     import json
     from streamlit_lottie import st_lottie
 
+    # Lottie animation
     with open("src/Welcome_Animation.json", "r") as f:
         lottie_json = json.load(f)
+
     st.markdown("""
     <style>
     .main-head {
         background: linear-gradient(90deg,#76eaff 40%,#41d2ff 70%,#eaf6ff 98%);
-        -webkit-background-clip:text;
-        -webkit-text-fill-color:transparent;
-        background-clip:text;
-        text-fill-color:transparent;
+        -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+        background-clip:text;text-fill-color:transparent;
         font-size:2.7rem; font-family:'Segoe UI','Poppins','Roboto',sans-serif;
         font-weight:900; letter-spacing:.23px; text-align:center; margin:0.2em 0 0.18em 0;
     }
     .main-desc { font-size:1.17rem; color:#41c7d3; font-weight:600; text-align:center; margin-top:-.18em; margin-bottom:.09em;}
     .feature-head { color:#23d6ff;text-align:center;font-size:1.33rem;font-weight:800;margin-top:1.2em;margin-bottom:.45em;}
-    .feature-list {max-width:570px;margin:0 auto 1.3em auto; padding-left:.7em;}
-    .feature-list li {color:#eafeff;font-size:1.08rem;margin-bottom:.13em;font-weight:540;text-shadow:0 1px 7px #099ad132;}
+    .cards-row {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 1.6rem;
+        margin-bottom: 16px;
+        margin-top: 8px;
+    }
+    .feature-card {
+        background: rgba(22,166,255,0.14);
+        border-radius: 16px;
+        padding: 1.26em 1.38em .9em 1.38em;
+        min-width: 267px;
+        max-width: 310px;
+        box-shadow: 0 1.5px 18px rgba(30,190,255,0.11);
+        margin-bottom: 10px;
+        text-align: left;
+        transition: box-shadow .15s, transform .15s;
+        border: 1.5px solid #31b1ff30;
+    }
+    .feature-card:hover {
+        box-shadow: 0 2px 28px #23d6ff49;
+        transform: translateY(-4px) scale(1.03);
+        background: rgba(27, 213, 255, 0.17);
+    }
+    .card-emoji {
+        font-size: 1.78rem;
+        margin-bottom: 0.18em;
+        margin-right: 0.16em;
+    }
+    .card-title {
+        font-weight: 750;
+        color: #23d6ff;
+        font-size: 1.14rem;
+        margin-bottom: 0.13em;
+        letter-spacing: .01px;
+    }
+    .card-desc {
+        color: #eafeff;
+        font-size: 1.01rem;
+        font-weight:500;
+        letter-spacing:0.01em;
+    }
+    @media (max-width: 850px) {
+        .cards-row {flex-direction: column; align-items: center; gap: 1.1rem;}
+        .feature-card {max-width: 98vw;}
+    }
     .welcome-card-btn {
         display:inline-block;
         background:linear-gradient(92deg,#16a6ff 44%,#1173b8 100%);
@@ -129,6 +175,7 @@ def show_welcome_page():
     }
     </style>
     """, unsafe_allow_html=True)
+
     st_lottie(lottie_json, height=150, key="welcome_lottie")
     st.markdown("<div class='main-head'>MetalliQ LCA Platform</div>", unsafe_allow_html=True)
     st.markdown("<div class='main-desc'>AI-Driven Life Cycle Assessment for Metallurgy</div>", unsafe_allow_html=True)
@@ -139,40 +186,140 @@ def show_welcome_page():
     </div>
     """, unsafe_allow_html=True)
     st.markdown("<div class='feature-head'>Key Features</div>", unsafe_allow_html=True)
-    st.markdown("""
-    <ul class="feature-list">
-        <li><b style='color:#62e4fd;'>ISO 14044 LCA Wizard</b>: Industry-standard workflow for metals, alloys, and steel.</li>
-        <li><b style='color:#62e4fd;'>AI Autofill & Explain</b>: Automatic data input and smart LCA result explanations for engineers.</li>
-        <li><b style='color:#62e4fd;'>Circularity & Eco-Labels</b>: Evaluate for circular economy, eco-labels, and maximize sustainability compliance.</li>
-        <li><b style='color:#62e4fd;'>Interactive Visuals</b>: Animated Sankey diagrams, timelines, and deep analytics for transparency.</li>
-        <li><b style='color:#62e4fd;'>Comprehensive Reports</b>: Automated PDF reporting for certifications, auditing, and quality checks.</li>
-        <li><b style='color:#62e4fd;'>Cloud AI Integration</b>: Seamless Google AI Studio and third-party workflow support.</li>
-    </ul>
-    """, unsafe_allow_html=True)
+
+    feature_list = [
+        {
+            "title": "ISO 14044 LCA Wizard",
+            "desc": "Industry-standard workflow for metals, alloys, and steel.",
+            "emoji": "🧭"
+        },
+        {
+            "title": "AI Autofill & Explain",
+            "desc": "Automatic data input and smart LCA result explanations for engineers.",
+            "emoji": "🤖"
+        },
+        {
+            "title": "Circularity & Eco-Labels",
+            "desc": "Evaluate for circular economy, eco-labels, and maximize sustainability compliance.",
+            "emoji": "♻️"
+        },
+        {
+            "title": "Interactive Visuals",
+            "desc": "Animated Sankey diagrams, timelines, and deep analytics for transparency.",
+            "emoji": "📊"
+        },
+        {
+            "title": "Comprehensive Reports",
+            "desc": "Automated PDF reporting for certifications, auditing, and quality checks.",
+            "emoji": "📄"
+        },
+        {
+            "title": "Cloud AI Integration",
+            "desc": "Seamless Google AI Studio and third-party workflow support.",
+            "emoji": "☁️"
+        },
+    ]
+
+    st.markdown('<div class="cards-row">', unsafe_allow_html=True)
+    for feat in feature_list:
+        card = f"""
+        <div class="feature-card">
+            <div class="card-emoji">{feat["emoji"]}</div>
+            <div class="card-title">{feat["title"]}</div>
+            <div class="card-desc">{feat["desc"]}</div>
+        </div>
+        """
+        st.markdown(card, unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+
     st.markdown("""
     <div style="text-align:center;">
         <button class="welcome-card-btn" onclick="window.location.href='#'">Start Platform 🚀</button>
     </div>
     """, unsafe_allow_html=True)
+
     if st.button("Start Platform", key="realstartbutton"):
         st.session_state.show_login = True
 
+
 def login_page():
+    import streamlit as st
+
     st.markdown("""
-        <style>
-        .centered-card {max-width:420px; margin:110px auto 0 auto; padding:44px 44px 28px 44px; border-radius:18px; background:#fff; box-shadow:0 4px 32px #1b23362d; text-align:center;}
-        </style>
+    <style>
+    body { background: #f4f4f4 !important; }
+    .centered-login-card {
+        max-width: 420px;
+        margin: 110px auto 0 auto;
+        padding: 44px 44px 32px 44px;
+        border-radius: 20px;
+        background: linear-gradient(120deg, rgba(61,177,255,0.15) 60%, #eafdff25 100%);
+        box-shadow: 0 6px 32px 0 #25d3fd24, 0 0px 0px 1.5px #2cbcff18;
+        text-align: center;
+        font-family: 'Segoe UI', 'Inter', sans-serif;
+        position: relative;
+    }
+    .login-logo {
+        font-size: 3.2rem;
+        margin-bottom: 9px;
+        color: #23d6ff;
+        text-shadow: 0 2px 6px #33d6ff29;
+    }
+    .login-title {
+        color: #174679;
+        font-size: 1.45rem;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+        margin-bottom: .18em;
+    }
+    .login-sub {
+        color: #44acc7;
+        font-size: 1.06rem;
+        margin-bottom: 1rem;
+        font-weight: 600;
+        letter-spacing: -.3px;
+    }
+    .login-desc {
+        color: #444b60;
+        font-size: 1.06rem;
+        margin-bottom: 1.3rem;
+        font-weight: 500;
+    }
+    .stButton>button, .styled-login-btn {
+        padding: .64rem 1.7rem;
+        background: linear-gradient(96deg,#1eb3ff 20%,#1590d7 90%);
+        color: #fff !important;
+        border: none !important;
+        font-size: 1.06rem;
+        font-weight: 700;
+        margin-top: .13em;
+        border-radius: 16px;
+        transition: background .18s, box-shadow .17s; 
+        margin-bottom: .43em;
+        box-shadow: 0 1.5px 18px #3ed6ff0d, 0 0 0 1.5px #29bbff13;
+    }
+    .stButton>button:hover, .styled-login-btn:hover {
+        background: linear-gradient(92deg,#17a7ef 12%,#1363be 100%);
+        color: #eafdfe !important;
+        box-shadow: 0 3.2px 28px #27eaff24;
+    }
+    </style>
     """, unsafe_allow_html=True)
+
     col1, col2, col3 = st.columns([2, 4, 2])
     with col2:
-        st.markdown("""<div class="centered-card">
-            <div style="font-size:2.9rem;color:#174679;margin-bottom:11px;">🏛️</div>
-            <div style="color:#174679;font-size:1.45rem;font-weight:700;">MetalliQ</div>
-            <div style="font-size:1.07rem;color:#313a4a; margin-bottom:1.05rem;">AI-Powered Metals Sustainability</div>
-            <div style="color:#444b60; font-size:1.07rem; margin-bottom:0.62rem; font-weight:500;">Sign in to the official portal</div>
-        </div>""", unsafe_allow_html=True)
+        st.markdown("""
+            <div class="centered-login-card">
+                <div class="login-logo">🏛️</div>
+                <div class="login-title">MetalliQ</div>
+                <div class="login-sub">AI-Powered Metals Sustainability</div>
+                <div class="login-desc">Sign in to the official portal</div>
+            """, unsafe_allow_html=True)
+        # Modern styled buttons
         user = st.button("Sign In as User (John Doe)", key="user-btn")
         admin = st.button("Sign In as Admin (Sarah Singh)", key="admin-btn")
+        st.markdown("</div>", unsafe_allow_html=True)
+
     if user:
         st.session_state.logged_in = True
         st.session_state.role = "Investigator"
