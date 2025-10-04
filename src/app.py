@@ -90,38 +90,6 @@ section[data-testid="stSidebar"] [aria-disabled="true"] {
 </style>
 """, unsafe_allow_html=True)
 
-st.markdown("""
-<style>
-/* Let main container expand and center when sidebar is collapsed */
-@media (max-width: 1250px) {
-    .block-container {
-        margin-left: auto !important;
-        margin-right: auto !important;
-        max-width: 720px !important;
-        min-width: 388px;
-        padding-left: 1.5rem;
-        padding-right: 1.5rem;
-        transition: margin 0.28s;
-    }
-}
-/* If sidebar is collapsed, center the main block regardless of container */
-[data-testid="collapsedControl"] ~ div section.main .block-container {
-    margin-left: auto !important;
-    margin-right: auto !important;
-    max-width: 760px !important;
-    min-width: 388px;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
-}
-.welcome-center, .centered-card, .main-head, .main-desc, .card-container {
-    margin-left: auto !important;
-    margin-right: auto !important;
-    text-align: center !important;
-}
-</style>
-""", unsafe_allow_html=True)
-
-
 
 # -------------------- Sidebar Logo + Workspace Switcher ----------------------
 def workspace_selector():
@@ -283,6 +251,9 @@ def show_welcome_page():
 
     if st.button("Start Platform", key="realstartbutton"):
         st.session_state.show_login = True
+
+
+
 
 # -------------------- LOGIN PAGE (pure card, no bar/header shown) ---------------------
 def login_page():
