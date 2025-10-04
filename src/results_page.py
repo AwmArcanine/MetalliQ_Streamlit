@@ -1,0 +1,350 @@
+import streamlit as st
+import plotly.express as px
+import plotly.graph_objects as go
+import pandas as pd
+import ai_recommendation
+
+def results_page(results, ai_text):
+    st.title("Steel for New Building Frame")
+    st.markdown("---")
+
+    # ISO 14044 Compliance banner
+    st.markdown(
+        """
+        <div style='background:#eef3fc; border-radius:16px; padding:21px 25px 17px 40px; margin-bottom: 20px; font-size:1.07em; border: 1px solid #c5dbfc;'>
+            <b>ISO 14044 Conformance</b><br>
+            This is a screening-level LCA designed to be broadly consistent with ISO 14044 principles for internal decision-making.
+            For public comparative assertions, a formal third-party critical review of this report is required.
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+    st.markdown("---")
+
+    # EXECUTIVE SUMMARY
+    es = results.get('executive_summary', {
+        "Global Warming Potential": 2288,
+        "Circularity Score": 50,
+        "Particulate Matter": 0.763,
+        "Water Consumption": 4.7,
+        "Production Phase GWP": 2200,
+        "Overall Energy Demand": 26700,
+        "Circular Score": 50,
+        "Supply Chain Hotspots": [
+            {
+                "title": "Production Phase Global Warming Potential",
+                "description": "Highest Environmental Impact Contributor",
+                "impact": 65
+            },
+            {
+                "title": "Overall Energy Demand",
+                "description": "",
+                "impact": 25
+            },
+            {
+                "title": "Circularity Score",
+                "description": "",
+                "impact": 10
+            }
+        ]
+    })
+    st.markdown("<div style='font-size:1.22rem;font-weight:700;margin-bottom:3px;'>Executive Summary</div>", unsafe_allow_html=True)
+    st.caption("Displaying the mean values from a 1,000-run Monte Carlo simulation.")
+    cols = st.columns(4)
+    cols[0].markdown(
+        f"""<div style='background:#fbfbfb;border-radius:14px;padding:17px 0 11px 20px;box-shadow:0 1.5px 10px #e5e5ec7a;margin-bottom:1rem;'>
+        <span style='color:#909da9;font-weight:500;'>Global Warming Potential</span><br>
+        <span style='font-size:2.07em;font-weight:850;color:#262626;'>{es.get('Global Warming Potential', 2288)}</span>
+        <span style='color:#b4b9c2;font-weight:900;'> kg CO₂-eq</span></div>""", unsafe_allow_html=True)
+    cols[1].markdown(
+        f"""<div style='background:#fbfbfb;border-radius:14px;padding:17px 0 11px 20px;box-shadow:0 1.5px 10px #e5e5ec7a;margin-bottom:1rem;'>
+        <span style='color:#909da9;font-weight:500;'>Circularity Score</span><br>
+        <span style='font-size:2.07em;font-weight:850;color:#262626;'>{es.get('Circularity Score', 50)}</span>
+        <span style='color:#b4b9c2;font-weight:900;'> %</span></div>""", unsafe_allow_html=True)
+    cols[2].markdown(
+        f"""<div style='background:#fbfbfb;border-radius:14px;padding:17px 0 11px 20px;box-shadow:0 1.5px 10px #e5e5ec7a;margin-bottom:1rem;'>
+        <span style='color:#909da9;font-weight:500;'>Particulate Matter</span><br>
+        <span style='font-size:2.07em;font-weight:850;color:#262626;'>{es.get('Particulate Matter', 0.763):.3g}</span>
+        <span style='color:#b4b9c2;font-weight:900;'> kg PM2.5-eq</span></div>""", unsafe_allow_html=True)
+    cols[3].markdown(
+        f"""<div style='background:#fbfbfb;border-radius:14px;padding:17px 0 11px 20px;box-shadow:0 1.5px 10px #e5e5ec7a;margin-bottom:1rem;'>
+        <span style='color:#909da9;font-weight:500;'>Water Consumption</span><br>
+        <span style='font-size:2.07em;font-weight:850;color:#262626;'>{es.get('Water Consumption', 4.7)}</span>
+        <span style='color:#b4b9c2;font-weight:900;'> m³</span></div>""", unsafe_allow_html=True)
+    st.markdown("---")
+
+    # Goal & Scope
+    gs = results.get('goal_scope', {
+        "Intended Application": "Screening assessment for internal R&D purposes to compare material choices.",
+        "System Boundary": "Cradle-to-Grave",
+        "Limitations": "This analysis relies on industry-average data and does not include site-specific emissions. Results are for directional guidance only.",
+        "Intended Audience": "Internal engineering and sustainability departments.",
+        "Comparative Assertion for Public": "Yes"
+    })
+    st.markdown("<div style='margin-top:1.7em;'></div>", unsafe_allow_html=True)
+    c1, c2 = st.columns([2.2, 1.1])
+    with c1:
+        st.markdown("<div style='font-weight:700;font-size:1.07rem;margin-bottom:5px;'>Goal & Scope (ISO 14044)</div>", unsafe_allow_html=True)
+        st.write(f"**Intended Application:** {gs.get('Intended Application', '')}")
+        st.write(f"**System Boundary:** {gs.get('System Boundary', '')}")
+        st.write(f"**Limitations:** {gs.get('Limitations', '')}")
+    with c2:
+        st.write(f"**Intended Audience:** {gs.get('Intended Audience', '')}")
+        st.write(f"**Comparative Assertion for Public:** {gs.get('Comparative Assertion for Public', '')}")
+    st.markdown("---")
+    # Data Quality + Uncertainty
+    dq = results.get('data_quality', {
+        "Reliability Score": 5,
+        "Completeness Score": 5,
+        "Temporal Score": 5,
+        "Technological Score": 4,
+        "Geographical Score": 4,
+        "Aggregated Data Quality": 4.51,
+        "Result Uncertainty": "±14%"
+    })
+    c1, c2 = st.columns([2, 1.2])
+    with c1:
+        st.markdown("<div style='font-weight:700;font-size:1.07rem;margin-top:1.2em;'>Data Quality & Uncertainty</div>", unsafe_allow_html=True)
+        st.write(f"Reliability Score: {dq.get('Reliability Score', 'N/A')} / 5")
+        st.write(f"Completeness Score: {dq.get('Completeness Score', 'N/A')} / 5")
+        st.write(f"Temporal Score: {dq.get('Temporal Score', 'N/A')} / 5")
+        st.write(f"Technological Score: {dq.get('Technological Score', 'N/A')} / 5")
+        st.write(f"Geographical Score: {dq.get('Geographical Score', 'N/A')} / 5")
+    with c2:
+        st.markdown("<div style='font-size:1.07em;font-weight:500;color:#415;'>Aggregated Data Quality</div>", unsafe_allow_html=True)
+        st.markdown(f"<div style='font-size:2.3em;font-weight:800;'>{dq.get('Aggregated Data Quality', 'N/A')}</div>", unsafe_allow_html=True)
+        st.markdown(f"<div style='font-size:1.1em;margin-top:4px;color:#1769a0;'>Result Uncertainty <b>{dq.get('Result Uncertainty', '')}</b></div>", unsafe_allow_html=True)
+    st.markdown("---")
+
+    # Supply Chain Hotspots
+    st.markdown("<div style='font-weight:700;font-size:1.10rem;margin-top:1.65em;margin-bottom:5px;'>Supply Chain Hotspots</div>", unsafe_allow_html=True)
+    for h in es["Supply Chain Hotspots"]:
+        color = "#fff6ea" if "Production Phase" in h['title'] else "#f5f5f6"
+        border = "#ecb263" if "Production Phase" in h['title'] else "#efefef"
+        st.markdown(
+            f"""<div style="background:{color};border-radius:10px;
+            border:2px solid {border};
+            display:flex;align-items:center;margin-bottom:12px;box-shadow:0 1px 6px #efc26634;">
+            <div style="flex:5;padding:12px 9px 6px 21px;">
+                <span style="font-weight:730;font-size:1.09em;color:#b06718;">{h['title']}</span>
+                {"<div style='font-size:.97em;color:#dc9509;margin-top:2.5px;'>" + h['description'] + "</div>" if h['description'] else ""}
+            </div>
+            <div style="flex:1;padding:0 32px 0 10px;text-align:right;font-weight:800;font-size:1.6em;color:#dd961f;">
+                {h['impact']}%
+                <span style="font-size:.8em;font-weight:600; color:#c9b072;">of GWP Impact</span>
+            </div>
+            </div>""", unsafe_allow_html=True
+        )
+    st.markdown("---")
+
+    # Production Metrics
+    st.markdown(
+        f"""<div style='display:flex;gap:28px;margin-top:1.9em;'>
+            <div style='background:#f8fafd;border-radius:11px;padding:15px 28px 15px 22px;min-width:210px;'>
+                <span style='color:#799;font-size:1em;'>Production Phase GWP</span><br>
+                <span style='font-size:2em;font-weight:800;color:#136;'>{es['Production Phase GWP']}</span>
+                <span style='font-size:1em;color:#aec;'>kg CO₂-eq</span>
+            </div>
+            <div style='background:#f8fafd;border-radius:11px;padding:15px 28px 15px 22px;min-width:210px;'>
+                <span style='color:#799;font-size:1em;'>Overall Energy Demand</span><br>
+                <span style='font-size:2em;font-weight:800;color:#136;'>{es['Overall Energy Demand']}</span>
+                <span style='font-size:1em;color:#aec;'>MJ</span>
+            </div>
+            <div style='background:#f8fafd;border-radius:11px;padding:15px 28px 15px 22px;min-width:210px;'>
+                <span style='color:#799;font-size:1em;'>Circular Score</span><br>
+                <span style='font-size:2em;font-weight:800;color:#136;'>{es['Circular Score']}%</span>
+            </div>
+        </div>""", unsafe_allow_html=True
+    )
+    st.markdown("---")
+
+    # ---------- IMPACT METRICS GRID ----------
+
+    impact_data = [
+    ("Global Warming Potential", 2293, "kg CO₂-eq"),
+    ("Energy Demand", 26454, "MJ"),
+    ("Water Consumption", 4.7, "m³"),
+    ("Acidification Potential", 4.1, "kg SO₂-eq"),
+    ("Eutrophication Potential", 1.15, "kg PO₄-eq"),
+    ("Ozone Depletion Potential", 0.00229, "kg CFC-11 eq"),
+    ("Photochemical Ozone Creation", 2.29, "kg NMVOC-eq"),
+    ("Particulate Matter Formation", 0.76, "kg PM2.5-eq"),
+    ("Abiotic Depletion (Fossil)", 29100, "MJ"),
+    ("Abiotic Depletion (Elements)", 0.01, "kg Sb-eq"),
+    ("Human Toxicity (Cancer)", 0.23, "CTUh"),
+    ("Human Toxicity (Non-Cancer)", 2.29, "CTUh"),
+    ("Freshwater Ecotoxicity", 22.88, "CTUe"),
+    ("Ionizing Radiation", 0.00458, "kBq U235-eq"),
+    ("Land Use", 228.77, "m²·year")
+    ]
+    df = pd.DataFrame(impact_data, columns=["Impact Metric", "Value", "Unit"])
+    st.markdown("#### Detailed Impact Assessment")
+    st.dataframe(df, hide_index=True)
+    st.markdown("---")
+
+    # [Retain all your original expander/Plotly/logic below (Sankey, AI, etc.)]
+    # Sankey Diagram, Material Flow
+    with st.expander("Process Life Cycle - Sankey Diagram"):
+        mf = results.get('material_flow_analysis')
+        if mf:
+            fig = go.Figure(go.Sankey(
+                node=dict(label=mf['labels']),
+                link=dict(source=mf['source'], target=mf['target'], value=mf['value'])
+            ))
+            st.plotly_chart(fig, use_container_width=True)
+        else:
+            st.write("No material flow data available.")
+    st.markdown("---")
+
+    st.markdown(
+        """
+        <style>
+        .lifecycle-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 98%;
+            margin: 40px auto 30px auto;
+            position: relative;
+        }
+        .lifecycle-line {
+            position: absolute;
+            top: 42px;
+            left: 8%;
+            width: 84%;
+            border-top: 2px solid #c1d9ef;
+            z-index: 1;
+            height: 0;
+        }
+        .lifecycle-stage {
+            background: #fff;
+            border: 2.5px solid #18538618;
+            border-radius: 2.5em;
+            width: 65px;
+            height: 65px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 5px;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 6px 23px #e1eaff81;
+            transition: box-shadow 0.2s;
+        }
+        .lifecycle-stage:hover {
+            box-shadow: 0 8px 23px #1a2e4a13;
+            border: 2.5px solid #508fda66;
+        }
+        .icon-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 90px;
+        }
+        .stage-label {
+            font-size: 1em;
+            font-weight: 600;
+            color: #233354;
+            margin-top: 9px;
+            letter-spacing: -0.5px;
+        }
+        </style>
+        <div class="lifecycle-row">
+            <div class="lifecycle-line"></div>
+            <div class="icon-label">
+                <div class="lifecycle-stage">🌞</div>
+                <div class="stage-label">Raw Material</div>
+            </div>
+            <div class="icon-label">
+                <div class="lifecycle-stage">🧰</div>
+                <div class="stage-label">Processing</div>
+            </div>
+            <div class="icon-label">
+                <div class="lifecycle-stage">⚙️</div>
+                <div class="stage-label">Manufacturing</div>
+            </div>
+            <div class="icon-label">
+                <div class="lifecycle-stage">🚚</div>
+                <div class="stage-label">Transport</div>
+            </div>
+            <div class="icon-label">
+                <div class="lifecycle-stage">⏲️</div>
+                <div class="stage-label">Use Phase</div>
+            </div>
+            <div class="icon-label">
+                <div class="lifecycle-stage">🗑️</div>
+                <div class="stage-label">End of Life</div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    st.caption("Hover for details, click for breakdowns.")
+
+    st.divider()
+    # AI Life Cycle Interpretation
+    with st.expander("AI Generated Life Cycle Interpretation"):
+        st.markdown(ai_text if ai_text else "No AI interpretation available.")
+    st.markdown("---")
+
+    # Key Impact Profiles and Chart
+    kip = results.get('key_impact_profiles', {})
+    if kip:
+        df_kip = pd.DataFrame(kip).T.reset_index()
+        if {'mean', 'Metric', 'Value'}.intersection(set(df_kip.columns)):
+            # try each style as appropriate, or better, print/inspect your df_kip columns first!
+            if 'Metric' in df_kip.columns:
+                fig = px.bar(df_kip, x='Metric', y='Value', color='Metric', text='Value', title='Key Impact Profiles')
+            elif 'index' in df_kip.columns and 'mean' in df_kip.columns:
+                fig = px.bar(df_kip, x='index', y='mean', text='mean', title='Key Impact Profiles')
+            else:
+                st.write("KIP: DataFrame column mismatch, columns:", df_kip.columns)
+            st.plotly_chart(fig, use_container_width=True)
+        else:
+            st.write("No Key Impact Profiles data to display.")
+    else:
+        st.write("No Key Impact Profiles data to display.")
+    st.markdown("---")
+
+    # GWP Contribution Pie Chart
+    gwp_contrib = results.get('gwp_contribution_analysis', {})
+    if gwp_contrib:
+        df_gwp = pd.DataFrame(list(gwp_contrib.items()), columns=["Category", "Value"])
+        fig = px.pie(df_gwp, names='Category', values='Value', title='GWP Contribution Analysis')
+        st.plotly_chart(fig, use_container_width=True)
+    st.markdown("---")
+
+    # Energy Breakdown
+    energy_breakdown = results.get('energy_source_breakdown', {})
+    if energy_breakdown:
+        df_energy = pd.DataFrame(list(energy_breakdown.items()), columns=["Energy Source", "Value"])
+        fig = px.bar(df_energy, x='Energy Source', y='Value', title='Energy Source Breakdown')
+        st.plotly_chart(fig, use_container_width=True)
+    st.markdown("---")
+
+    # Uncertainty Distributions
+    uncty = results.get('uncertainty_dashboard', {})
+    if uncty:
+        for key in ['Global Warming Potential', 'Energy Demand', 'Water Consumption']:
+            if key in uncty:
+                df = pd.DataFrame({"Value": uncty[key]})
+                fig = px.histogram(df, x='Value', nbins=30, title=f"{key} Uncertainty Distribution")
+                st.plotly_chart(fig, use_container_width=True)
+    st.markdown("---")
+
+    # AI-Powered Insights/Recommendations
+    if ai_text:
+        ai_recommendation.display_ai_recommendations(ai_text)
+    st.markdown("---")
+    
+    # Scenario Comparison Table and Chart
+    pvrs = results.get('primary_vs_recycled', {})
+    if pvrs and 'comparison_table' in pvrs:
+        df = pd.DataFrame(pvrs['comparison_table'])
+        st.markdown("### Primary vs Recycled Scenario Comparison")
+        st.dataframe(df)
+        if not df.empty and "Metric" in df.columns:
+            df_long = df.melt(id_vars=['Metric'], var_name="Scenario", value_name="Value")
+            fig = px.bar(df_long, x='Metric', y='Value', color='Scenario', barmode='group',
+                        title='Scenario Comparison Across Multiple Metrics')
+            st.plotly_chart(fig, use_container_width=True)

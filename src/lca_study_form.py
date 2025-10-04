@@ -1,0 +1,196 @@
+import streamlit as st
+
+# --- MetalliQ blue theme override for lca study form ---
+st.markdown("""
+<style>
+h1, h2, h3, h4, h5, h6 {
+    color: #1366b3 !important;
+}
+.st-cb, .st-bu {  /* override button and checkbox if needed */
+    background: #1366b3 !important;
+    color: #fff !important;
+    border-radius: 8px !important;
+}
+label, .st-ba, .st-eb {
+    color: #174679 !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
+def full_lca_study_form():
+    st.title("AI-Powered Metals Sustainability")
+
+    with st.form("lca_full_study"):
+        # --------- SECTION 1: Goal & Scope Definition ----------
+        st.markdown("### 🎯 Goal & Scope Definition (ISO 14044)")
+        col1, col2 = st.columns(2)
+        with col1:
+            intended_app = st.text_input(
+                "Intended Application",
+                value="Screening assessment for internal R&D purposes to compare material choices."
+            )
+            system_boundary = st.selectbox(
+                "System Boundary",
+                ["Cradle-to-Gate", "Cradle-to-Grave", "Gate-to-Gate", "Cradle-to-Cradle"],
+                index=0
+            )
+        with col2:
+            intended_audience = st.text_input("Intended Audience", value="Internal engineering and sustainability departments.")
+            comparative_assertion = st.radio(
+                "Comparative Assertion for Public Disclosure?",
+                ["No", "Yes"], horizontal=True, index=0
+            )
+        study_limitations = st.text_area(
+            "Study Limitations",
+            value="This analysis relies on industry-average data from recent Indian/International LCA datasets. Results are for design guidance; site-specific emissions are not included."
+        )
+
+        # --------- SECTION 2: Project & Material ----------
+        st.markdown("### 🏗️ Project & Material")
+        col1, col2 = st.columns(2)
+        with col1:
+            project_name = st.text_input("Project Name", value="New Building Frame")
+            category = st.selectbox(
+                "Category / Application",
+                ["Packaging", "Structural", "Automotive", "Construction", "Aerospace", "Railways", "Defence", "Electronics", "Power Transmission", "Other"],
+                index=0
+            )
+            ore_conc = st.number_input("Metal Ore Concentration (%)", min_value=0.0, max_value=100.0, value=45.0, step=0.1)
+            alloy_complexity = st.selectbox(
+                "Alloy Complexity",
+                ["Simple Alloy (High Purity)", "Ferritic", "Austenitic", "Martensitic", "High Carbon", "Low Alloy", "Medium Alloy", "High Alloy"],
+                index=0
+            )
+        with col2:
+            material = st.selectbox(
+                "Material",
+                ["Aluminum", "Steel", "Copper", "Zinc", "Lead", "Nickel", "Magnesium", "Titanium", "Stainless Steel", "Other"],
+                index=0
+            )
+            analysis_region = st.selectbox(
+                "Analysis Region",
+                ["India - Odisha (Barbil)", "India - Gujarat", "India - Jharkhand (Singhbhum)", "India - Chhattisgarh", "India - Maharashtra", "India - West Bengal", "China", "EU", "USA", "Other Asia", "Global - Average", "Other"],
+                index=0
+            )
+            ore_type = st.text_input("Type of Ore (Optional)", value="Bauxite")
+            coatings = st.selectbox(
+                "Coatings / Additives",
+                ["None", "Anodized", "Painted/Epoxy", "Chromium plated", "Nickel plated", "Powder coated", "Galvanized Zinc", "Other"],
+                index=0
+            )
+
+        # --------- SECTION 3: Lifecycle Stages ----------
+        st.markdown("### ♻️ Lifecycle Stages")
+        col1, col2 = st.columns(2)
+        with col1:
+            functional_unit = st.text_input("Functional Unit", value="1 ton of product")
+            sec_material_content = st.number_input("Secondary Material Content (%)", min_value=0.0, max_value=100.0, value=10.0, step=0.1)
+        with col2:
+            production_process = st.selectbox(
+                "Production Process",
+                ["Primary Route (BF-BOF)", "Secondary Route (EAF)", "Bauxite Refining", "DRI - Coal", "DRI - Gas", "Smelting", "Casting", "Forging", "Powder Metallurgy", "Other"],
+                index=2
+            )
+            use_duration = st.text_input("Use Phase Duration (years)", value="35")
+            end_life_scenario = st.selectbox(
+                "End of Life Cycle Scenario",
+                ["90% Recycled", "50% Recycled / 50% Landfill", "100% Landfill", "Other"],
+                index=0
+            )
+
+        # --------- SECTION 4: Transportation (staged) ----------
+        st.markdown("### 🚚 Transportation Stages")
+        st.caption("*Example: mine -> concentrator -> plant*")
+        st.markdown("#### Stage 1")
+        col1, col2, col3, col4 = st.columns(4)
+        with col1:
+            transport1_stage = st.text_input("Stage Name", value="Mine to Concentrator")
+        with col2:
+            transport1_mode = st.selectbox("Mode", ["Truck", "Train", "Ship", "Other"], index=0, key="mode1")
+        with col3:
+            transport1_fuel = st.selectbox("Fuel Type", ["Diesel", "Electric", "Petrol", "Other"], index=0, key="fuel1")
+        with col4:
+            transport1_dist = st.number_input("Distance (km)", min_value=0.0, value=75.0, step=1.0, key="dist1")
+
+        st.markdown("#### Stage 2")
+        col1, col2, col3, col4 = st.columns(4)
+        with col1:
+            transport2_stage = st.text_input("Stage Name", value="Concentrator to Plant")
+        with col2:
+            transport2_mode = st.selectbox("Mode", ["Train", "Truck", "Ship", "Other"], index=0, key="mode2")
+        with col3:
+            transport2_fuel = st.selectbox("Fuel Type", ["Diesel", "Electric", "Other"], index=1, key="fuel2")
+        with col4:
+            transport2_dist = st.number_input("Distance (km)", min_value=0.0, value=250.0, step=1.0, key="dist2")
+
+        # --------- SECTION 5: Advanced Parameters ----------
+        st.markdown("### ⚙️ Advanced Parameters")
+        grid_elec_mix = st.selectbox(
+            "Grid Electricity Mix",
+            ["India - Grid Average", "India - Eastern Region (Coal Heavy)", "India - Western Region", "India - Southern Region", "India - Northern Region", "International Best", "Other"],
+            index=0
+        )
+        water_source = st.selectbox(
+            "Water Source", ["Surface", "Groundwater", "Municipal", "Rainwater", "Other"], index=0)
+        proceff = st.number_input("Process Energy Efficiency (%)", min_value=0.0, max_value=100.0, value=85.0, step=0.1)
+        lifetime_ext = st.number_input("Product Lifetime Extension (Years)", min_value=0, max_value=200, value=5, step=1)
+        waste_method = st.selectbox(
+            "Waste Treatment Method",
+            ["Recycling", "Controlled Landfill", "Open Landfill", "Incineration", "Composting", "Other"], index=0
+        )
+
+        # --------- SECTION 6: Data Quality & Uncertainty ----------
+        st.markdown("### 📊 Data Quality Assessment & Uncertainty (Pedigree Matrix)")
+        reliability = st.slider("Reliability", 1, 5, 4)
+        completeness = st.slider("Completeness", 1, 5, 4)
+        temporal = st.slider("Temporal Correlation", 1, 5, 4)
+        geographical = st.slider("Geographical Correlation", 1, 5, 4)
+        technological = st.slider("Technological Correlation", 1, 5, 4)
+
+        submitted = st.form_submit_button("Run Analysis")
+        if submitted:
+            st.session_state['lca_form_data'] = {
+                "goal": "",
+                "intended_app": intended_app,
+                "intended_audience": intended_audience,
+                "system_boundary": system_boundary,
+                "study_limitations": study_limitations,
+                "comparative_assertion": comparative_assertion,
+                "material": material,
+                "category": category,
+                "region": analysis_region,
+                "project_name": project_name,
+                "ore_conc": ore_conc,
+                "sec_material_content": sec_material_content,
+                "alloy_complexity": alloy_complexity,
+                "ore_type": ore_type,
+                "coatings": coatings,
+                "functional_unit": functional_unit,
+                "production_process": production_process,
+                "use_duration": use_duration,
+                "end_life_scenario": end_life_scenario,
+                "transport_stage_1": {
+                    "name": transport1_stage,
+                    "mode": transport1_mode,
+                    "fuel": transport1_fuel,
+                    "distance": transport1_dist
+                },
+                "transport_stage_2": {
+                    "name": transport2_stage,
+                    "mode": transport2_mode,
+                    "fuel": transport2_fuel,
+                    "distance": transport2_dist
+                },
+                "grid_elec_mix": grid_elec_mix,
+                "water_source": water_source,
+                "proceff": proceff,
+                "lifetime_ext": lifetime_ext,
+                "waste_method": waste_method,
+                "reliability": reliability,
+                "completeness": completeness,
+                "temporal": temporal,
+                "geographical": geographical,
+                "technological": technological
+            }
+            st.session_state['lca_form_submitted'] = True
+            st.success("Inputs saved and sent for LCA simulation.", icon="✅")
