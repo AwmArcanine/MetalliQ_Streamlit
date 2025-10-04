@@ -34,7 +34,7 @@ section[data-testid="stSidebar"] .st-emotion-cache-1b7j0ig,
 section[data-testid="stSidebar"] .st-emotion-cache-1b7j0ig * {
     color: #fff !important;
     font-weight: 800 !important;
-    font-size: 1.09em !important;
+    font-size: 0.5em !important;
     border-radius: 13px;
 }
 section[data-testid="stSidebar"] [aria-disabled="true"] {
