@@ -10,36 +10,81 @@ from view_reports import view_reports_page
 from streamlit_lottie import st_lottie
 
 
-# ==== MetalliQ Universal Theme & Sidebar Styles ====
 st.markdown("""
 <style>
+/* Sidebar: background, width */
+section[data-testid="stSidebar"] {
+    min-width: 260px !important;
+    max-width: 330px !important;
+    width: 300px !important;
+    background: linear-gradient(180deg,#182b3a 0%,#19375F 92%) !important;
+    box-shadow: 2px 0 8px #05376917;
+}
+
+/* Main sidebar font/settings */
 section[data-testid="stSidebar"] * {
-    color: #f2f8fc !important;
-    font-weight: 700 !important;
-    font-size: 1.06em !important;
-    letter-spacing: .005em;
+    color: #f4faff !important;
+    font-family: 'Inter', 'Segoe UI', 'Poppins', sans-serif !important;
+    font-size: 1.05em !important;
+    font-weight: 600 !important;
+    letter-spacing: .01em;
     text-shadow: none !important;
 }
+
+/* Logo + MetalliQ title */
 section[data-testid="stSidebar"] h1,
 section[data-testid="stSidebar"] h2,
 section[data-testid="stSidebar"] h3,
 section[data-testid="stSidebar"] h4,
 section[data-testid="stSidebar"] h5,
 section[data-testid="stSidebar"] h6 {
-    font-size: 1.13em !important;
-    font-weight: 800 !important;
     color: #fff !important;
+    font-size: 1.14em !important;
+    font-weight: 800 !important;
+    margin-bottom: 2px !important;
 }
-section[data-testid="stSidebar"] .st-emotion-cache-1b7j0ig,
+
+/* WORKSPACES heading  */
+section[data-testid="stSidebar"] [class*="workspace"] {
+    text-transform: uppercase;
+    color: #e0eaff !important;
+    font-size: 0.93em !important;
+    letter-spacing: .054em;
+    font-weight: 900 !important; 
+    margin-bottom: 2px;
+}
+
+/* Workspace selection chips */
+section[data-testid="stSidebar"] .st-emotion-cache-1b7j0ig, 
 section[data-testid="stSidebar"] .st-emotion-cache-1b7j0ig * {
     color: #fff !important;
+    font-size: 1.01em !important;
     font-weight: 800 !important;
-    font-size: 0.5em !important;
-    border-radius: 13px;
+    border-radius: 15px !important;
+    padding-top: 4px !important; padding-bottom: 4px !important;
+    background: #232f42 !important;
+    margin-bottom: 7px !important;
+    box-shadow: none !important;
+}
+
+/* Navigation icons and text */
+section[data-testid="stSidebar"] ul,
+section[data-testid="stSidebar"] li {
+    color: #f2f8fc !important;
+    font-size: 1.05em !important;
+    font-weight: 700 !important;
+    letter-spacing: .008em;
+    margin-bottom: 8px !important;
+    transition: background 0.2s;
+}
+section[data-testid="stSidebar"] svg {
+    color: #b9c5e0 !important;
+    margin-right: 5px;
 }
 section[data-testid="stSidebar"] [aria-disabled="true"] {
-    color: #c7d0df !important;
-    opacity: 0.75 !important;
+    color: #b2bdcb !important;
+    opacity: 0.74 !important;
+    font-size: 1.01em !important;
     font-weight: 600 !important;
 }
 </style>
