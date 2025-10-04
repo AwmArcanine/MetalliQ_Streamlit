@@ -99,14 +99,15 @@ def show_welcome_page():
     import json
     from streamlit_lottie import st_lottie
 
-    # Lottie animation
-    with open("src/Welcome_Animation.json", "r") as f:
-        lottie_json = json.load(f)
-
+    # Custom global background gradient
     st.markdown("""
     <style>
+    body, .stApp {
+        background: linear-gradient(108deg, #121c2b 0%, #115e85 100%) !important;
+        background-color: #121c2b !important;
+    }
     .main-head {
-        background: linear-gradient(90deg,#76eaff 40%,#41d2ff 70%,#eaf6ff 98%);
+        background: linear-gradient(90deg,#76eaff 40%,#41d2ff 80%,#eaf6ff 98%);
         -webkit-background-clip:text; -webkit-text-fill-color:transparent;
         background-clip:text;text-fill-color:transparent;
         font-size:2.7rem; font-family:'Segoe UI','Poppins','Roboto',sans-serif;
@@ -114,80 +115,99 @@ def show_welcome_page():
     }
     .main-desc { font-size:1.17rem; color:#41c7d3; font-weight:600; text-align:center; margin-top:-.18em; margin-bottom:.09em;}
     .feature-head { color:#23d6ff;text-align:center;font-size:1.33rem;font-weight:800;margin-top:1.2em;margin-bottom:.45em;}
-    .cards-row {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 1.6rem;
-        margin-bottom: 16px;
-        margin-top: 8px;
+    .center-desc{
+        color:#eafeff;text-align:center;max-width:680px;margin:0 auto 1.1em auto;font-size:1.05rem;
+    }
+    .features-flex-row {
+        width:100vw;
+        display:flex;
+        flex-wrap:wrap;
+        justify-content:center;
+        gap:2.8rem 2.1rem;
+        margin-top:.9em;
     }
     .feature-card {
-        background: rgba(22,166,255,0.14);
-        border-radius: 16px;
-        padding: 1.26em 1.38em .9em 1.38em;
-        min-width: 267px;
-        max-width: 310px;
-        box-shadow: 0 1.5px 18px rgba(30,190,255,0.11);
-        margin-bottom: 10px;
+        background: linear-gradient(130deg, #1c7ae0 97%, #41f6ff12 115%);
+        border-radius: 19px;
+        min-width: 305px;
+        max-width: 350px;
+        flex: 1 1 326px;
+        box-shadow: 0 4px 22px 0 #0cb1ff12, 0 0px 1.5px 4px #29bbff11;
+        margin-bottom: 14px;
+        padding: 1.15em 1.2em 1.05em 1.36em;
         text-align: left;
+        border: 1.5px solid #1cf3ff22;
+        display: flex; flex-direction: row; gap: 1.13em; align-items: flex-start;
         transition: box-shadow .15s, transform .15s;
-        border: 1.5px solid #31b1ff30;
     }
     .feature-card:hover {
-        box-shadow: 0 2px 28px #23d6ff49;
-        transform: translateY(-4px) scale(1.03);
-        background: rgba(27, 213, 255, 0.17);
+        box-shadow: 0 2px 32px #13e5ff51;
+        transform: translateY(-4px) scale(1.022);
+        background: linear-gradient(120deg, #29bafc 85%, #41f6ff3a 115%);
+        border: 1.5px solid #27e3fa55;
     }
     .card-emoji {
-        font-size: 1.78rem;
-        margin-bottom: 0.18em;
-        margin-right: 0.16em;
+        font-size: 2.14rem;
+        margin-right: .36em;
     }
+    .card-content { display:flex; flex-direction:column;}
     .card-title {
-        font-weight: 750;
-        color: #23d6ff;
-        font-size: 1.14rem;
-        margin-bottom: 0.13em;
-        letter-spacing: .01px;
+        font-weight: 800;
+        color: #e8ffff;
+        font-size: 1.18rem;
+        margin-bottom: 0.15em;
+        letter-spacing: .03px;
     }
     .card-desc {
-        color: #eafeff;
-        font-size: 1.01rem;
-        font-weight:500;
-        letter-spacing:0.01em;
+        color: #eafafd;
+        font-size: 1.03rem;
+        font-weight:510;
+        letter-spacing:.004em;
     }
-    @media (max-width: 850px) {
-        .cards-row {flex-direction: column; align-items: center; gap: 1.1rem;}
-        .feature-card {max-width: 98vw;}
+    @media (max-width: 900px) {
+        .features-flex-row {flex-direction:column;align-items:center;gap:1.2rem;}
+        .feature-card {max-width:92vw;}
     }
     .welcome-card-btn {
         display:inline-block;
         background:linear-gradient(92deg,#16a6ff 44%,#1173b8 100%);
-        color:#fff !important; padding:.7em 2.8em; border-radius:19px;
-        border:none;font-size:1.1rem;font-weight:800;box-shadow:0 1.5px 12px rgba(18,220,255,0.14);
-        cursor:pointer;letter-spacing:.04rem;margin-top:1.15em;margin-bottom:1.4em;transition:all .13s;
+        color:#fff !important;
+        padding:.7em 2.8em;
+        border-radius:19px;
+        border:none;
+        font-size:1.1rem;
+        font-weight:800;
+        box-shadow:0 1.5px 12px rgba(18,220,255,0.14);
+        cursor:pointer;
+        letter-spacing:.04rem;
+        margin-top:1.15em;
+        margin-bottom:1.55em;
+        transition:all .13s;
     }
     .welcome-card-btn:hover {
         box-shadow:0 2px 16px rgba(30,190,255,.18);
-        background:linear-gradient(91deg,#19a5ec 24%,#1e65d1 100%);
+        background:linear-gradient(92deg,#19a5ec 44%,#1e65d1 100%);
         color:#f2ffff !important;
     }
     </style>
     """, unsafe_allow_html=True)
 
-    st_lottie(lottie_json, height=150, key="welcome_lottie")
+    # Lottie animation (bot)
+    with open("src/Welcome_Animation.json", "r") as f:
+        lottie_json = json.load(f)
+    st_lottie(lottie_json, height=105, key="welcome_lottie")
+
     st.markdown("<div class='main-head'>MetalliQ LCA Platform</div>", unsafe_allow_html=True)
     st.markdown("<div class='main-desc'>AI-Driven Life Cycle Assessment for Metallurgy</div>", unsafe_allow_html=True)
-    st.markdown("""
-    <div style='color:#eafeff;text-align:center;max-width:680px;margin:0 auto 1.1em auto;font-size:1.05rem;'>
-        Welcome to <b style='color:#41c7d3'>MetalliQ</b> – your comprehensive platform for advanced Life Cycle Assessment (LCA) of metals, steel, and alloys.
-        Optimize your product footprint, drive sustainability, and ensure compliance, all through an intuitive, AI-powered interface.
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown(
+        "<div class='center-desc'>"
+        "Welcome to <b style='color:#41c7d3'>MetalliQ</b> – your comprehensive platform for advanced Life Cycle Assessment (LCA) of metals, steel, and alloys. "
+        "Optimize your product footprint, drive sustainability, and ensure compliance, all through an intuitive, AI-powered interface."
+        "</div>",
+        unsafe_allow_html=True
+    )
     st.markdown("<div class='feature-head'>Key Features</div>", unsafe_allow_html=True)
-
-    feature_list = [
+    features = [
         {
             "title": "ISO 14044 LCA Wizard",
             "desc": "Industry-standard workflow for metals, alloys, and steel.",
@@ -220,26 +240,28 @@ def show_welcome_page():
         },
     ]
 
-    st.markdown('<div class="cards-row">', unsafe_allow_html=True)
-    for feat in feature_list:
+    st.markdown('<div class="features-flex-row">', unsafe_allow_html=True)
+    for feat in features:
         card = f"""
         <div class="feature-card">
-            <div class="card-emoji">{feat["emoji"]}</div>
-            <div class="card-title">{feat["title"]}</div>
-            <div class="card-desc">{feat["desc"]}</div>
+            <span class="card-emoji">{feat["emoji"]}</span>
+            <div class="card-content">
+                <div class="card-title">{feat["title"]}</div>
+                <div class="card-desc">{feat["desc"]}</div>
+            </div>
         </div>
         """
         st.markdown(card, unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
 
     st.markdown("""
     <div style="text-align:center;">
         <button class="welcome-card-btn" onclick="window.location.href='#'">Start Platform 🚀</button>
     </div>
     """, unsafe_allow_html=True)
-
     if st.button("Start Platform", key="realstartbutton"):
         st.session_state.show_login = True
+
 
 
 def login_page():
