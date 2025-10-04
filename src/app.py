@@ -10,11 +10,6 @@ from view_reports import view_reports_page
 from streamlit_lottie import st_lottie
 import json
 
-with open("src/Welcome_Animation.json", "r") as f:  # Update path if needed
-    lottie_json = json.load(f)
-
-st_lottie(lottie_json, height=200)
-
 # ==== MetalliQ Universal Theme & Sidebar Styles ====
 st.markdown("""
 <style>
@@ -92,6 +87,10 @@ def sidebar_navigation(active):
     return selected.split(" ", 1)[1]
 
 def show_welcome_page():
+    with open("src/Welcome_Animation.json", "r") as f:  # Update path if needed
+        lottie_json = json.load(f)
+
+    st_lottie(lottie_json, height=200)
     # Animated background with mesh gradients (CSS)
     st.markdown("""
     <style>
@@ -143,7 +142,7 @@ def show_welcome_page():
     </style>
     """, unsafe_allow_html=True)
 
-    st.image("src/metalliq_logo.jpg", use_container_width=True)
+    st.image("src/metalliq_logo.jpg", width=80)
 
     st.markdown(
         "<h1 style='margin-bottom:0.13em;font-size:2.35rem;font-family:sans-serif;font-weight:880;letter-spacing:0.2px;'>MetalliQ LCA Platform</h1>",
