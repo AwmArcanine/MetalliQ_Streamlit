@@ -8,7 +8,7 @@ from admin_dashboard import show_admin_dashboard, users_df, datasets_df, ai_mode
 from Compare_Scenarios import compare_scenarios_page
 from view_reports import view_reports_page
 from streamlit_lottie import st_lottie
-
+st.set_page_config(layout="wide", initial_sidebar_state="expanded")
 # --- Global sidebar style ---
 st.markdown("""
     <style>
@@ -206,44 +206,79 @@ def show_welcome_page():
         "</div>",
         unsafe_allow_html=True
     )
+    # ... previous content and head styles, lottie, etc.
+
     st.markdown("<div class='feature-head'>Key Features</div>", unsafe_allow_html=True)
     features = [
-        {
-            "title": "ISO 14044 LCA Wizard",
-            "desc": "Industry-standard workflow for metals, alloys, and steel.",
-            "emoji": "🧭"
-        },
-        {
-            "title": "AI Autofill & Explain",
-            "desc": "Automatic data input and smart LCA result explanations for engineers.",
-            "emoji": "🤖"
-        },
-        {
-            "title": "Circularity & Eco-Labels",
-            "desc": "Evaluate for circular economy, eco-labels, and maximize sustainability compliance.",
-            "emoji": "♻️"
-        },
-        {
-            "title": "Interactive Visuals",
-            "desc": "Animated Sankey diagrams, timelines, and deep analytics for transparency.",
-            "emoji": "📊"
-        },
-        {
-            "title": "Comprehensive Reports",
-            "desc": "Automated PDF reporting for certifications, auditing, and quality checks.",
-            "emoji": "📄"
-        },
-        {
-            "title": "Cloud AI Integration",
-            "desc": "Seamless Google AI Studio and third-party workflow support.",
-            "emoji": "☁️"
-        },
+        {"title": "ISO 14044 LCA Wizard", "desc": "Industry-standard workflow for metals, alloys, and steel.", "emoji": "🧭"},
+        {"title": "AI Autofill & Explain", "desc": "Automatic data input and smart LCA result explanations for engineers.", "emoji": "🤖"},
+        {"title": "Circularity & Eco-Labels", "desc": "Evaluate for circular economy, eco-labels, and maximize sustainability compliance.", "emoji": "♻️"},
+        {"title": "Interactive Visuals", "desc": "Animated Sankey diagrams, timelines, and deep analytics for transparency.", "emoji": "📊"},
+        {"title": "Comprehensive Reports", "desc": "Automated PDF reporting for certifications, auditing, and quality checks.", "emoji": "📄"},
+        {"title": "Cloud AI Integration", "desc": "Seamless Google AI Studio and third-party workflow support.", "emoji": "☁️"},
     ]
 
-    st.markdown('<div class="features-flex-row">', unsafe_allow_html=True)
+    st.markdown("""
+    <style>
+    .grid-wrap {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(260px, 1fr));
+        gap: 2.2rem 2.1rem;
+        max-width: 1250px;
+        margin: 1.3em auto 0 auto;
+        padding-bottom: .5em;
+        justify-items: center;
+    }
+    .grid-card {
+    background: linear-gradient(140deg, #2be2fe 77%, #1c7ae0 134%);
+    border-radius: 19px;
+    min-width: 260px;
+    max-width: 346px;
+    box-shadow: 0 4px 22px 0 #0099fc1b, 0 0px 1.5px 4px #29bbff13;
+    padding: 1.18em 1.2em 1.02em 1.18em;
+    text-align: left;
+    border: 1.6px solid #1cf3ff17;
+    display: flex; flex-direction: row; gap: 1.09em; align-items: flex-start;
+    transition: box-shadow .14s, transform .13s;
+    }
+    .grid-card:hover {
+        box-shadow: 0 8px 38px #13e5ff49;
+        transform: translateY(-5px) scale(1.017);
+        background: linear-gradient(119deg, #12c8ed 85%, #23b6f7 138%);
+        border: 1.7px solid #27e3fa33;
+    }
+    .card-emoji {
+        font-size: 2.16rem;
+        margin-right: .31em;
+        margin-top: .12em;
+    }
+    .card-content { display:flex; flex-direction:column;}
+    .card-title {
+        font-weight: 820;
+        color: #e8ffff;
+        font-size: 1.16rem;
+        margin-bottom: 0.12em;
+        letter-spacing: .01px;
+    }
+    .card-desc {
+        color: #f3fcff;
+        font-size: 1.01rem;
+        font-weight:519;
+        letter-spacing:.002em;
+    }
+    @media (max-width: 1100px) {
+        .grid-wrap {grid-template-columns: repeat(2, minmax(260px, 1fr));}
+    }
+    @media (max-width: 800px) {
+        .grid-wrap {grid-template-columns: 1fr;}
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    st.markdown('<div class="grid-wrap">', unsafe_allow_html=True)
     for feat in features:
         card = f"""
-        <div class="feature-card">
+        <div class="grid-card">
             <span class="card-emoji">{feat["emoji"]}</span>
             <div class="card-content">
                 <div class="card-title">{feat["title"]}</div>
@@ -253,6 +288,7 @@ def show_welcome_page():
         """
         st.markdown(card, unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
+
 
     st.markdown("""
     <div style="text-align:center;">
@@ -377,17 +413,39 @@ def main_app():
     st.sidebar.markdown(f"<div style='margin-bottom:18px;'>Active workspace: <b>{workspace}</b></div>", unsafe_allow_html=True)
 
     if nav_page == "Dashboard":
-        st.markdown(
-        f"""
-        <div style='width:100vw; min-width:100vw; max-width:100vw; left:0; margin:0; height:54px; background:linear-gradient(92deg,#1173b8 62%,#15447a 125%);
-        color:#fff;border-radius:0 0 22px 22px;display:flex;align-items:center;padding-left:34px;
-        font-size:1.43rem;font-weight:800;letter-spacing:-.2px;box-sizing:border-box;z-index:100;'>
+        st.markdown("""
+        <style>
+        .main-top-bar {
+        max-width: 1200px;
+        margin: 2.1rem auto 1.1rem auto;
+        border-radius: 0 0 39px 39px;
+        background: linear-gradient(90deg, #0d7dc1 80%, #158ddb 120%);
+        color: #fff;
+        font-family: 'Segoe UI', 'Poppins', sans-serif;
+        font-size: 2rem;
+        font-weight: 800;
+        padding: 22px 3vw 15px 36px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 7px 28px #1078c820;
+        letter-spacing: .02em;
+        }
+        .welcome-user {
+            font-size: 1.13rem;
+            font-weight: 400;
+            margin-left: .6em;
+            opacity: 0.93;
+        }
+        @media (max-width: 950px) {.main-top-bar {font-size: 1.29rem; padding: 15px 2vw 12px 16px;}}
+        @media (max-width: 700px) {.main-top-bar {font-size: 0.97rem; padding: 11px 2vw 9px 10px;}}
+        </style>
+        <div class="main-top-bar">
             MetalliQ: AI-Powered Metals Sustainability
-            <span style='font-weight:400;font-size:1.08rem;margin-left:29px;opacity:.86;'>Welcome, {name}</span>
+            <span class="welcome-user">Welcome, Sarah Singh</span>
         </div>
-        """,
-        unsafe_allow_html=True
-        )
+        """, unsafe_allow_html=True)
+
         if st.session_state.get('role') == "Admin":
             user_info = {
                 "active_users": 33,
