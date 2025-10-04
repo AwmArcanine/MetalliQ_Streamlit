@@ -90,6 +90,38 @@ section[data-testid="stSidebar"] [aria-disabled="true"] {
 </style>
 """, unsafe_allow_html=True)
 
+st.markdown("""
+<style>
+/* Let main container expand and center when sidebar is collapsed */
+@media (max-width: 1250px) {
+    .block-container {
+        margin-left: auto !important;
+        margin-right: auto !important;
+        max-width: 720px !important;
+        min-width: 388px;
+        padding-left: 1.5rem;
+        padding-right: 1.5rem;
+        transition: margin 0.28s;
+    }
+}
+/* If sidebar is collapsed, center the main block regardless of container */
+[data-testid="collapsedControl"] ~ div section.main .block-container {
+    margin-left: auto !important;
+    margin-right: auto !important;
+    max-width: 760px !important;
+    min-width: 388px;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+.welcome-center, .centered-card, .main-head, .main-desc, .card-container {
+    margin-left: auto !important;
+    margin-right: auto !important;
+    text-align: center !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
+
 
 # -------------------- Sidebar Logo + Workspace Switcher ----------------------
 def workspace_selector():
@@ -144,11 +176,10 @@ def sidebar_navigation(active):
 
 def show_welcome_page():
     import json
-    with open("src/Welcome_Animation.json", "r") as f:  # Update path if needed
+    with open("src/Welcome_Animation.json", "r") as f:
         lottie_json = json.load(f)
 
-    st_lottie(lottie_json, height=200)
-    # Animated background with mesh gradients (CSS)
+    # Animated background and styling
     st.markdown("""
     <style>
     .stApp {
@@ -162,54 +193,54 @@ def show_welcome_page():
         0% {background-position: 0% 50%;}
         100% {background-position: 100% 50%;}
     }
-    .card-container {
-        display: flex; flex-wrap: wrap; gap: 1.5rem; justify-content:center; margin-top:2rem; margin-bottom:2.5rem;
+    /* Centering the welcome section */
+    .welcome-center {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        min-height: 70vh;
+        margin-top: 2.2rem;
     }
-    .feature-card {
-        background: rgba(24,30,48,0.95);
-        border-radius: 19px;
-        box-shadow: 0 10px 38px rgba(61,200,255,0.18), 0 2px 5px 2.5px rgba(0,200,245,0.09);
-        min-width: 260px; max-width: 330px;
-        padding: 1.45rem 1.16rem 1.2rem 1.16rem;
-        color: #eafeff;
-        font-size:1.09rem;
-        margin-bottom: 1.4rem;
-        transition: transform .17s, box-shadow .17s;
-        border: 1.1px solid #1fa0ff33;
+    /* Futuristic light blue-gradient heading */
+    .main-head {
+        background: linear-gradient(90deg,#76eaff 40%,#41d2ff 70%,#eaf6ff 98%);
+        color: #38dbff; /* fallback */
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-fill-color: transparent;
+        font-size: 2.56rem;
+        font-family: 'Segoe UI', 'Poppins', 'Roboto', sans-serif;
+        font-weight: 880;
+        letter-spacing: 0.2px;
+        margin-bottom: 0.13em;
+        margin-top: 0.4em;
+        text-align: center;
+        filter: brightness(1.18) drop-shadow(0 3px 10px #1fd6ff22);
     }
-    .feature-card:hover {
-        transform: translateY(-10px) scale(1.035);
-        box-shadow: 0 22px 42px rgba(0,220,255,0.19);
-    }
-    .card-title {
-        color:#38dbff;font-size:1.17rem;margin-bottom:0.33rem;font-weight:600;letter-spacing:.4px;
-    }
-    .start-btn {
-        background:linear-gradient(90deg,#16a6ff 44%,#12dde4 100%);
-        border:none; border-radius:29px; color:#fff;
-        font-size:1.28rem; padding:0.8rem 3.3rem;
-        font-weight:700; box-shadow:0 1.5px 12px rgba(18,220,255,0.19);
-        cursor:pointer; letter-spacing:.5px; margin-top:1.3rem; margin-bottom:1.6rem;
-        transition: all 0.11s;
-    }
-    .start-btn:hover {
-        box-shadow:0 2px 16px rgba(30,190,255,.27);
-        transform: scale(1.055);
+    .main-desc {
+        font-size:1.18rem; color:#41c7d3;font-weight:600;margin-bottom:0.23em;
+        text-align:center;
+        margin-top:-0.2em;
     }
     </style>
     """, unsafe_allow_html=True)
 
+    # -- Center block for all animated/content elements --
+    st.markdown("<div class='welcome-center'>", unsafe_allow_html=True)
+    st_lottie(lottie_json, height=200, key="welcome_lottie")
+
     st.markdown(
-        "<h1 style='margin-bottom:0.13em;font-size:2.35rem;font-family:sans-serif;font-weight:880;letter-spacing:0.2px;'>MetalliQ LCA Platform</h1>",
+        "<div class='main-head'>MetalliQ LCA Platform</div>", unsafe_allow_html=True)
+    st.markdown(
+        "<div class='main-desc'>AI-Driven Life Cycle Assessment for Metallurgy</div>",
         unsafe_allow_html=True)
     st.markdown(
-        "<div style='font-size:1.18rem; color:#41c7d3;font-weight:600;margin-bottom:0.23em;'>AI-Driven Life Cycle Assessment for Metallurgy</div>",
-        unsafe_allow_html=True)
-    st.markdown(
-        """<div style='margin-bottom:1.2em; color:#eafeff;'>Welcome to <b style='color:#41c7d3'>MetalliQ</b> – your comprehensive platform for advanced Life Cycle Assessment (LCA) of metals, steel, and alloys. Optimize your product footprint, drive sustainability, and ensure compliance, all through an intuitive, AI-powered interface.</div>""",
+        """<div style='margin-bottom:1.2em; color:#eafeff;text-align:center;'>Welcome to <b style='color:#41c7d3'>MetalliQ</b> – your comprehensive platform for advanced Life Cycle Assessment (LCA) of metals, steel, and alloys. Optimize your product footprint, drive sustainability, and ensure compliance, all through an intuitive, AI-powered interface.</div>""",
         unsafe_allow_html=True)
 
-    st.markdown("<h3 style='margin-top:0.5em;color:#38dbff;'>Key Features</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='margin-top:0.5em;color:#38dbff;text-align:center;'>Key Features</h3>", unsafe_allow_html=True)
 
     st.markdown("""
     <div class="card-container">
@@ -248,10 +279,10 @@ def show_welcome_page():
     </div>
     """, unsafe_allow_html=True)
 
+    st.markdown("</div>", unsafe_allow_html=True)  # close .welcome-center
+
     if st.button("Start Platform", key="realstartbutton"):
         st.session_state.show_login = True
-
-
 
 # -------------------- LOGIN PAGE (pure card, no bar/header shown) ---------------------
 def login_page():
@@ -342,15 +373,34 @@ def main_app():
 
     if nav_page == "Dashboard":
         st.markdown(
-        f"<div style='width:97%;margin:10px auto 5px auto;height:54px;"
-        f"background:linear-gradient(92deg,#1173b8 62%,#15447a 125%);color:#fff;"
-        f"border-radius:0 0 22px 22px;display:flex;align-items:center;padding-left:34px;"
-        f"font-size:1.43rem;font-weight:800;letter-spacing:-.2px;'>"
-        f"MetalliQ: AI-Powered Metals Sustainability"
-        f"<span style='font-weight:400;font-size:1.08rem;margin-left:29px;opacity:.86;'>Welcome, {name}</span></div>",
+        f"""
+        <div style='
+            width:100vw;
+            min-width:100vw;
+            max-width:100vw;
+            left:0;
+            margin:0;
+            height:54px;
+            background:linear-gradient(92deg,#1173b8 62%,#15447a 125%);
+            color:#fff;
+            border-radius:0 0 22px 22px;
+            display:flex;
+            align-items:center;
+            padding-left:34px;
+            font-size:1.43rem;
+            font-weight:800;
+            letter-spacing:-.2px;
+            box-sizing:border-box;
+            z-index:100;'>
+            MetalliQ: AI-Powered Metals Sustainability
+            <span style='font-weight:400;font-size:1.08rem;margin-left:29px;opacity:.86;'>
+                Welcome, {name}
+            </span>
+        </div>
+        """,
         unsafe_allow_html=True
         )
-        st.write("") 
+
         if st.session_state.get('role') == "Admin":
             user_info = {
                 "active_users": 33,

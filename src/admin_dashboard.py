@@ -104,11 +104,51 @@ def show_admin_dashboard(user_info, users_df, datasets_df, ai_models_df):
         st.dataframe(users_df, use_container_width=True)
 
     elif admin_nav == "Dataset Management":
+        st.markdown("""
+        <style>
+        .primary-btn, .admin-btn {
+            background: linear-gradient(92deg, #16a6ff 44%, #1173b8 100%);
+            color: #fff !important;
+            padding: 0.68em 2.4em;
+            border-radius: 19px;
+            border: none;
+            font-size: 1.17rem;
+            font-weight: 750;
+            box-shadow: 0 1.5px 11px rgba(18,220,255,0.09);
+            cursor: pointer;
+            letter-spacing: 0.08px;
+            transition: all 0.14s;
+            margin-bottom: 8px;
+            margin-top: 2px;
+        }
+        .primary-btn:hover, .admin-btn:hover {
+            box-shadow:0 2px 16px rgba(30,190,255,.17);
+            background:linear-gradient(91deg,#19a5ec 24%,#1e65d1 100%);
+            transform: scale(1.045);
+            color:#f2ffff !important;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+
         st.markdown('<div class="page-title">Database Management</div>', unsafe_allow_html=True)
         st.markdown('<div class="section-header">Update Core LCI Database</div>', unsafe_allow_html=True)
-        st.markdown('<button class="admin-btn">Upload New Dataset</button>', unsafe_allow_html=True)
+
+        # Upload logic
+        uploaded_file = st.file_uploader(
+            "Upload New Dataset (CSV or JSON)", type=['csv', 'json'], key="uploader"
+        )
+
+        if uploaded_file:
+            ext = uploaded_file.name.split('.')[-1].lower()
+            if ext == 'csv':
+                df = pd.read_csv(uploaded_file)
+            elif ext == 'json':
+                df = pd.read_json(uploaded_file)
+            st.success("Dataset Updated successfully.")
+
         st.markdown('<div class="section-header" style="margin-top:30px;">Upload History & Version Control</div>', unsafe_allow_html=True)
         st.dataframe(datasets_df, use_container_width=True)
+
 
     elif admin_nav == "AI Model Hub":
         st.markdown('<div class="page-title">AI Model Training Hub</div>', unsafe_allow_html=True)
