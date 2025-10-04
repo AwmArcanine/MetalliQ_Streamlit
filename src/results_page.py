@@ -116,7 +116,8 @@ def results_page(results, ai_text):
         st.markdown(f"<div style='font-size:1.1em;margin-top:4px;color:#1769a0;'>Result Uncertainty <b>{dq.get('Result Uncertainty', '')}</b></div>", unsafe_allow_html=True)
     st.markdown("---")
 
-    # EXTENDED CIRCULARITY METRICS CARD GRID
+    # Responsive Extended Circularity Metrics Card Grid
+
     extcirc = results.get('extended_circularity_metrics', {
         "Resource Efficiency": "92%",
         "Extended Product Life": "110%",
@@ -133,12 +134,12 @@ def results_page(results, ai_text):
     .metric-card {
         background: #f8fafc;
         border-radius: 13px;
-        padding: 30px 0 22px 0;
-        box-shadow: 0 1.5px 12px #c3d3e37a;
+        padding: 28px 0 18px 0;
+        box-shadow: 0 2px 12px #c3d3e35c;
         text-align: center;
         margin-bottom: 20px;
-        min-width: 220px;
-        min-height: 106px;
+        min-width: 180px;
+        min-height: 96px;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -148,10 +149,11 @@ def results_page(results, ai_text):
         font-size: 1.13em;
         font-weight: 600;
         margin-bottom: 7px;
+        white-space: pre-line;
     }
     .metric-value {
         color: #003866;
-        font-size: 2.3em;
+        font-size: 2em;
         font-weight: 800;
         letter-spacing: 0.6px;
         margin-bottom: 1px;
@@ -164,15 +166,20 @@ def results_page(results, ai_text):
     labels = list(extcirc.keys())
     values = list(extcirc.values())
 
-    cols = st.columns(4)
-    for i in range(len(labels)):
-        with cols[i % 4]:
-            st.markdown(f'''
-                <div class='metric-card'>
-                    <div class='metric-label'>{labels[i]}</div>
-                    <div class='metric-value'>{values[i]}</div>
-                </div>
-            ''', unsafe_allow_html=True)
+    # Choose 3 or 4 columns per row based on screen, keeps spacing optimal
+    cols_per_row = 4  # Try 3 if still squished, or use st.columns dynamically
+    for i in range(0, len(labels), cols_per_row):
+        cols = st.columns(cols_per_row)
+        for j, col in enumerate(cols):
+            idx = i + j
+            if idx < len(labels):
+                col.markdown(f'''
+                    <div class='metric-card'>
+                        <div class='metric-label'>{labels[idx]}</div>
+                        <div class='metric-value'>{values[idx]}</div>
+                    </div>
+                ''', unsafe_allow_html=True)
+
     st.divider()
 
     # Supply Chain Hotspots
