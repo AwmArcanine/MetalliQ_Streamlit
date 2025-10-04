@@ -116,6 +116,65 @@ def results_page(results, ai_text):
         st.markdown(f"<div style='font-size:1.1em;margin-top:4px;color:#1769a0;'>Result Uncertainty <b>{dq.get('Result Uncertainty', '')}</b></div>", unsafe_allow_html=True)
     st.markdown("---")
 
+    # EXTENDED CIRCULARITY METRICS CARD GRID
+    extcirc = results.get('extended_circularity_metrics', {
+        "Resource Efficiency": "92%",
+        "Extended Product Life": "110%",
+        "Reuse Potential": "40/50",
+        "Material Recovery": "90%",
+        "Closed–Loop Potential": "75%",
+        "Recycling Content": "10%",
+        "Landfill Rate": "8%",
+        "Energy Recovery": "2%"
+    })
+
+    st.markdown("""
+    <style>
+    .metric-card {
+        background: #f8fafc;
+        border-radius: 13px;
+        padding: 30px 0 22px 0;
+        box-shadow: 0 1.5px 12px #c3d3e37a;
+        text-align: center;
+        margin-bottom: 20px;
+        min-width: 220px;
+        min-height: 106px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    .metric-label {
+        color: #6f7887;
+        font-size: 1.13em;
+        font-weight: 600;
+        margin-bottom: 7px;
+    }
+    .metric-value {
+        color: #003866;
+        font-size: 2.3em;
+        font-weight: 800;
+        letter-spacing: 0.6px;
+        margin-bottom: 1px;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    st.markdown("### Extended Circularity Metrics")
+
+    labels = list(extcirc.keys())
+    values = list(extcirc.values())
+
+    cols = st.columns(4)
+    for i in range(len(labels)):
+        with cols[i % 4]:
+            st.markdown(f'''
+                <div class='metric-card'>
+                    <div class='metric-label'>{labels[i]}</div>
+                    <div class='metric-value'>{values[i]}</div>
+                </div>
+            ''', unsafe_allow_html=True)
+    st.divider()
+
     # Supply Chain Hotspots
     st.markdown("<div style='font-weight:700;font-size:1.10rem;margin-top:1.65em;margin-bottom:5px;'>Supply Chain Hotspots</div>", unsafe_allow_html=True)
     for h in es["Supply Chain Hotspots"]:
