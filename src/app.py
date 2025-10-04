@@ -142,12 +142,16 @@ def show_welcome_page():
     st.markdown("""
     <style>
     .key-features-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 2.3rem 2.3rem;
-        justify-content: center;
-        margin: 1.7em auto 2.1em auto;
-        max-width: 950px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2.3rem 2.3rem;
+    max-width: 950px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 1.7em;
+    margin-bottom: 2.1em;
+    box-sizing: border-box;
     }
     .feature-card {
         background: linear-gradient(130deg, #1fd8ff 72%, #46e0ff 110%);
