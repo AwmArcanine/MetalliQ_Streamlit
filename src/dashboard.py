@@ -178,8 +178,9 @@ def dashboard_page(workspace=None):
     line_fig.add_trace(go.Scatter(x=trendx, y=results["recycling_rate_trend"].values,
                                   fill='tozeroy', line=dict(color="#00EFFF", width=3)))
     line_fig.update_layout(xaxis_title=None, yaxis_title="Recycling Rate (%)",
-                           paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-                           font=dict(color="#FFFFFF"), height=450)
+                           paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",font=dict(family="Inter,Segoe UI,Poppins,sans-serif", color="#ffffff"),
+                            xaxis=dict(color="#FFFFFF", showgrid=False),
+                            yaxis=dict(color="#FFFFFF", showgrid=True), height=450)
     st.plotly_chart(line_fig, use_container_width=True)
 
     # --- Pie Chart ---
