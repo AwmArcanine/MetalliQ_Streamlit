@@ -140,8 +140,8 @@ def login_page():
     st.markdown("<div class='button-container'>", unsafe_allow_html=True)
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
-        user = st.button("👤 User Login", key="user_btn", use_container_width=True)
-        admin = st.button("🛠️ Admin Login", key="admin_btn", use_container_width=True)
+        user_login = st.button("👤 User Login", key="user_btn", use_container_width=True)
+        admin_login = st.button("🛠️ Admin Login", key="admin_btn", use_container_width=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
     # --- Footer ---
@@ -153,10 +153,15 @@ def login_page():
     """, unsafe_allow_html=True)
 
     # --- Navigation (OLD WORKING METHOD) ---
-    if user:
-        st.query_params["page"] = "user_dashboard"
+    if user_login:
+        st.session_state.logged_in = True
+        st.session_state.role = "Investigator"
+        st.session_state.name = "John Doe"
+        st.session_state['page'] = 'Dashboard'
         st.rerun()
-
-    if admin:
-        st.query_params["page"] = "admin_dashboard"
+    if admin_login:
+        st.session_state.logged_in = True
+        st.session_state.role = "Admin"
+        st.session_state.name = "Sarah Singh"
+        st.session_state['page'] = 'Dashboard'
         st.rerun()
