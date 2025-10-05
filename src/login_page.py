@@ -11,22 +11,24 @@ def login_page():
         .stApp {
             background: linear-gradient(135deg, #00494D 0%, #006D77 45%, #83C5BE 100%) !important;
             font-family: 'Poppins', sans-serif;
+            overflow: hidden; /* Prevent vertical scroll */
         }
 
         .login-wrapper {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            height: 92vh;
+            justify-content: flex-start;
+            height: 100vh;
+            padding-top: 80px; /* Slight top spacing only */
         }
 
         .centered-login-card {
             width: 420px;
             max-width: 92%;
             background: rgba(255,255,255,0.22);
-            border-radius: 16px 16px 0 0; /* top-rounded only */
-            padding: 30px 30px 18px 30px; /* reduced bottom padding */
+            border-radius: 16px 16px 0 0;
+            padding: 30px 30px 10px 30px; /* reduced bottom padding */
             box-shadow: 0 10px 30px rgba(0,109,119,0.22);
             border: 1px solid rgba(255,255,255,0.18);
             backdrop-filter: blur(8px);
@@ -60,40 +62,45 @@ def login_page():
             margin-bottom: 0;
         }
 
-        /* Buttons perfectly attached below card */
+        /* Buttons: no gap, same width, perfectly aligned */
+        .button-container {
+            width: 420px;
+            max-width: 92%;
+            margin-top: 0;
+        }
+
         .stButton>button {
             display: block;
-            width: 420px !important;
-            max-width: 92%;
-            border-radius: 0 !important;
+            width: 100% !important;
+            border: none;
+            border-radius: 0;
             font-weight: 700;
             font-size: 15px;
             transition: all .2s ease;
-            border: none;
-            margin: 0 auto;
-        }
-
-        /* Top button (User) */
-        .stButton>button:first-child {
-            background: linear-gradient(90deg,#00A896 0%, #02C39A 100%);
-            color: #fff !important;
+            margin: 0;
             box-shadow: none;
         }
 
-        .stButton>button:first-child:hover {
+        /* Top button (User) */
+        .button-container .stButton:nth-child(1) button {
+            background: linear-gradient(90deg,#00A896 0%, #02C39A 100%);
+            color: #fff !important;
+            border-radius: 0 0 0 0;
+        }
+
+        .button-container .stButton:nth-child(1) button:hover {
             box-shadow: 0 0 22px rgba(0,168,150,0.4);
             transform: translateY(-1px);
         }
 
         /* Bottom button (Admin) */
-        .stButton>button:last-child {
+        .button-container .stButton:nth-child(2) button {
             background: linear-gradient(90deg,#007C91 0%, #006D77 100%);
             color: #e7fdfc !important;
-            border-radius: 0 0 16px 16px !important; /* bottom-rounded only */
-            box-shadow: none;
+            border-radius: 0 0 16px 16px !important;
         }
 
-        .stButton>button:last-child:hover {
+        .button-container .stButton:nth-child(2) button:hover {
             box-shadow: 0 0 22px rgba(0,109,119,0.45);
             transform: translateY(-1px);
         }
@@ -101,13 +108,12 @@ def login_page():
         .footer {
             font-size: 0.88rem;
             color: rgba(255,255,255,0.75);
-            margin-top: 10px;
+            margin-top: 25px;
             text-align:center;
         }
 
         @media (max-width:680px) {
-            .centered-login-card { width: 90%; }
-            .stButton>button { width: 90% !important; }
+            .centered-login-card, .button-container { width: 90%; }
         }
         </style>
         """,
@@ -128,11 +134,13 @@ def login_page():
         unsafe_allow_html=True,
     )
 
-    # Perfectly attached buttons
+    # ✅ Buttons directly below card (perfectly attached)
+    st.markdown("<div class='button-container'>", unsafe_allow_html=True)
     c1, c2, c3 = st.columns([2.5, 3, 2.5])
     with c2:
         user_clicked = st.button("👤 User Login")
         admin_clicked = st.button("🛠️ Admin Login")
+    st.markdown("</div>", unsafe_allow_html=True)
 
     st.markdown(
         "<div class='footer'>This is a simulated login. No password required.<br>Powered by MetalliQ AI • Enabling Circular Futures</div>",
