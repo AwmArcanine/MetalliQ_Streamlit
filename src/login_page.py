@@ -155,8 +155,8 @@ def login_page():
     # --- Navigation (OLD WORKING METHOD) ---
     if user:
         st.query_params["page"] = "user_dashboard"
-        st.experimental_rerun()
+        st.rerun()
 
     if admin:
         st.query_params["page"] = "admin_dashboard"
-        st.experimental_rerun()
+        st.rerun()
