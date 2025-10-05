@@ -3,10 +3,10 @@ import streamlit as st
 def login_page():
     st.set_page_config(layout="wide")
 
-    # ===== CSS for strict layout =====
+    # --- CSS: Futuristic theme + perfect layout alignment ---
     st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@400;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Poppins:wght@400;500;600&display=swap');
 
     html, body, .stApp {
         height: 100%;
@@ -17,108 +17,120 @@ def login_page():
         overflow: hidden !important;
     }
 
-    /* ✅ Wrapper: Perfect center */
+    /* Center entire layout */
     .main-container {
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
         height: 100vh;
-        gap: 14px;
-    }
-
-    /* ✅ Card Styling */
-    .login-card {
-        width: 380px;
-        background: rgba(255, 255, 255, 0.18);
-        border-radius: 16px;
-        padding: 28px;
         text-align: center;
-        box-shadow: 0 8px 25px rgba(0, 109, 119, 0.3);
-        border: 1px solid rgba(255, 255, 255, 0.15);
-        backdrop-filter: blur(8px);
     }
 
-    /* ✅ Title */
+    /* Card */
+    .login-card {
+        width: 90%;
+        max-width: 400px;
+        background: rgba(255, 255, 255, 0.15);
+        border-radius: 16px;
+        padding: 28px 20px;
+        box-shadow: 0 8px 25px rgba(0, 109, 119, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+    }
+
     .login-logo {
-        font-size: 42px;
-        margin-bottom: 8px;
+        font-size: 44px;
+        margin-bottom: 10px;
         color: #D4BEE4;
     }
 
     .login-title {
         font-family: 'Orbitron', sans-serif;
-        font-size: 2rem;
-        font-weight: 700;
+        font-size: 1.9rem;
+        font-weight: 600;
         color: #7CF4E3;
-        text-shadow: 0 0 14px rgba(124, 244, 227, 0.9);
-        margin-bottom: 5px;
+        text-shadow: 0 0 15px rgba(124, 244, 227, 0.85);
+        margin-bottom: 6px;
     }
 
     .login-sub {
         font-weight: 600;
-        color: #044B4D;
+        color: #022C2D;
         margin-bottom: 4px;
     }
 
     .login-desc {
-        color: rgba(0, 0, 0, 0.65);
-        margin: 0;
+        color: rgba(0, 0, 0, 0.7);
+        margin-bottom: 0;
     }
 
-    /* ✅ Buttons Section */
-    .button-section {
+    /* Buttons container */
+    .button-container {
         display: flex;
         flex-direction: column;
         align-items: center;
         gap: 8px;
-        width: 380px;
+        margin-top: 8px;
     }
 
+    /* Buttons */
     .stButton>button {
         width: 100% !important;
+        max-width: 400px;
         border: none;
         border-radius: 10px;
-        font-weight: 700;
+        font-weight: 600;
         font-size: 15px;
-        transition: all 0.25s ease;
-        padding: 0.7em 0;
+        padding: 0.75em 0;
+        transition: all 0.3s ease;
         cursor: pointer;
     }
 
-    /* ✅ User button */
+    /* User Login Button */
     .stButton>button:first-child {
         background: linear-gradient(90deg, #00A896 0%, #02C39A 100%);
-        color: #fff !important;
-        box-shadow: 0 0 12px rgba(0,168,150,0.6);
-    }
-    .stButton>button:first-child:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 0 18px rgba(0,168,150,0.8);
+        color: white !important;
+        box-shadow: 0 0 10px rgba(0,168,150,0.6);
     }
 
-    /* ✅ Admin button */
+    .stButton>button:first-child:hover {
+        transform: scale(1.03);
+        box-shadow: 0 0 20px rgba(0,168,150,0.9);
+    }
+
+    /* Admin Login Button */
     .stButton>button:last-child {
         background: linear-gradient(90deg, #007C91 0%, #006D77 100%);
         color: #E7FDFC !important;
-        box-shadow: 0 0 12px rgba(0,109,119,0.5);
-    }
-    .stButton>button:last-child:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 0 18px rgba(0,109,119,0.8);
+        box-shadow: 0 0 10px rgba(0,109,119,0.5);
     }
 
-    /* ✅ Footer */
+    .stButton>button:last-child:hover {
+        transform: scale(1.03);
+        box-shadow: 0 0 20px rgba(0,109,119,0.8);
+    }
+
+    /* Footer */
     .footer {
+        margin-top: 12px;
+        font-size: 0.9rem;
+        color: rgba(255,255,255,0.9);
         text-align: center;
-        font-size: 0.85rem;
-        color: rgba(255,255,255,0.85);
-        margin-top: 10px;
+    }
+
+    @media (max-width: 600px) {
+        .login-card, .stButton>button {
+            max-width: 320px;
+        }
+        .login-title {
+            font-size: 1.6rem;
+        }
     }
     </style>
     """, unsafe_allow_html=True)
 
-    # ===== Layout =====
+    # --- Layout ---
     st.markdown("""
     <div class="main-container">
         <div class="login-card">
@@ -127,11 +139,10 @@ def login_page():
             <div class="login-sub">AI-Powered Sustainability</div>
             <div class="login-desc">Sign in to the official platform</div>
         </div>
-
-        <div class="button-section">
+        <div class="button-container">
     """, unsafe_allow_html=True)
 
-    # Buttons (strictly centered below the card)
+    # Buttons (functional + responsive)
     user = st.button("👤 User Login")
     admin = st.button("🛠️ Admin Login")
 
