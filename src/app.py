@@ -7,122 +7,141 @@ from results_page import results_page
 from admin_dashboard import show_admin_dashboard, users_df, datasets_df, ai_models_df
 from Compare_Scenarios import compare_scenarios_page
 from view_reports import view_reports_page
-from streamlit_lottie import st_lottie
 
 st.set_page_config(layout="wide", initial_sidebar_state="expanded")
 
-# === FUTURISTIC GLOBAL THEME ===
+# === METALLIQ THEME: TECH & NATURE HARMONY ===
 st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600&family=Poppins:wght@400;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Orbitron:wght@500;700&display=swap');
 
     /* ===== APP BACKGROUND ===== */
     .stApp {
-        background: linear-gradient(135deg, #001a2e 0%, #003b46 40%, #00b4d8 100%);
+        background: linear-gradient(135deg, #00494D 0%, #006D77 45%, #83C5BE 100%);
         font-family: 'Poppins', sans-serif;
-        color: #d9faff !important;
+        color: #073B4C;
     }
 
     /* ===== HEADINGS ===== */
     h1, h2, h3, h4, h5 {
-        color: #00f5ff !important;
-        text-shadow: 0 0 12px #00f5ff, 0 0 25px #00b4d8;
+        color: #00494D !important;
         font-family: 'Orbitron', sans-serif;
-        letter-spacing: 0.02em;
+        letter-spacing: 0.03em;
+        text-shadow: 0 0 8px rgba(0,77,91,0.15);
     }
 
     /* ===== SIDEBAR ===== */
     section[data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #001f2f 0%, #003e4d 90%) !important;
-        box-shadow: 2px 0 12px #00f5ff33;
-        border-right: 1px solid #00f5ff44;
+        background: linear-gradient(180deg, #013B44 0%, #00494D 90%) !important;
+        border-right: 1px solid #007F8E;
+        box-shadow: 3px 0 12px rgba(0,80,90,0.3);
+        transition: all 0.3s ease-in-out;
     }
+
+    /* Sidebar text */
     section[data-testid="stSidebar"] * {
-        color: #c9faff !important;
-        font-family: 'Poppins', sans-serif !important;
-        font-weight: 600 !important;
+        color: #E0FBFC !important;
+        font-weight: 500 !important;
     }
-    section[data-testid="stSidebar"] h1, section[data-testid="stSidebar"] h2 {
-        color: #00f5ff !important;
-        text-shadow: 0 0 8px #00f5ff;
+
+    /* Collapsed sidebar visibility */
+    [data-testid="collapsedControl"] {
+        visibility: visible !important;
+        opacity: 1 !important;
     }
 
     /* ===== BUTTONS ===== */
     div.stButton > button {
-        background-color: transparent;
-        border: 2px solid #00f5ff;
-        color: #00f5ff;
-        border-radius: 10px;
-        padding: 0.6em 1.8em;
+        background: linear-gradient(90deg, #006D77 0%, #00A896 100%);
+        color: #FFFFFF !important;
+        border: none;
+        border-radius: 8px;
+        padding: 0.55em 1.8em;
         font-weight: 600;
-        transition: all 0.3s ease;
-        box-shadow: 0 0 15px #00f5ff55;
-        text-shadow: 0 0 5px #00eaff;
+        transition: all 0.25s ease;
+        box-shadow: 0 4px 12px rgba(0,109,119,0.25);
     }
     div.stButton > button:hover {
-        background-color: #00f5ff;
-        color: #001f2f !important;
-        box-shadow: 0 0 25px #00f5ff;
-        transform: scale(1.07);
+        background: linear-gradient(90deg, #007F8E 0%, #009C9A 100%);
+        box-shadow: 0 6px 18px rgba(0,150,160,0.3);
+        transform: scale(1.03);
     }
 
-    /* ===== INPUT FIELDS ===== */
+    /* ===== INPUTS ===== */
     input, textarea, select {
-        background: rgba(0, 30, 40, 0.4) !important;
-        color: #c9faff !important;
-        border: 1px solid #00b4d8 !important;
-        border-radius: 8px !important;
+        background: rgba(255,255,255,0.9) !important;
+        color: #00494D !important;
+        border: 1px solid #83C5BE !important;
+        border-radius: 6px !important;
+        font-size: 1rem;
     }
 
-    /* ===== CARD STYLING ===== */
+    /* ===== CARDS ===== */
     .card, .stContainer {
-        background: rgba(0, 50, 70, 0.25);
-        border-radius: 15px;
-        border: 1px solid #00b4d8;
-        box-shadow: 0 0 20px #00b4d833;
-        padding: 20px;
-        backdrop-filter: blur(8px);
-    }
-
-    /* ===== TOGGLE & RADIO ===== */
-    div[role="radiogroup"] label {
-        color: #00eaff !important;
+        background: rgba(255,255,255,0.5);
+        border-radius: 12px;
+        border: 1px solid rgba(0,109,119,0.25);
+        box-shadow: 0 4px 12px rgba(0,109,119,0.15);
+        padding: 18px;
+        backdrop-filter: blur(10px);
     }
 
     /* ===== TOP BAR ===== */
     .main-top-bar {
-        background: linear-gradient(90deg, #00b4d8 0%, #0077b6 100%);
-        color: #e0ffff;
-        text-shadow: 0 0 8px #00eaff;
-        box-shadow: 0 4px 18px #00b4d833;
+        background: linear-gradient(90deg, #006D77 0%, #00A896 100%);
+        color: #FFFFFF;
+        box-shadow: 0 4px 12px rgba(0,109,119,0.25);
         border-radius: 0 0 25px 25px;
+        font-weight: 600;
+        padding: 20px 3vw;
+        font-size: 1.5rem;
+        letter-spacing: 0.02em;
     }
 
-    /* ===== HIDE STREAMLIT DEFAULTS ===== */
+    /* ===== TEXT ===== */
+    p, li, span {
+        color: #073B4C;
+    }
+
+    /* ===== CHART BACKGROUND ===== */
+    .plotly, canvas {
+        background-color: transparent !important;
+    }
+
+    /* ===== SCROLLBAR ===== */
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: #006D77;
+        border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: #008C9E;
+    }
+
     #MainMenu, footer, header {visibility: hidden;}
     </style>
 """, unsafe_allow_html=True)
 
-# --- SIDEBAR HEADER ---
+
+# --- Sidebar branding ---
 def workspace_selector():
-    st.sidebar.markdown(
-        """
+    st.sidebar.markdown("""
         <div style='display:flex;align-items:center;gap:13px;margin-bottom:27px;margin-top:4px'>
-            <span style='font-size:2.2rem;line-height:.95;margin-right:10px;'>⚙️</span>
+            <span style='font-size:2rem;'>🌿</span>
             <div>
-                <div style='font-weight:900;font-size:1.25rem;
-                            background:linear-gradient(90deg,#00f5ff,#00b4d8);
+                <div style='font-weight:900;font-size:1.3rem;
+                            background:linear-gradient(90deg,#00A896,#83C5BE);
                             -webkit-background-clip:text;
-                            -webkit-text-fill-color:transparent;
-                            text-shadow:0 0 15px #00eaff;'>
+                            -webkit-text-fill-color:transparent;'>
                     MetalliQ
                 </div>
-                <div style='color:#87f5ff;font-size:.93rem;'>Futuristic LCA Platform</div>
+                <div style='color:#DEF6FF;font-size:.9rem;'>Sustainable AI for Metallurgy</div>
             </div>
         </div>
-        """, unsafe_allow_html=True
-    )
-    st.sidebar.markdown("### WORKSPACES", unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
+
     ws_choice = st.sidebar.radio(
         "", st.session_state.get("workspaces", ["John's Workspace", "Project Phoenix"]),
         index=st.session_state.get("workspaces", ["John's Workspace", "Project Phoenix"]).index(
@@ -143,17 +162,11 @@ def sidebar_navigation(active):
         {"name": "Sign Out", "icon": "🚪"}
     ]
     nav_options = [f"{item['icon']} {item['name']}" for item in menu]
-    default_index = 0
-    for idx, option in enumerate(nav_options):
-        if option.endswith(active):
-            default_index = idx
-            break
-    selected = st.sidebar.radio("Main Menu", nav_options, index=default_index)
+    selected = st.sidebar.radio("Main Menu", nav_options, index=0)
     st.sidebar.markdown("---")
     return selected.split(" ", 1)[1]
 
 
-# --- MAIN APP FUNCTION ---
 def main_app():
     if "show_login" not in st.session_state:
         st.session_state.show_login = False
@@ -172,43 +185,32 @@ def main_app():
         login_page()
         return
 
-    name = st.session_state.get('name', "John Doe")
     workspace = workspace_selector()
-    page = st.session_state.get('page', "Dashboard")
-    nav_page = sidebar_navigation(page)
-    st.session_state['page'] = nav_page
+    nav_page = sidebar_navigation("Dashboard")
+    st.sidebar.markdown(f"<div style='margin-bottom:10px;'>Active Workspace: <b>{workspace}</b></div>", unsafe_allow_html=True)
 
-    st.sidebar.markdown(f"<div style='margin-bottom:10px; font-weight:bold;'>Welcome, {st.session_state.get('role', 'Guest')}</div>", unsafe_allow_html=True)
-    st.sidebar.markdown(f"<div style='margin-bottom:18px;'>Active workspace: <b>{workspace}</b></div>", unsafe_allow_html=True)
-
-    # --- PAGE ROUTING ---
+    # --- Pages ---
     if nav_page == "Dashboard":
-        st.markdown("""
-        <div class="main-top-bar">
-            MetalliQ: AI-Powered Sustainability
-            <span class="welcome-user" style="font-size:1.1rem;opacity:0.8;">Welcome, Sarah Singh</span>
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown("<div class='main-top-bar'>MetalliQ: AI-Powered Sustainability</div>", unsafe_allow_html=True)
         if st.session_state.get('role') == "Admin":
-            user_info = {"active_users": 33, "lca_studies": 12, "reports_generated": 67}
-            show_admin_dashboard(user_info, users_df, datasets_df, ai_models_df)
+            show_admin_dashboard({"active_users": 33, "lca_studies": 12, "reports_generated": 67},
+                                 users_df, datasets_df, ai_models_df)
         else:
             dashboard_page()
         if st.session_state.get('ai_recommendations'):
             display_ai_recommendations(st.session_state['ai_recommendations'])
-
     elif nav_page == "Create Study":
         full_lca_study_form()
         if st.session_state.get('lca_form_submitted'):
             inputs = st.session_state['lca_form_data']
-            with st.spinner("Performing Life Cycle Assessment analysis..."):
+            with st.spinner("Running LCA Simulation..."):
                 results = run_simulation(inputs)
             st.session_state['simulation_results'] = results
             st.session_state['ai_recommendations'] = ai_data_example
             st.session_state['lca_form_submitted'] = False
             st.success("Analysis Completed!")
-            results_page(st.session_state['simulation_results'], st.session_state['ai_recommendations'])
-
+            results_page(st.session_state['simulation_results'],
+                         st.session_state['ai_recommendations'])
     elif nav_page == "View Reports":
         view_reports_page()
     elif nav_page == "Compare Scenarios":
@@ -218,7 +220,6 @@ def main_app():
         st.rerun()
     else:
         st.info("Page under development.")
-
 
 if __name__ == "__main__":
     main_app()

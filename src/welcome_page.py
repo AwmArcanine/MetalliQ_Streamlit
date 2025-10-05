@@ -3,15 +3,13 @@ def show_welcome_page():
     import json
     from streamlit_lottie import st_lottie
 
-    # === GLOBAL STYLE FOR WELCOME PAGE ===
     st.markdown("""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@400;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Poppins:wght@400;600&display=swap');
 
     body, .stApp {
-        background: linear-gradient(135deg, #001a2e 0%, #003b46 45%, #00b4d8 100%) !important;
-        background-attachment: fixed;
-        color: #c9faff;
+        background: linear-gradient(135deg, #00494D 0%, #006D77 45%, #83C5BE 100%) !important;
+        color: #073B4C;
         font-family: 'Poppins', sans-serif;
     }
 
@@ -19,168 +17,179 @@ def show_welcome_page():
     .main-head {
         font-family: 'Orbitron', sans-serif;
         font-size: 2.8rem;
-        background: linear-gradient(90deg,#00f5ff 10%,#00b4d8 90%);
+        background: linear-gradient(90deg, #006D77 20%, #00A896 80%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
-        text-shadow: 0 0 15px #00eaff, 0 0 25px #00b4d8;
         text-align: center;
         font-weight: 800;
-        margin-top: 1.2em;
-        margin-bottom: 0.4em;
-        letter-spacing: 0.02em;
+        margin-top: 1em;
+        margin-bottom: 0.3em;
     }
 
     .main-desc {
         text-align: center;
-        color: #aef9ff;
-        text-shadow: 0 0 10px #00eaff;
+        color: #00494D;
         font-weight: 600;
-        margin-bottom: 0.8em;
-        font-size: 1.15rem;
+        font-size: 1.2rem;
+        margin-bottom: 0.7em;
     }
 
-    .center-desc {
+    .key-features-title {
         text-align: center;
-        max-width: 700px;
-        margin: 0 auto;
-        font-size: 1.05rem;
-        color: #d7ffff;
-        line-height: 1.5;
-        text-shadow: 0 0 8px #00b4d8aa;
+        color: #00494D;
+        font-weight: 700;
+        font-size: 1.5rem;
+        margin-top: 2em;
+        margin-bottom: 1.5em;
     }
 
-    /* ===== FEATURE GRID ===== */
-    .key-features-grid {
+    /* ===== MAIN CONTAINER ===== */
+    .features-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 4rem;
+        flex-wrap: wrap;
+        width: 100%;
+        margin: 2em auto;
+    }
+
+    /* ===== LEFT START SECTION ===== */
+    .start-section {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+    }
+
+    .launch-btn {
+        background: linear-gradient(90deg, #006D77 0%, #00A896 100%);
+        color: #FFFFFF !important;
+        padding: 1.1em 2.5em;
+        border-radius: 10px;
+        border: none;
+        font-size: 1.15rem;
+        font-weight: 600;
+        box-shadow: 0 4px 14px rgba(0,109,119,0.25);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        letter-spacing: 0.03em;
+        text-align: center;
+    }
+
+    .launch-btn:hover {
+        background: linear-gradient(90deg, #007F8E 0%, #00BFA5 100%);
+        box-shadow: 0 6px 20px rgba(0,150,160,0.3);
+        transform: scale(1.04);
+    }
+
+    /* ===== RIGHT FEATURES GRID ===== */
+    .features-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 2.3rem;
-        max-width: 950px;
-        margin: 2em auto 3em auto;
-        box-sizing: border-box;
+        grid-template-columns: repeat(3, 240px);
+        grid-gap: 1.8rem;
+        justify-content: center;
+        align-items: center;
     }
 
     .feature-card {
-        background: rgba(0, 45, 70, 0.25);
-        border: 1px solid #00b4d8;
-        border-radius: 20px;
-        box-shadow: 0 0 25px #00b4d822;
-        padding: 2rem 1rem;
+        background: rgba(255, 255, 255, 0.55);
+        border: 1px solid rgba(0, 109, 119, 0.25);
+        border-radius: 16px;
+        box-shadow: 0 3px 10px rgba(0,109,119,0.15);
+        padding: 1.8rem 1rem;
         text-align: center;
         transition: all 0.25s ease;
         backdrop-filter: blur(8px);
+        height: 190px;
     }
 
     .feature-card:hover {
-        transform: translateY(-8px) scale(1.05);
-        box-shadow: 0 0 35px #00eaff55;
-        border: 1px solid #00f5ff;
+        transform: translateY(-6px);
+        box-shadow: 0 5px 16px rgba(0,150,160,0.25);
     }
 
     .card-icon {
-        font-size: 2.4rem;
-        margin-bottom: 0.7em;
-        color: #00f5ff;
-        text-shadow: 0 0 12px #00f5ff88;
+        font-size: 2.3rem;
+        margin-bottom: 0.6em;
+        color: #006D77;
     }
 
     .card-title {
-        font-family: 'Orbitron', sans-serif;
         font-weight: 700;
-        font-size: 1.2rem;
-        color: #00f5ff;
+        font-size: 1.1rem;
+        color: #00494D;
         margin-bottom: 0.3em;
-        text-shadow: 0 0 10px #00eaff88;
     }
 
     .card-desc {
         font-size: 0.95rem;
-        color: #d9faff;
-        line-height: 1.4;
+        color: #073B4C;
+        opacity: 0.9;
     }
 
-    /* ===== BUTTON ===== */
-    .welcome-card-btn {
-        display: inline-block;
-        background: transparent;
-        border: 2px solid #00f5ff;
-        color: #00f5ff !important;
-        text-shadow: 0 0 8px #00eaff;
-        border-radius: 25px;
-        padding: 0.9em 3em;
-        font-size: 1.2rem;
-        font-weight: 700;
-        letter-spacing: 0.05em;
-        box-shadow: 0 0 20px #00b4d844;
-        transition: all 0.3s ease;
+    /* ===== RESPONSIVE ADJUSTMENTS ===== */
+    @media (max-width: 1200px) {
+        .features-grid {
+            grid-template-columns: repeat(2, 240px);
+        }
     }
-
-    .welcome-card-btn:hover {
-        background: #00f5ff;
-        color: #001f2f !important;
-        box-shadow: 0 0 35px #00f5ff;
-        transform: scale(1.05);
-    }
-
-    /* ===== SECTION HEADERS ===== */
-    .feature-head {
-        color: #00f5ff;
-        font-family: 'Orbitron', sans-serif;
-        text-align: center;
-        font-size: 1.6rem;
-        font-weight: 700;
-        text-shadow: 0 0 12px #00f5ff;
-        margin-top: 2em;
-        margin-bottom: 1em;
+    @media (max-width: 800px) {
+        .features-container {
+            flex-direction: column;
+            gap: 2rem;
+        }
+        .features-grid {
+            grid-template-columns: 1fr;
+        }
     }
     </style>
     """, unsafe_allow_html=True)
 
-    # === Lottie Animation (optional) ===
+    # Optional animation (non-blocking)
     try:
         with open("src/Welcome_Animation.json", "r") as f:
             lottie_json = json.load(f)
         st_lottie(lottie_json, height=110, key="welcome_lottie")
     except:
-        st.write("")  # skip if not found
+        pass
 
-    # === HEADERS ===
-    st.markdown("<div class='main-head'>MetalliQ LCA Platform</div>", unsafe_allow_html=True)
-    st.markdown("<div class='main-desc'>AI-Driven Sustainability for Metals & Alloys</div>", unsafe_allow_html=True)
-    st.markdown("""
-        <div class='center-desc'>
-        <b>MetalliQ</b> empowers you to conduct comprehensive <b>Life Cycle Assessments</b> 
-        with AI-driven insights, scenario simulation, and data-driven circularity analysis.  
-        Explore advanced analytics, visualize material flows, and accelerate your sustainability roadmap.
-        </div>
-    """, unsafe_allow_html=True)
+    # Headings
+    st.markdown("<div class='main-head'>MetalliQ Sustainability Platform</div>", unsafe_allow_html=True)
+    st.markdown("<div class='main-desc'>AI-Powered Life Cycle Intelligence for Metals & Alloys</div>", unsafe_allow_html=True)
+    st.markdown("<div class='key-features-title'>Key Features</div>", unsafe_allow_html=True)
 
-    # === FEATURE SECTION ===
-    st.markdown("<div class='feature-head'>Core Capabilities</div>", unsafe_allow_html=True)
+    # --- MAIN FLEX CONTAINER ---
+    st.markdown("<div class='features-container'>", unsafe_allow_html=True)
 
+    # Left column (Start button)
+    st.markdown("<div class='start-section'><button class='launch-btn'>🚀 Start Platform</button></div>", unsafe_allow_html=True)
+
+    # Right column (Features grid)
     features = [
-        {"icon": "🧭", "title": "ISO 14044 Workflow", "desc": "Complete, compliant LCA process automation for metals."},
-        {"icon": "🤖", "title": "AI Autofill", "desc": "Predict missing parameters & interpret sustainability metrics."},
-        {"icon": "♻️", "title": "Circularity Dashboard", "desc": "Analyze circular economy metrics and eco-label readiness."},
-        {"icon": "📊", "title": "3D Visual Analytics", "desc": "Interactive Sankey, radar, and time-based insights."},
-        {"icon": "📄", "title": "Instant Reports", "desc": "Auto-generate ISO-standardized sustainability reports."},
-        {"icon": "☁️", "title": "Cloud AI Models", "desc": "Integrate AI Studio and train LCA prediction models."}
+        {"icon": "🧭", "title": "ISO 14044 Workflow", "desc": "Standardized and automated LCA pipeline for metallurgical processes."},
+        {"icon": "🌿", "title": "Circularity Metrics", "desc": "Quantify sustainability and material reuse efficiency in real-time."},
+        {"icon": "🤖", "title": "AI-Assisted Modeling", "desc": "Predict missing values and simulate environmental outcomes intelligently."},
+        {"icon": "📊", "title": "Interactive Dashboards", "desc": "Visualize emissions, energy flows, and recycling potential seamlessly."},
+        {"icon": "☁️", "title": "Cloud Data Sync", "desc": "Secure integration with AI services and cloud sustainability datasets."},
+        {"icon": "📄", "title": "Automated Reports", "desc": "Instant, audit-ready ISO-compliant LCA summaries."}
     ]
 
-    st.markdown("<div class='key-features-grid'>", unsafe_allow_html=True)
+    html = "<div class='features-grid'>"
     for f in features:
-        st.markdown(f"""
+        html += f"""
         <div class='feature-card'>
             <div class='card-icon'>{f['icon']}</div>
             <div class='card-title'>{f['title']}</div>
             <div class='card-desc'>{f['desc']}</div>
         </div>
-        """, unsafe_allow_html=True)
+        """
+    html += "</div>"
+
+    st.markdown(html, unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
-    # === LAUNCH BUTTON ===
-    c1, c2, c3 = st.columns([3, 2, 3])
-    with c2:
-        clicked = st.button("Launch Platform 🚀", key="start_button")
-        if clicked:
-            st.session_state.show_login = True
-    st.markdown("<div style='text-align:center;margin-top:2em;'><a class='welcome-card-btn'>Launch Platform 🚀</a></div>", unsafe_allow_html=True)
+    # --- Functional Button (real Streamlit button trigger) ---
+    if st.button("Launch Platform 🚀", key="real_launch_btn"):
+        st.session_state.show_login = True
