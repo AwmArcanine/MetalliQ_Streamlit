@@ -20,11 +20,11 @@ def login_page():
 
         .login-wrapper {
             height: 100vh;
+            width: 100%;
             display: flex;
             flex-direction: column;
-            align-items: center;
             justify-content: center;
-            gap: 8px; /* Strict 8px gap between card and buttons */
+            align-items: center;
         }
 
         .login-card {
@@ -37,6 +37,7 @@ def login_page():
             border: 1px solid rgba(255, 255, 255, 0.18);
             backdrop-filter: blur(8px);
             text-align: center;
+            margin-bottom: 8px; /* Exact 8px gap to buttons */
         }
 
         .login-logo {
@@ -113,7 +114,6 @@ def login_page():
         </style>
     """, unsafe_allow_html=True)
 
-    # Layout
     st.markdown("""
         <div class="login-wrapper">
             <div class="login-card">
@@ -137,7 +137,6 @@ def login_page():
         </div>
     """, unsafe_allow_html=True)
 
-    # Logic
     if user_clicked:
         st.session_state.logged_in = True
         st.session_state.role = "User"
