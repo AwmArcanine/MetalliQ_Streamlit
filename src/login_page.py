@@ -18,21 +18,20 @@ def login_page():
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 90vh;
+            height: 92vh;
         }
 
         .centered-login-card {
             width: 420px;
             max-width: 92%;
             background: rgba(255,255,255,0.22);
-            border-radius: 16px;
-            padding: 30px 30px; /* reduced padding slightly */
+            border-radius: 16px 16px 0 0; /* top-rounded only */
+            padding: 30px 30px 18px 30px; /* reduced bottom padding */
             box-shadow: 0 10px 30px rgba(0,109,119,0.22);
             border: 1px solid rgba(255,255,255,0.18);
             backdrop-filter: blur(8px);
             text-align: center;
             color: #06343a;
-            margin-bottom: 12px; /* reduced from 20px */
         }
 
         .login-logo {
@@ -45,7 +44,7 @@ def login_page():
             font-family: 'Orbitron', sans-serif;
             font-size: 2rem;
             font-weight: 700;
-            color: #6FFFE9; /* neon cyan */
+            color: #6FFFE9;
             text-shadow: 0 0 10px rgba(111,255,233,0.8), 0 0 20px rgba(111,255,233,0.4);
             margin-bottom: 4px;
         }
@@ -58,43 +57,45 @@ def login_page():
 
         .login-desc {
             color: rgba(0,0,0,0.6);
-            margin-bottom: 2px;
+            margin-bottom: 0;
         }
 
-        /* Button styling */
+        /* Buttons perfectly attached below card */
         .stButton>button {
             display: block;
-            width: 420px !important;  /* same width as card */
+            width: 420px !important;
             max-width: 92%;
-            margin: 6px auto;
-            border-radius: 10px;
-            padding: 10px 0px;
+            border-radius: 0 !important;
             font-weight: 700;
             font-size: 15px;
             transition: all .2s ease;
             border: none;
+            margin: 0 auto;
         }
 
+        /* Top button (User) */
         .stButton>button:first-child {
             background: linear-gradient(90deg,#00A896 0%, #02C39A 100%);
             color: #fff !important;
-            box-shadow: 0 0 14px rgba(0,168,150,0.25);
+            box-shadow: none;
         }
 
         .stButton>button:first-child:hover {
-            transform: translateY(-3px);
             box-shadow: 0 0 22px rgba(0,168,150,0.4);
+            transform: translateY(-1px);
         }
 
+        /* Bottom button (Admin) */
         .stButton>button:last-child {
             background: linear-gradient(90deg,#007C91 0%, #006D77 100%);
             color: #e7fdfc !important;
-            box-shadow: 0 0 10px rgba(0,109,119,0.3);
+            border-radius: 0 0 16px 16px !important; /* bottom-rounded only */
+            box-shadow: none;
         }
 
         .stButton>button:last-child:hover {
-            transform: translateY(-3px);
             box-shadow: 0 0 22px rgba(0,109,119,0.45);
+            transform: translateY(-1px);
         }
 
         .footer {
@@ -127,7 +128,7 @@ def login_page():
         unsafe_allow_html=True,
     )
 
-    # Buttons perfectly aligned under card
+    # Perfectly attached buttons
     c1, c2, c3 = st.columns([2.5, 3, 2.5])
     with c2:
         user_clicked = st.button("👤 User Login")
