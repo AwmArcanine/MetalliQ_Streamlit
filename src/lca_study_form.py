@@ -1,95 +1,93 @@
 import streamlit as st
 
 # --- MetalliQ Neon-Teal Theme for LCA Study Form ---
-st.markdown("""
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Poppins:wght@400;500;600&display=swap');
-
-body, .stApp {
-    background: linear-gradient(135deg, #00494D 0%, #006D77 40%, #83C5BE 100%) !important;
-    color: #E0FFFF !important;
-    font-family: 'Poppins', sans-serif !important;
-}
-
-/* Headings */
-h1 {
-    font-family: 'Orbitron', sans-serif !important;
-    font-size: 2.1rem !important;
-    color: #00EFFF !important;
-    text-shadow: 0 0 15px rgba(0,239,255,0.8);
-    margin-bottom: 10px !important;
-}
-
-h2, h3, h4, h5, h6 {
-    color: #C8FAF8 !important;
-    font-weight: 600 !important;
-}
-
-/* Labels & Inputs */
-label, .stTextInput label, .stSelectbox label, .stNumberInput label, .stTextArea label {
-    color: #E6FFFF !important;
-    font-size: 0.95rem !important;
-    font-weight: 500 !important;
-}
-
-.stTextInput, .stSelectbox, .stNumberInput, .stTextArea {
-    color: #E6FFFF !important;
-}
-
-/* Buttons */
-div.stButton > button {
-    background: linear-gradient(90deg, #00A896 0%, #02C39A 100%) !important;
-    color: #FFFFFF !important;
-    border: none !important;
-    border-radius: 10px !important;
-    font-weight: 700 !important;
-    box-shadow: 0 0 15px rgba(0,168,150,0.4);
-    transition: all 0.25s ease-in-out;
-}
-div.stButton > button:hover {
-    box-shadow: 0 0 20px rgba(0,239,255,0.8);
-    transform: scale(1.04);
-}
-
-/* Form fields */
-.stTextInput input, .stNumberInput input, textarea {
-    background: rgba(255,255,255,0.1) !important;
-    color: #E6FFFF !important;
-    border-radius: 8px !important;
-    border: 1px solid rgba(255,255,255,0.25) !important;
-}
-
-/* Radio buttons and sliders */
-.stRadio label {
-    color: #E0FFFF !important;
-}
-.stSlider label {
-    color: #C8FAF8 !important;
-}
-
-/* Section Titles */
-.stMarkdown h3 {
-    color: #7CF4E3 !important;
-    text-shadow: 0 0 10px rgba(124,244,227,0.6);
-}
-
-/* Captions */
-.stCaption, .stMarkdown small {
-    color: #B5EDE9 !important;
-}
-
-/* Success message */
-.stSuccess {
-    background: rgba(0,239,255,0.1) !important;
-    color: #00EFFF !important;
-    border: 1px solid rgba(0,239,255,0.4) !important;
-    border-radius: 8px !important;
-}
-</style>
-""", unsafe_allow_html=True)
-
-
 def full_lca_study_form():
+    st.markdown("""
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Poppins:wght@400;500;600&display=swap');
+
+        body, .stApp {
+            background: linear-gradient(135deg, #00494D 0%, #006D77 40%, #83C5BE 100%) !important;
+            color: #E0FFFF !important;
+            font-family: 'Poppins', sans-serif !important;
+        }
+
+        /* Headings */
+        h1 {
+            font-family: 'Orbitron', sans-serif !important;
+            font-size: 2.1rem !important;
+            color: #00EFFF !important;
+            text-shadow: 0 0 15px rgba(0,239,255,0.8);
+            margin-bottom: 10px !important;
+        }
+
+        h2, h3, h4, h5, h6 {
+            color: #C8FAF8 !important;
+            font-weight: 600 !important;
+        }
+
+        /* Labels & Inputs */
+        label, .stTextInput label, .stSelectbox label, .stNumberInput label, .stTextArea label {
+            color: #E6FFFF !important;
+            font-size: 0.95rem !important;
+            font-weight: 500 !important;
+        }
+
+        .stTextInput, .stSelectbox, .stNumberInput, .stTextArea {
+            color: #E6FFFF !important;
+        }
+
+        /* Buttons */
+        div.stButton > button {
+            background: linear-gradient(90deg, #00A896 0%, #02C39A 100%) !important;
+            color: #FFFFFF !important;
+            border: none !important;
+            border-radius: 10px !important;
+            font-weight: 700 !important;
+            box-shadow: 0 0 15px rgba(0,168,150,0.4);
+            transition: all 0.25s ease-in-out;
+        }
+        div.stButton > button:hover {
+            box-shadow: 0 0 20px rgba(0,239,255,0.8);
+            transform: scale(1.04);
+        }
+
+        /* Form fields */
+        .stTextInput input, .stNumberInput input, textarea {
+            background: rgba(255,255,255,0.1) !important;
+            color: #E6FFFF !important;
+            border-radius: 8px !important;
+            border: 1px solid rgba(255,255,255,0.25) !important;
+        }
+
+        /* Radio buttons and sliders */
+        .stRadio label {
+            color: #E0FFFF !important;
+        }
+        .stSlider label {
+            color: #C8FAF8 !important;
+        }
+
+        /* Section Titles */
+        .stMarkdown h3 {
+            color: #7CF4E3 !important;
+            text-shadow: 0 0 10px rgba(124,244,227,0.6);
+        }
+
+        /* Captions */
+        .stCaption, .stMarkdown small {
+            color: #B5EDE9 !important;
+        }
+
+        /* Success message */
+        .stSuccess {
+            background: rgba(0,239,255,0.1) !important;
+            color: #00EFFF !important;
+            border: 1px solid rgba(0,239,255,0.4) !important;
+            border-radius: 8px !important;
+        }
+        </style>
+        """, unsafe_allow_html=True)
     st.title("AI-Powered Metals Sustainability")
 
     with st.form("lca_full_study"):
