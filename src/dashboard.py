@@ -8,9 +8,9 @@ import plotly.express as px
 
 
 def dashboard_page(workspace=None):
+    st.set_page_config(layout="wide")
+    st.cache_data.clear()  # Clears cached CSS in Streamlit
     st.markdown("""
-        st.set_page_config(layout="wide")
-        st.cache_data.clear()  # Clears cached CSS in Streamlit
         <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Poppins:wght@400;500;600&display=swap');
 
