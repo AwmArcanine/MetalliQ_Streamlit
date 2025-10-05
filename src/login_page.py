@@ -3,7 +3,6 @@ import streamlit as st
 def login_page():
     st.set_page_config(layout="wide")
 
-    # Remove all Streamlit default padding and top space
     st.markdown("""
         <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Poppins:wght@400;600&display=swap');
@@ -14,32 +13,28 @@ def login_page():
             overflow: hidden;
         }
 
-        /* Remove built-in Streamlit paddings */
         .block-container {
-            padding-top: 0 !important;
-            padding-bottom: 0 !important;
-            margin: 0 auto !important;
+            padding: 0 !important;
+            margin: 0 !important;
         }
 
-        /* Center entire content perfectly in viewport */
         .login-wrapper {
             height: 100vh;
-            width: 100%;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            gap: 6px; /* this is the gap between card and buttons — tiny */
+            justify-content: center;
+            gap: 8px; /* Strict 8px gap between card and buttons */
         }
 
         .login-card {
             width: 400px;
             max-width: 90%;
-            background: rgba(255,255,255,0.22);
+            background: rgba(255, 255, 255, 0.22);
             border-radius: 16px;
             padding: 28px 30px 22px 30px;
-            box-shadow: 0 10px 30px rgba(0,109,119,0.25);
-            border: 1px solid rgba(255,255,255,0.18);
+            box-shadow: 0 10px 30px rgba(0, 109, 119, 0.25);
+            border: 1px solid rgba(255, 255, 255, 0.18);
             backdrop-filter: blur(8px);
             text-align: center;
         }
@@ -55,7 +50,7 @@ def login_page():
             font-size: 2rem;
             font-weight: 700;
             color: #6FFFE9;
-            text-shadow: 0 0 12px rgba(111,255,233,0.8), 0 0 20px rgba(111,255,233,0.4);
+            text-shadow: 0 0 12px rgba(111, 255, 233, 0.8), 0 0 20px rgba(111, 255, 233, 0.4);
             margin-bottom: 5px;
         }
 
@@ -66,17 +61,17 @@ def login_page():
         }
 
         .login-desc {
-            color: rgba(0,0,0,0.65);
+            color: rgba(0, 0, 0, 0.65);
             margin: 0;
         }
 
-        /* Buttons container */
         .btn-container {
-            width: 400px;
-            max-width: 90%;
             display: flex;
             flex-direction: column;
+            align-items: center;
             gap: 8px;
+            width: 400px;
+            max-width: 90%;
         }
 
         .stButton>button {
@@ -89,21 +84,21 @@ def login_page():
             padding: 0.65em 0;
         }
 
-        /* User Button */
         .stButton>button:first-child {
-            background: linear-gradient(90deg,#00A896 0%, #02C39A 100%);
+            background: linear-gradient(90deg, #00A896 0%, #02C39A 100%);
             color: #fff !important;
         }
+
         .stButton>button:first-child:hover {
             box-shadow: 0 0 15px rgba(0,168,150,0.5);
             transform: translateY(-1px);
         }
 
-        /* Admin Button */
         .stButton>button:last-child {
-            background: linear-gradient(90deg,#007C91 0%, #006D77 100%);
+            background: linear-gradient(90deg, #007C91 0%, #006D77 100%);
             color: #E7FDFC !important;
         }
+
         .stButton>button:last-child:hover {
             box-shadow: 0 0 15px rgba(0,109,119,0.45);
             transform: translateY(-1px);
@@ -113,13 +108,12 @@ def login_page():
             text-align: center;
             font-size: 0.88rem;
             color: rgba(255,255,255,0.8);
-            margin-top: 8px;
+            margin-top: 10px;
         }
-
         </style>
     """, unsafe_allow_html=True)
 
-    # Actual centered layout
+    # Layout
     st.markdown("""
         <div class="login-wrapper">
             <div class="login-card">
@@ -128,15 +122,14 @@ def login_page():
                 <div class="login-sub">AI-Powered Sustainability</div>
                 <div class="login-desc">Sign in to the official platform</div>
             </div>
+            <div class="btn-container">
     """, unsafe_allow_html=True)
 
-    # Buttons - tightly grouped below card
-    col1, col2, col3 = st.columns([2.5, 3, 2.5])
-    with col2:
-        user_clicked = st.button("👤 User Login")
-        admin_clicked = st.button("🛠️ Admin Login")
+    user_clicked = st.button("👤 User Login")
+    admin_clicked = st.button("🛠️ Admin Login")
 
     st.markdown("""
+            </div>
             <div class="footer">
                 This is a simulated login. No password required.<br>
                 Powered by MetalliQ AI • Enabling Circular Futures
@@ -144,6 +137,7 @@ def login_page():
         </div>
     """, unsafe_allow_html=True)
 
+    # Logic
     if user_clicked:
         st.session_state.logged_in = True
         st.session_state.role = "User"
