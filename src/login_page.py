@@ -1,26 +1,9 @@
 import streamlit as st
 
 def login_page():
-    # --- Handle URL-based login using st.query_params ---
-    params = st.query_params
-    if "login" in params:
-        choice = params.get("login", "").lower()
-        if choice == "user":
-            st.session_state.logged_in = True
-            st.session_state.role = "Investigator"
-            st.session_state.name = "John Doe"
-            st.session_state['page'] = 'Dashboard'
-            st.query_params.clear()
-            st.rerun()
-        elif choice == "admin":
-            st.session_state.logged_in = True
-            st.session_state.role = "Admin"
-            st.session_state.name = "Sarah Singh"
-            st.session_state['page'] = 'Dashboard'
-            st.query_params.clear()
-            st.rerun()
+    st.query_params.clear()
 
-    # --- Page style ---
+    # --- Background and CSS ---
     st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Poppins:wght@400;600&display=swap');
@@ -30,49 +13,49 @@ def login_page():
         font-family: 'Poppins', sans-serif;
     }
 
-    .login-wrapper {
-        height: 90vh;
+    .login-container {
         display: flex;
         justify-content: center;
         align-items: center;
+        height: 90vh;
     }
 
     .login-card {
         width: 400px;
-        background: rgba(255, 255, 255, 0.6);
+        background: rgba(255, 255, 255, 0.25);
         border-radius: 18px;
-        box-shadow: 0 10px 28px rgba(0, 109, 119, 0.25);
         padding: 45px 35px;
         text-align: center;
-        border: 1px solid rgba(0, 109, 119, 0.2);
-        backdrop-filter: blur(8px);
+        box-shadow: 0 8px 30px rgba(0, 109, 119, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        backdrop-filter: blur(10px);
+        color: #00494D;
     }
 
     .login-icon {
         font-size: 3rem;
-        color: #006D77;
-        margin-bottom: 12px;
+        color: #00A896;
+        margin-bottom: 15px;
     }
 
     .login-title {
         font-family: 'Orbitron', sans-serif;
         font-size: 1.8rem;
-        color: #00494D;
         margin-bottom: 6px;
-        text-shadow: 0 0 10px rgba(100, 255, 230, 0.45);
+        text-shadow: 0 0 8px rgba(0, 255, 255, 0.4);
     }
 
     .login-subtitle {
         font-size: 1rem;
         font-weight: 600;
-        opacity: 0.9;
         margin-bottom: 12px;
+        color: rgba(0,0,0,0.7);
     }
 
     .login-desc {
         font-size: 0.95rem;
-        opacity: 0.9;
         margin-bottom: 18px;
+        opacity: 0.8;
     }
 
     .btn {
@@ -89,20 +72,20 @@ def login_page():
     }
 
     .btn-primary {
-        background: linear-gradient(90deg, #006D77 0%, #00A896 100%);
-        color: #fff !important;
-        box-shadow: 0 6px 18px rgba(0, 109, 119, 0.25);
+        background: linear-gradient(90deg, #00A896 0%, #02C39A 100%);
+        color: white !important;
         border: none;
+        box-shadow: 0 6px 18px rgba(0, 109, 119, 0.3);
     }
 
     .btn-primary:hover {
         transform: translateY(-3px);
-        box-shadow: 0 10px 26px rgba(0, 150, 160, 0.3);
+        box-shadow: 0 10px 26px rgba(0, 150, 160, 0.4);
     }
 
     .btn-secondary {
         background: transparent;
-        border: 2px solid #006D77;
+        border: 2px solid #00A896;
         color: #00494D !important;
     }
 
@@ -118,9 +101,9 @@ def login_page():
     </style>
     """, unsafe_allow_html=True)
 
-    # --- HTML Layout ---
+    # --- HTML content ---
     html_content = """
-    <div class="login-wrapper">
+    <div class="login-container">
         <div class="login-card">
             <div class="login-icon">🏛️</div>
             <div class="login-title">MetalliQ Portal</div>
@@ -136,4 +119,5 @@ def login_page():
     </div>
     """
 
-    st.components.v1.html(html_content, height=600)
+    # Render HTML content
+    st.components.v1.html(html_content, height=650, scrolling=False)
