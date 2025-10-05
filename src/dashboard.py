@@ -3,133 +3,106 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 
-# --- Neon Futuristic Theme with Pulse Glow ---
-
-
 
 def dashboard_page(workspace=None):
     st.set_page_config(layout="wide")
-    st.cache_data.clear()  # Clears cached CSS in Streamlit
+    st.cache_data.clear()
+
     st.markdown("""
         <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Poppins:wght@400;500;600&display=swap');
 
+        /* General App Theme */
         body, .stApp {
             background: linear-gradient(135deg, #00494D 0%, #006D77 40%, #83C5BE 100%) !important;
-            color: #E0FFFF;
+            color: #E6FFFF;
             font-family: 'Poppins', sans-serif;
             overflow-x: hidden;
         }
 
-        /* Text Styles */
+        /* Headings */
         h1, h2, h3, h4, h5, h6 {
             font-family: 'Orbitron', sans-serif;
-            color: #00EFFF;
-            text-shadow: 0 0 18px rgba(0, 239, 255, 0.8);
+            color: #7CF4E3 !important;
+            text-shadow: 0 0 15px rgba(124, 244, 227, 0.7);
         }
 
         .section-title {
-            color: #00EFFF !important;
+            color: #7CF4E3 !important;
             font-weight: 700;
             margin-top: 40px;
-            margin-bottom: 10px;
-            font-size: 1.4rem !important;
+            margin-bottom: 15px;
+            font-size: 1.35rem !important;
         }
 
-        /* Pulse Animation */
-        @keyframes pulseGlow {
-            0% { box-shadow: 0 0 10px rgba(0,239,255,0.4), 0 0 20px rgba(0,239,255,0.2); }
-            50% { box-shadow: 0 0 25px rgba(0,239,255,0.7), 0 0 40px rgba(0,239,255,0.5); }
-            100% { box-shadow: 0 0 10px rgba(0,239,255,0.4), 0 0 20px rgba(0,239,255,0.2); }
-        }
-
-        /* Metric Cards */
-        .metriccard {
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 18px;
-            border: 1px solid rgba(0, 239, 255, 0.25);
+        /* Cards and Glow */
+        .metriccard, .ext-card, .report-card {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            border-radius: 16px;
             padding: 18px 22px;
-            text-align: left;
-            margin-top: 8px;
-            animation: pulseGlow 4s infinite ease-in-out;
+            box-shadow: 0 8px 25px rgba(0, 109, 119, 0.3);
+            transition: 0.3s;
+        }
+        .metriccard:hover, .ext-card:hover, .report-card:hover {
+            box-shadow: 0 0 20px rgba(124, 244, 227, 0.8);
+            transform: translateY(-3px);
         }
 
         .metricheader {
-            font-size: 1.15rem;
-            color: #A7FAFF;
-            margin-bottom: 7px;
+            font-size: 1.1rem;
+            color: #D8FFFF;
+            margin-bottom: 6px;
         }
 
         .metricvalue {
-            font-size: 2rem;
+            font-size: 1.9rem;
             font-weight: 800;
-            color: #00EFFF;
+            color: #7CF4E3;
         }
 
-        /* Extended Circularity Cards */
         .ext-card {
-            background: rgba(255, 255, 255, 0.07);
-            border: 1px solid rgba(0, 239, 255, 0.2);
-            border-radius: 14px;
             text-align: center;
-            padding: 15px 8px;
             margin-bottom: 10px;
-            animation: pulseGlow 5s infinite ease-in-out;
-            color: #E0FFFF;
         }
 
-        .ext-card b {
-            color: #00EFFF;
-        }
-
-        /* Table Styles */
+        /* Table */
         table {
-            border: 1.5px solid rgba(0, 239, 255, 0.3) !important;
-            border-radius: 12px;
+            border: 1.5px solid rgba(124, 244, 227, 0.35) !important;
+            border-radius: 10px;
             background: rgba(255,255,255,0.05);
         }
         thead tr {
-            background: rgba(0,239,255,0.15) !important;
-            color: #00EFFF !important;
+            background: rgba(124, 244, 227, 0.15) !important;
+            color: #7CF4E3 !important;
             font-weight: 600;
         }
         tbody tr {
-            color: #E0FFFF !important;
+            color: #E6FFFF !important;
         }
 
-        /* Project Leaderboard */
+        /* Project list */
         .leaderboard-badge {
-            background: rgba(0, 239, 255, 0.2);
-            border: 1px solid rgba(0,239,255,0.4);
-            border-radius: 14px;
-            color: #00EFFF;
+            background: rgba(124, 244, 227, 0.25);
+            border-radius: 12px;
+            color: #7CF4E3;
             font-weight: 600;
-            padding: 4px 14px;
-        }
-
-        /* Latest Report Cards */
-        .report-card {
-            background: rgba(255, 255, 255, 0.07);
-            border: 1px solid rgba(0,239,255,0.3);
-            border-radius: 16px;
-            padding: 18px;
-            text-align: center;
-            animation: pulseGlow 6s infinite ease-in-out;
-            color: #E0FFFF;
+            padding: 3px 12px;
         }
 
         /* Chart Container */
         .stPlotlyChart {
             margin-top: 10px;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
         }
         </style>
-        """, unsafe_allow_html=True)
+    """, unsafe_allow_html=True)
+
     # --- Header ---
     col1, col2 = st.columns([8, 2])
     with col1:
-        st.markdown("<h1 style='color: #00EFFF;text-shadow: 0 0 18px rgba(0, 239, 255, 0.8);margin-bottom:2px;'>John's Workspace Dashboard</h1>", unsafe_allow_html=True)
-        st.markdown("<p style='color:#00EFFF;font-size:0.9rem;'>An overview of your workspace's sustainability metrics.</p>", unsafe_allow_html=True)
+        st.markdown("<h1>MetalliQ Sustainability Dashboard</h1>", unsafe_allow_html=True)
+        st.markdown("<p style='color:#E6FFFF;font-size:0.95rem;'>An overview of your workspace’s sustainability intelligence.</p>", unsafe_allow_html=True)
     with col2:
         if st.button("➕ New Study", use_container_width=True):
             st.session_state["page"] = "Create Study"
@@ -176,17 +149,18 @@ def dashboard_page(workspace=None):
     line_fig = go.Figure()
     trendx = [str(d.date()) for d in results["recycling_rate_trend"].index]
     line_fig.add_trace(go.Scatter(x=trendx, y=results["recycling_rate_trend"].values,
-                                  fill='tozeroy', line=dict(color="#00EFFF", width=3)))
+                                  fill='tozeroy', line=dict(color="#7CF4E3", width=3)))
     line_fig.update_layout(xaxis_title=None, yaxis_title="Recycling Rate (%)",
                            paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-                           font=dict(color="#FFFFFF"), height=450)
+                           font=dict(color="#FFFFFF"), height=400,
+                           xaxis=dict(tickfont=dict(color='white')), yaxis=dict(tickfont=dict(color='white')))
     st.plotly_chart(line_fig, use_container_width=True)
 
     # --- Pie Chart ---
     st.markdown("<h3 class='section-title'>Recycled vs Primary Material Share</h3>", unsafe_allow_html=True)
     pie_fig = go.Figure(go.Pie(labels=["Recycled Route", "Primary Route"],
                                values=results["pie_share"], hole=0.6,
-                               marker=dict(colors=["#00EFFF", "#00494D"]),
+                               marker=dict(colors=["#7CF4E3", "#00494D"]),
                                textinfo='percent+label'))
     pie_fig.update_layout(paper_bgcolor="rgba(0,0,0,0)",
                           font=dict(color="#FFFFFF"), height=350)
@@ -196,7 +170,7 @@ def dashboard_page(workspace=None):
     st.markdown("<h3 class='section-title'>Extended Circularity Metrics</h3>", unsafe_allow_html=True)
     cardcols = st.columns(4)
     for i, (label, value) in enumerate(results["extended_circularity"]):
-        cardcols[i % 4].markdown(f"<div class='ext-card'><b>{label}</b><br><span style='font-size:1.3rem;font-weight:700;'>{value}</span></div>", unsafe_allow_html=True)
+        cardcols[i % 4].markdown(f"<div class='ext-card'><b>{label}</b><br><span style='font-size:1.25rem;font-weight:700;color:#7CF4E3;'>{value}</span></div>", unsafe_allow_html=True)
 
     # --- Table ---
     st.markdown("<h3 class='section-title'>Sustainability Hotspots – Top 3 Materials</h3>", unsafe_allow_html=True)
@@ -206,13 +180,13 @@ def dashboard_page(workspace=None):
     # --- Projects ---
     st.markdown("<h3 class='section-title'>Projects with Highest Reuse Potential</h3>", unsafe_allow_html=True)
     for proj, mat, pct in results["reuse_projects"]:
-        st.markdown(f"<div style='background:rgba(255,255,255,0.05);border:1px solid rgba(0,239,255,0.2);border-radius:14px;padding:10px 16px;margin-bottom:6px;display:flex;justify-content:space-between;'><span><b>{proj}</b> ({mat})</span><span class='leaderboard-badge'>{pct}%</span></div>", unsafe_allow_html=True)
+        st.markdown(f"<div style='background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.25);border-radius:14px;padding:10px 16px;margin-bottom:6px;display:flex;justify-content:space-between;'><span><b>{proj}</b> ({mat})</span><span class='leaderboard-badge'>{pct}%</span></div>", unsafe_allow_html=True)
 
     # --- Impact Bar Chart ---
     st.markdown("<h3 class='section-title'>Key Impact Profiles</h3>", unsafe_allow_html=True)
     df_impact = pd.DataFrame(results["key_impact_profiles"], columns=["Category", "Value"])
     bar = px.bar(df_impact, x="Category", y="Value", color="Category",
-                 color_discrete_sequence=["#00EFFF", "#00B8CC", "#009EBB", "#0080A4", "#00494D"])
+                 color_discrete_sequence=["#7CF4E3", "#02C39A", "#00A896", "#009EBB", "#00494D"])
     bar.update_layout(showlegend=False, paper_bgcolor="rgba(0,0,0,0)",
                       plot_bgcolor="rgba(0,0,0,0)", font=dict(color="#FFFFFF"))
     st.plotly_chart(bar, use_container_width=True)
@@ -223,6 +197,6 @@ def dashboard_page(workspace=None):
     cols = st.columns(4)
     for i, (k, v) in enumerate(s.items()):
         cols[i % 4].markdown(
-            f"<div class='report-card'><b>{k}</b><br><span style='font-size:1.35rem;font-weight:700;color:#00EFFF;'>{v['mean']} <small>{v['unit']}</small></span></div>",
+            f"<div class='report-card'><b>{k}</b><br><span style='font-size:1.35rem;font-weight:700;color:#7CF4E3;'>{v['mean']} <small>{v['unit']}</small></span></div>",
             unsafe_allow_html=True
         )
