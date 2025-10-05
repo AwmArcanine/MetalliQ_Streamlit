@@ -176,7 +176,7 @@ def dashboard_page(workspace=None):
                                   fill='tozeroy', line=dict(color="#00EFFF", width=3)))
     line_fig.update_layout(xaxis_title=None, yaxis_title="Recycling Rate (%)",
                            paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
-                           font=dict(color="#C8FFFF"), height=230)
+                           font=dict(color="#C8FFFF"), height=350)
     st.plotly_chart(line_fig, use_container_width=True)
 
     # --- Pie Chart ---
@@ -186,7 +186,7 @@ def dashboard_page(workspace=None):
                                marker=dict(colors=["#00EFFF", "#00494D"]),
                                textinfo='percent+label'))
     pie_fig.update_layout(paper_bgcolor="rgba(0,0,0,0)",
-                          font=dict(color="#E0FFFF"), height=250)
+                          font=dict(color="#E0FFFF"), height=350)
     st.plotly_chart(pie_fig, use_container_width=True)
 
     # --- Extended Circularity ---
