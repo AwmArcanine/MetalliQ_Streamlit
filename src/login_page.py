@@ -1,130 +1,166 @@
+# login_page.py
 import streamlit as st
+from urllib.parse import urlencode
 
 def login_page():
-    # ====== PAGE STYLE ======
-    st.markdown("""
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Poppins:wght@400;600&display=swap');
+    """
+    Login page implemented as a self-contained HTML card.
+    Buttons are HTML links (href="?login=user" / "?login=admin").
+    We detect the query param and set session_state accordingly.
+    This avoids Streamlit DOM-wrapping issues and keeps the card visually intact.
+    """
 
-    .stApp {
-        background: linear-gradient(135deg, #00494D 0%, #006D77 45%, #83C5BE 100%) !important;
-        font-family: 'Poppins', sans-serif;
-    }
+    # 1) If the URL contains ?login=user or ?login=admin -> handle and redirect
+    params = st.experimental_get_query_params()
+    if "login" in params:
+        choice = params.get("login", [""])[0].lower()
+        if choice == "user":
+            st.session_state.logged_in = True
+            st.session_state.role = "Investigator"
+            st.session_state.name = "John Doe"
+            st.session_state["page"] = "Dashboard"
+            # clear query params and rerun to avoid repeated triggers
+            st.experimental_set_query_params()
+            st.experimental_rerun()
+        elif choice == "admin":
+            st.session_state.logged_in = True
+            st.session_state.role = "Admin"
+            st.session_state.name = "Sarah Singh"
+            st.session_state["page"] = "Dashboard"
+            st.experimental_set_query_params()
+            st.experimental_rerun()
 
-    .login-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 90vh;
-        text-align: center;
-    }
+    # 2) Styles + HTML card (matches your theme, centered and stable)
+    st.markdown(
+        """
+        <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Poppins:wght@400;600&display=swap');
 
-    .login-card {
-        background: rgba(255, 255, 255, 0.55);
-        border-radius: 16px;
-        padding: 50px 45px 40px 45px;
-        box-shadow: 0 8px 28px rgba(0, 109, 119, 0.25);
-        backdrop-filter: blur(8px);
-        max-width: 400px;
-        width: 90%;
-        border: 1px solid rgba(0, 109, 119, 0.25);
-    }
+        /* App background kept consistent with theme */
+        .stApp {
+            background: linear-gradient(135deg, #00494D 0%, #006D77 45%, #83C5BE 100%) !important;
+            font-family: 'Poppins', sans-serif;
+            color: #073B4C;
+        }
 
-    .login-icon {
-        font-size: 3rem;
-        color: #006D77;
-        margin-bottom: 8px;
-    }
+        /* Centering wrapper: uses viewport height to center card */
+        .login-wrap {
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            height:calc(100vh - 70px); /* leave small room for top bar */
+            width:100%;
+            padding: 10px;
+            box-sizing: border-box;
+        }
 
-    .login-title {
-        font-family: 'Orbitron', sans-serif;
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: #00494D;
-        margin-bottom: 6px;
-    }
+        /* Card */
+        .login-card {
+            width: 420px;
+            max-width: 94%;
+            background: rgba(255,255,255,0.60);
+            border-radius: 16px;
+            padding: 36px 30px;
+            box-shadow: 0 10px 30px rgba(0,109,119,0.24);
+            border: 1px solid rgba(0,109,119,0.14);
+            text-align: center;
+            backdrop-filter: blur(6px);
+        }
 
-    .login-subtitle {
-        font-size: 1rem;
-        color: #00494D;
-        font-weight: 600;
-        margin-bottom: 20px;
-    }
+        .login-icon {
+            font-size: 48px;
+            margin-bottom: 6px;
+            color: #006D77;
+        }
 
-    .login-desc {
-        font-size: 0.95rem;
-        color: #073B4C;
-        margin-bottom: 24px;
-    }
+        .login-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 22px;
+            color: #00494D;
+            margin-bottom: 6px;
+            font-weight: 700;
+        }
 
-    .stButton > button {
-        width: 100%;
-        border-radius: 10px;
-        border: none;
-        font-weight: 600;
-        font-size: 1.05rem;
-        padding: 0.8em 0;
-        margin-top: 8px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
+        .login-sub {
+            font-size: 14px;
+            color: #00494D;
+            margin-bottom: 14px;
+            font-weight: 600;
+            opacity: 0.92;
+        }
 
-    /* User button */
-    .stButton > button[kind="primary"] {
-        background: linear-gradient(90deg, #006D77 0%, #00A896 100%);
-        color: #ffffff !important;
-        box-shadow: 0 3px 10px rgba(0, 109, 119, 0.25);
-    }
-    .stButton > button[kind="primary"]:hover {
-        background: linear-gradient(90deg, #007F8E 0%, #00BFA5 100%);
-        box-shadow: 0 5px 14px rgba(0, 150, 160, 0.25);
-    }
+        .login-desc {
+            font-size: 14px;
+            color: #073B4C;
+            margin-bottom: 18px;
+            opacity: 0.9;
+        }
 
-    /* Admin button */
-    .stButton > button[kind="secondary"] {
-        background: transparent;
-        color: #00494D !important;
-        border: 2px solid #006D77 !important;
-        box-shadow: none;
-    }
-    .stButton > button[kind="secondary"]:hover {
-        background: rgba(0, 109, 119, 0.1);
-    }
+        /* Buttons are styled anchor tags so they visually behave like buttons */
+        .btn {
+            display: inline-block;
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 15px;
+            margin: 8px 0;
+            box-sizing: border-box;
+            transition: all 0.18s ease;
+        }
 
-    .login-footer {
-        font-size: 0.9rem;
-        color: #00494D;
-        opacity: 0.8;
-        margin-top: 1.2rem;
-    }
-    </style>
-    """, unsafe_allow_html=True)
+        .btn-primary {
+            background: linear-gradient(90deg, #006D77 0%, #00A896 100%);
+            color: #fff;
+            border: none;
+            box-shadow: 0 6px 18px rgba(0,109,119,0.18);
+        }
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 26px rgba(0,150,160,0.20);
+        }
 
-    # ====== LAYOUT ======
-    st.markdown("<div class='login-container'><div class='login-card'>", unsafe_allow_html=True)
-    st.markdown("<div class='login-icon'>🏛️</div>", unsafe_allow_html=True)
-    st.markdown("<div class='login-title'>MetalliQ Portal</div>", unsafe_allow_html=True)
-    st.markdown("<div class='login-subtitle'>AI-Powered Sustainability</div>", unsafe_allow_html=True)
-    st.markdown("<div class='login-desc'>Sign in to the official platform</div>", unsafe_allow_html=True)
+        .btn-secondary {
+            background: rgba(255,255,255,0.06);
+            color: #00494D;
+            border: 2px solid rgba(0,109,119,0.16);
+        }
+        .btn-secondary:hover {
+            background: rgba(0,109,119,0.06);
+        }
 
-    # ====== BUTTONS ======
-    user_login = st.button("👤 Sign In as User (John Doe)", key="user-btn", type="primary")
-    admin_login = st.button("🛠️ Sign In as Admin (Sarah Singh)", key="admin-btn", type="secondary")
+        .login-footer {
+            margin-top: 14px;
+            font-size: 12px;
+            color: #00494D;
+            opacity: 0.85;
+        }
 
-    # ====== FOOTER ======
-    st.markdown("<div class='login-footer'>This is a simulated login. No password required.<br>Powered by MetalliQ AI • Enabling Circular Futures</div>", unsafe_allow_html=True)
-    st.markdown("</div></div>", unsafe_allow_html=True)
+        /* Small screens */
+        @media (max-width: 460px){
+            .login-card { padding: 26px 18px; }
+            .login-title { font-size: 20px; }
+        }
+        </style>
 
-    # ====== LOGIC ======
-    if user_login:
-        st.session_state.logged_in = True
-        st.session_state.role = "Investigator"
-        st.session_state.name = "John Doe"
-        st.session_state['page'] = 'Dashboard'
-        st.rerun()
-    if admin_login:
-        st.session_state.logged_in = True
-        st.session_state.role = "Admin"
-        st.session_state.name = "Sarah Singh"
-        st.session_state['page'] = 'Dashboard'
-        st.rerun()
+        <div class="login-wrap">
+            <div class="login-card">
+                <div class="login-icon">🏛️</div>
+                <div class="login-title">MetalliQ Portal</div>
+                <div class="login-sub">AI-Powered Sustainability</div>
+                <div class="login-desc">Sign in to the official platform</div>
+
+                <!-- Buttons: using query params so Streamlit can react on reload -->
+                <a href="?login=user" class="btn btn-primary">👤 Sign In as User (John Doe)</a>
+                <a href="?login=admin"  class="btn btn-secondary">🛠️ Sign In as Admin (Sarah Singh)</a>
+
+                <div class="login-footer">
+                    This is a simulated login. No password needed.<br>
+                    Powered by MetalliQ AI • Enabling Circular Futures
+                </div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
