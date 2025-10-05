@@ -35,7 +35,7 @@ def login_page():
         box-shadow: 0 8px 25px rgba(0, 109, 119, 0.3);
         border: 1px solid rgba(255, 255, 255, 0.2);
         backdrop-filter: blur(10px);
-        margin-bottom: 2px; /* small gap */
+        margin-bottom: -8px; /* small gap */
     }
 
     .login-logo {
