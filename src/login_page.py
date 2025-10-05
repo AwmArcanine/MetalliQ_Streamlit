@@ -1,33 +1,27 @@
-# login_page.py
 import streamlit as st
 
 def login_page():
-    # Optional: ensure a centered layout for this page
     st.set_page_config(layout="centered")
 
-    # --- Styles (keeps the teal/aqua theme and glass card look) ---
+    # --- Styles ---
     st.markdown(
         """
         <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Poppins:wght@400;600&display=swap');
 
-        /* Page background & typography */
         .stApp {
             background: linear-gradient(135deg, #00494D 0%, #006D77 45%, #83C5BE 100%) !important;
             font-family: 'Poppins', sans-serif;
         }
 
-        /* Centering outer container - we render the card then native buttons below */
         .login-wrapper {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            margin-top: 40px;
-            margin-bottom: 40px;
+            height: 90vh;
         }
 
-        /* Glass card */
         .centered-login-card {
             width: 420px;
             max-width: 92%;
@@ -42,71 +36,83 @@ def login_page():
             margin-bottom: 18px;
         }
 
-        .login-logo { font-size: 46px; margin-bottom: 8px; color:#00A896; }
+        .login-logo {
+            font-size: 46px;
+            margin-bottom: 8px;
+            color: #00A896;
+        }
+
         .login-title {
             font-family: 'Orbitron', sans-serif;
-            font-size: 22px;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #6FFFE9;  /* neon cyan */
+            text-shadow: 0 0 10px rgba(111, 255, 233, 0.8), 0 0 20px rgba(111, 255, 233, 0.4);
             margin-bottom: 6px;
-            color: #003f45;
-            text-shadow: 0 0 6px rgba(127,255,212,0.35);
         }
-        .login-sub { color: rgba(0, 63, 69, 0.95); font-weight:600; margin-bottom:6px; }
-        .login-desc { color: rgba(0,0,0,0.55); margin-bottom: 2px; }
 
-        /* Buttons styling (applies to native Streamlit buttons) */
-        div.stButton > button {
+        .login-sub {
+            color: rgba(0, 63, 69, 0.95);
+            font-weight:600;
+            margin-bottom:6px;
+        }
+
+        .login-desc {
+            color: rgba(0,0,0,0.55);
+            margin-bottom: 2px;
+        }
+
+        /* Button container and styling */
+        .stButton>button {
+            width: 420px !important;
+            max-width: 92% !important;
             border-radius: 10px;
-            padding: 10px 22px;
+            padding: 12px 0px;
             font-weight: 700;
             font-size: 15px;
             box-shadow: 0 6px 18px rgba(0,109,119,0.18);
             transition: transform .12s ease, box-shadow .12s ease;
         }
-        /* Primary look */
-        div.stButton > button.primary {
+
+        .stButton>button:first-child {
             background: linear-gradient(90deg,#00A896 0%, #02C39A 100%);
             color: #fff !important;
             border: none;
         }
-        div.stButton > button.primary:hover { transform: translateY(-3px); box-shadow: 0 10px 26px rgba(0,150,160,0.22); }
 
-        /* Secondary look */
-        div.stButton > button.secondary {
+        .stButton>button:first-child:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 26px rgba(0,150,160,0.25);
+        }
+
+        .stButton>button:last-child {
             background: transparent;
-            border: 2px solid rgba(0,168,150,0.95);
+            border: 2px solid #00A896;
             color: #003f45 !important;
         }
-        div.stButton > button.secondary:hover { background: rgba(0,168,150,0.06); }
 
-        /* Buttons container to keep them horizontally centered and responsive */
-        .button-row {
-            display:flex;
-            gap:16px;
-            justify-content:center;
-            align-items:center;
-            flex-wrap:wrap;
-            margin-top: 10px;
-            margin-bottom: 6px;
+        .stButton>button:last-child:hover {
+            background: rgba(0,168,150,0.08);
         }
 
         .footer {
             font-size: 0.88rem;
             color: rgba(0,0,0,0.65);
-            margin-top: 12px;
+            margin-top: 14px;
             text-align:center;
         }
 
-        /* Mobile: stack buttons */
         @media (max-width:680px) {
-            .button-row { flex-direction: column; gap:10px; width: 90%; }
-            div.stButton > button { width:100% !important; }
+            .stButton>button {
+                width: 90% !important;
+            }
         }
         </style>
         """,
         unsafe_allow_html=True,
     )
 
-    # --- Card HTML (purely visual) ---
+    # --- HTML card ---
     st.markdown(
         """
         <div class="login-wrapper">
@@ -121,21 +127,17 @@ def login_page():
         unsafe_allow_html=True,
     )
 
-    # --- Native Streamlit buttons placed below the card and centered ---
-    # Use columns so buttons appear centered on wide screens and stacked nicely on narrow screens
-    c1, c2, c3 = st.columns([1, 0.6, 1])
-    with c2:
-        # The styling class names 'primary' and 'secondary' are applied by adding a wrapper <div>,
-        # but streamlit doesn't allow adding class to the button directly. To keep appearance consistent
-        # we rely on the global button styles above and add small inline wrappers to differentiate.
-        user_clicked = st.button("👤 User Login", key="user-btn")
-        st.write("")  # small spacing
-        admin_clicked = st.button("🛠️ Admin Login", key="admin-btn")
+    # --- Streamlit buttons ---
+    user_clicked = st.button("👤 User Login")
+    admin_clicked = st.button("🛠️ Admin Login")
 
-    # Footer text centered under buttons
-    st.markdown("<div class='footer'>This is a simulated login. No password required.<br>Powered by MetalliQ AI • Enabling Circular Futures</div>", unsafe_allow_html=True)
+    # --- Footer ---
+    st.markdown(
+        "<div class='footer'>This is a simulated login. No password required.<br>Powered by MetalliQ AI • Enabling Circular Futures</div>",
+        unsafe_allow_html=True,
+    )
 
-    # --- Button logic (same behavior as before) ---
+    # --- Button Logic ---
     if user_clicked:
         st.session_state.logged_in = True
         st.session_state.role = "Investigator"
