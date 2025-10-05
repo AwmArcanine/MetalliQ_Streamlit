@@ -3,7 +3,7 @@ import streamlit as st
 def login_page():
     st.set_page_config(layout="wide")
 
-    # --- CSS: Futuristic theme + perfect layout alignment ---
+    # --- Styling ---
     st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Poppins:wght@400;500;600&display=swap');
@@ -17,7 +17,7 @@ def login_page():
         overflow: hidden !important;
     }
 
-    /* Center entire layout */
+    /* Center all elements */
     .main-container {
         display: flex;
         flex-direction: column;
@@ -25,9 +25,10 @@ def login_page():
         align-items: center;
         height: 100vh;
         text-align: center;
+        gap: 8px; /* spacing between card and buttons */
     }
 
-    /* Card */
+    /* Card Styling */
     .login-card {
         width: 90%;
         max-width: 400px;
@@ -41,7 +42,7 @@ def login_page():
 
     .login-logo {
         font-size: 44px;
-        margin-bottom: 10px;
+        margin-bottom: 8px;
         color: #D4BEE4;
     }
 
@@ -65,19 +66,19 @@ def login_page():
         margin-bottom: 0;
     }
 
-    /* Buttons container */
+    /* Button Container (right below card) */
     .button-container {
         display: flex;
         flex-direction: column;
         align-items: center;
         gap: 8px;
-        margin-top: 8px;
+        width: 100%;
+        max-width: 400px;
     }
 
     /* Buttons */
     .stButton>button {
         width: 100% !important;
-        max-width: 400px;
         border: none;
         border-radius: 10px;
         font-weight: 600;
@@ -87,25 +88,23 @@ def login_page():
         cursor: pointer;
     }
 
-    /* User Login Button */
+    /* User Login */
     .stButton>button:first-child {
         background: linear-gradient(90deg, #00A896 0%, #02C39A 100%);
         color: white !important;
         box-shadow: 0 0 10px rgba(0,168,150,0.6);
     }
-
     .stButton>button:first-child:hover {
         transform: scale(1.03);
         box-shadow: 0 0 20px rgba(0,168,150,0.9);
     }
 
-    /* Admin Login Button */
+    /* Admin Login */
     .stButton>button:last-child {
         background: linear-gradient(90deg, #007C91 0%, #006D77 100%);
         color: #E7FDFC !important;
         box-shadow: 0 0 10px rgba(0,109,119,0.5);
     }
-
     .stButton>button:last-child:hover {
         transform: scale(1.03);
         box-shadow: 0 0 20px rgba(0,109,119,0.8);
@@ -113,14 +112,14 @@ def login_page():
 
     /* Footer */
     .footer {
-        margin-top: 12px;
+        margin-top: 10px;
         font-size: 0.9rem;
         color: rgba(255,255,255,0.9);
         text-align: center;
     }
 
     @media (max-width: 600px) {
-        .login-card, .stButton>button {
+        .login-card, .button-container {
             max-width: 320px;
         }
         .login-title {
@@ -139,10 +138,11 @@ def login_page():
             <div class="login-sub">AI-Powered Sustainability</div>
             <div class="login-desc">Sign in to the official platform</div>
         </div>
+
         <div class="button-container">
     """, unsafe_allow_html=True)
 
-    # Buttons (functional + responsive)
+    # Functional buttons (kept responsive and glowing)
     user = st.button("👤 User Login")
     admin = st.button("🛠️ Admin Login")
 
@@ -155,7 +155,7 @@ def login_page():
     </div>
     """, unsafe_allow_html=True)
 
-    # Logic
+    # --- Logic (unchanged) ---
     if user:
         st.session_state.page = "User Dashboard"
         st.rerun()
