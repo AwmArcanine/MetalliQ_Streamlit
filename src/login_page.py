@@ -11,29 +11,32 @@ def login_page():
         .stApp {
             background: linear-gradient(135deg, #00494D 0%, #006D77 45%, #83C5BE 100%) !important;
             font-family: 'Poppins', sans-serif;
-            overflow: hidden; /* Prevent vertical scroll */
+            overflow: hidden; /* No scroll */
         }
 
+        /* Wrapper centers everything horizontally */
         .login-wrapper {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
             height: 100vh;
-            padding-top: 80px; /* Slight top spacing only */
+            padding-top: 7vh; /* Top offset only */
         }
 
+        /* Card styling */
         .centered-login-card {
             width: 420px;
-            max-width: 92%;
+            max-width: 90%;
             background: rgba(255,255,255,0.22);
-            border-radius: 16px 16px 0 0;
-            padding: 30px 30px 10px 30px; /* reduced bottom padding */
-            box-shadow: 0 10px 30px rgba(0,109,119,0.22);
+            border-radius: 16px;
+            padding: 28px 30px 24px 30px;
+            box-shadow: 0 10px 30px rgba(0,109,119,0.25);
             border: 1px solid rgba(255,255,255,0.18);
             backdrop-filter: blur(8px);
             text-align: center;
             color: #06343a;
+            margin-bottom: 15px; /* Small gap before buttons */
         }
 
         .login-logo {
@@ -59,57 +62,57 @@ def login_page():
 
         .login-desc {
             color: rgba(0,0,0,0.6);
-            margin-bottom: 0;
+            margin: 0;
         }
 
-        /* Buttons: no gap, same width, perfectly aligned */
+        /* Buttons container directly attached to card */
         .button-container {
             width: 420px;
-            max-width: 92%;
-            margin-top: 0;
+            max-width: 90%;
+            margin-top: 0; /* No gap */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px; /* Just a small space between buttons */
         }
 
-        .stButton>button {
-            display: block;
+        .stButton > button {
             width: 100% !important;
             border: none;
-            border-radius: 0;
+            border-radius: 12px;
             font-weight: 700;
             font-size: 15px;
-            transition: all .2s ease;
-            margin: 0;
-            box-shadow: none;
+            transition: all 0.2s ease;
+            padding: 0.6em 0;
         }
 
-        /* Top button (User) */
+        /* User button */
         .button-container .stButton:nth-child(1) button {
             background: linear-gradient(90deg,#00A896 0%, #02C39A 100%);
             color: #fff !important;
-            border-radius: 0 0 0 0;
         }
 
         .button-container .stButton:nth-child(1) button:hover {
-            box-shadow: 0 0 22px rgba(0,168,150,0.4);
+            box-shadow: 0 0 20px rgba(0,168,150,0.45);
             transform: translateY(-1px);
         }
 
-        /* Bottom button (Admin) */
+        /* Admin button */
         .button-container .stButton:nth-child(2) button {
             background: linear-gradient(90deg,#007C91 0%, #006D77 100%);
-            color: #e7fdfc !important;
-            border-radius: 0 0 16px 16px !important;
+            color: #E7FDFC !important;
         }
 
         .button-container .stButton:nth-child(2) button:hover {
-            box-shadow: 0 0 22px rgba(0,109,119,0.45);
+            box-shadow: 0 0 20px rgba(0,109,119,0.45);
             transform: translateY(-1px);
         }
 
         .footer {
             font-size: 0.88rem;
-            color: rgba(255,255,255,0.75);
-            margin-top: 25px;
-            text-align:center;
+            color: rgba(255,255,255,0.8);
+            margin-top: 18px;
+            text-align: center;
         }
 
         @media (max-width:680px) {
@@ -117,11 +120,11 @@ def login_page():
         }
         </style>
         """,
-        unsafe_allow_html=True,
+        unsafe_allow_html=True
     )
 
-    st.markdown(
-        """
+    # Card
+    st.markdown("""
         <div class="login-wrapper">
             <div class="centered-login-card">
                 <div class="login-logo">🏛️</div>
@@ -130,22 +133,22 @@ def login_page():
                 <div class="login-desc">Sign in to the official platform</div>
             </div>
         </div>
-        """,
-        unsafe_allow_html=True,
-    )
+    """, unsafe_allow_html=True)
 
-    # ✅ Buttons directly below card (perfectly attached)
+    # Buttons – directly under the card, aligned center
     st.markdown("<div class='button-container'>", unsafe_allow_html=True)
-    c1, c2, c3 = st.columns([2.5, 3, 2.5])
-    with c2:
+    col1, col2, col3 = st.columns([2.5, 3, 2.5])
+    with col2:
         user_clicked = st.button("👤 User Login")
         admin_clicked = st.button("🛠️ Admin Login")
     st.markdown("</div>", unsafe_allow_html=True)
 
-    st.markdown(
-        "<div class='footer'>This is a simulated login. No password required.<br>Powered by MetalliQ AI • Enabling Circular Futures</div>",
-        unsafe_allow_html=True,
-    )
+    st.markdown("""
+        <div class='footer'>
+            This is a simulated login. No password required.<br>
+            Powered by MetalliQ AI • Enabling Circular Futures
+        </div>
+    """, unsafe_allow_html=True)
 
     if user_clicked:
         st.session_state.logged_in = True
