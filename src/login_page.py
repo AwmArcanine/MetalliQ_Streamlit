@@ -22,7 +22,7 @@ def login_page():
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        height: 100vh;
+        height: 70vh;
         text-align: center;
     }
 
