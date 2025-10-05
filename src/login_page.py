@@ -1,130 +1,151 @@
+# login_page.py
 import streamlit as st
 
 def login_page():
-    # ====== PAGE STYLE ======
-    st.markdown("""
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Poppins:wght@400;600&display=swap');
+    # Optional: ensure a centered layout for this page
+    st.set_page_config(layout="centered")
 
-    .stApp {
-        background: linear-gradient(135deg, #00494D 0%, #006D77 45%, #83C5BE 100%) !important;
-        font-family: 'Poppins', sans-serif;
-    }
+    # --- Styles (keeps the teal/aqua theme and glass card look) ---
+    st.markdown(
+        """
+        <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Poppins:wght@400;600&display=swap');
 
-    .login-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 90vh;
-        text-align: center;
-    }
+        /* Page background & typography */
+        .stApp {
+            background: linear-gradient(135deg, #00494D 0%, #006D77 45%, #83C5BE 100%) !important;
+            font-family: 'Poppins', sans-serif;
+        }
 
-    .login-card {
-        background: rgba(255, 255, 255, 0.55);
-        border-radius: 16px;
-        padding: 50px 45px 40px 45px;
-        box-shadow: 0 8px 28px rgba(0, 109, 119, 0.25);
-        backdrop-filter: blur(8px);
-        max-width: 400px;
-        width: 90%;
-        border: 1px solid rgba(0, 109, 119, 0.25);
-    }
+        /* Centering outer container - we render the card then native buttons below */
+        .login-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-top: 40px;
+            margin-bottom: 40px;
+        }
 
-    .login-icon {
-        font-size: 3rem;
-        color: #006D77;
-        margin-bottom: 8px;
-    }
+        /* Glass card */
+        .centered-login-card {
+            width: 420px;
+            max-width: 92%;
+            background: rgba(255,255,255,0.22);
+            border-radius: 16px;
+            padding: 36px 30px;
+            box-shadow: 0 10px 30px rgba(0,109,119,0.22);
+            border: 1px solid rgba(255,255,255,0.18);
+            backdrop-filter: blur(8px);
+            text-align: center;
+            color: #06343a;
+            margin-bottom: 18px;
+        }
 
-    .login-title {
-        font-family: 'Orbitron', sans-serif;
-        font-size: 1.8rem;
-        font-weight: 700;
-        color: #00494D;
-        margin-bottom: 6px;
-    }
+        .login-logo { font-size: 46px; margin-bottom: 8px; color:#00A896; }
+        .login-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 22px;
+            margin-bottom: 6px;
+            color: #003f45;
+            text-shadow: 0 0 6px rgba(127,255,212,0.35);
+        }
+        .login-sub { color: rgba(0, 63, 69, 0.95); font-weight:600; margin-bottom:6px; }
+        .login-desc { color: rgba(0,0,0,0.55); margin-bottom: 2px; }
 
-    .login-subtitle {
-        font-size: 1rem;
-        color: #00494D;
-        font-weight: 600;
-        margin-bottom: 20px;
-    }
+        /* Buttons styling (applies to native Streamlit buttons) */
+        div.stButton > button {
+            border-radius: 10px;
+            padding: 10px 22px;
+            font-weight: 700;
+            font-size: 15px;
+            box-shadow: 0 6px 18px rgba(0,109,119,0.18);
+            transition: transform .12s ease, box-shadow .12s ease;
+        }
+        /* Primary look */
+        div.stButton > button.primary {
+            background: linear-gradient(90deg,#00A896 0%, #02C39A 100%);
+            color: #fff !important;
+            border: none;
+        }
+        div.stButton > button.primary:hover { transform: translateY(-3px); box-shadow: 0 10px 26px rgba(0,150,160,0.22); }
 
-    .login-desc {
-        font-size: 0.95rem;
-        color: #073B4C;
-        margin-bottom: 24px;
-    }
+        /* Secondary look */
+        div.stButton > button.secondary {
+            background: transparent;
+            border: 2px solid rgba(0,168,150,0.95);
+            color: #003f45 !important;
+        }
+        div.stButton > button.secondary:hover { background: rgba(0,168,150,0.06); }
 
-    .stButton > button {
-        width: 100%;
-        border-radius: 10px;
-        border: none;
-        font-weight: 600;
-        font-size: 1.05rem;
-        padding: 0.8em 0;
-        margin-top: 8px;
-        cursor: pointer;
-        transition: all 0.2s ease;
-    }
+        /* Buttons container to keep them horizontally centered and responsive */
+        .button-row {
+            display:flex;
+            gap:16px;
+            justify-content:center;
+            align-items:center;
+            flex-wrap:wrap;
+            margin-top: 10px;
+            margin-bottom: 6px;
+        }
 
-    /* User button */
-    .stButton > button[kind="primary"] {
-        background: linear-gradient(90deg, #006D77 0%, #00A896 100%);
-        color: #ffffff !important;
-        box-shadow: 0 3px 10px rgba(0, 109, 119, 0.25);
-    }
-    .stButton > button[kind="primary"]:hover {
-        background: linear-gradient(90deg, #007F8E 0%, #00BFA5 100%);
-        box-shadow: 0 5px 14px rgba(0, 150, 160, 0.25);
-    }
+        .footer {
+            font-size: 0.88rem;
+            color: rgba(0,0,0,0.65);
+            margin-top: 12px;
+            text-align:center;
+        }
 
-    /* Admin button */
-    .stButton > button[kind="secondary"] {
-        background: transparent;
-        color: #00494D !important;
-        border: 2px solid #006D77 !important;
-        box-shadow: none;
-    }
-    .stButton > button[kind="secondary"]:hover {
-        background: rgba(0, 109, 119, 0.1);
-    }
+        /* Mobile: stack buttons */
+        @media (max-width:680px) {
+            .button-row { flex-direction: column; gap:10px; width: 90%; }
+            div.stButton > button { width:100% !important; }
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
 
-    .login-footer {
-        font-size: 0.9rem;
-        color: #00494D;
-        opacity: 0.8;
-        margin-top: 1.2rem;
-    }
-    </style>
-    """, unsafe_allow_html=True)
+    # --- Card HTML (purely visual) ---
+    st.markdown(
+        """
+        <div class="login-wrapper">
+            <div class="centered-login-card">
+                <div class="login-logo">🏛️</div>
+                <div class="login-title">MetalliQ Portal</div>
+                <div class="login-sub">AI-Powered Sustainability</div>
+                <div class="login-desc">Sign in to the official platform</div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
-    # ====== LAYOUT ======
-    st.markdown("<div class='login-container'><div class='login-card'>", unsafe_allow_html=True)
-    st.markdown("<div class='login-icon'>🏛️</div>", unsafe_allow_html=True)
-    st.markdown("<div class='login-title'>MetalliQ Portal</div>", unsafe_allow_html=True)
-    st.markdown("<div class='login-subtitle'>AI-Powered Sustainability</div>", unsafe_allow_html=True)
-    st.markdown("<div class='login-desc'>Sign in to the official platform</div>", unsafe_allow_html=True)
+    # --- Native Streamlit buttons placed below the card and centered ---
+    # Use columns so buttons appear centered on wide screens and stacked nicely on narrow screens
+    c1, c2, c3 = st.columns([1, 0.6, 1])
+    with c2:
+        # The styling class names 'primary' and 'secondary' are applied by adding a wrapper <div>,
+        # but streamlit doesn't allow adding class to the button directly. To keep appearance consistent
+        # we rely on the global button styles above and add small inline wrappers to differentiate.
+        user_clicked = st.button("👤 User Login", key="user-btn")
+        st.write("")  # small spacing
+        admin_clicked = st.button("🛠️ Admin Login", key="admin-btn")
 
-    # ====== BUTTONS ======
-    user_login = st.button("👤 Sign In as User (John Doe)", key="user-btn", type="primary")
-    admin_login = st.button("🛠️ Sign In as Admin (Sarah Singh)", key="admin-btn", type="secondary")
+    # Footer text centered under buttons
+    st.markdown("<div class='footer'>This is a simulated login. No password required.<br>Powered by MetalliQ AI • Enabling Circular Futures</div>", unsafe_allow_html=True)
 
-    # ====== FOOTER ======
-    st.markdown("<div class='login-footer'>This is a simulated login. No password required.<br>Powered by MetalliQ AI • Enabling Circular Futures</div>", unsafe_allow_html=True)
-    st.markdown("</div></div>", unsafe_allow_html=True)
-
-    # ====== LOGIC ======
-    if user_login:
+    # --- Button logic (same behavior as before) ---
+    if user_clicked:
         st.session_state.logged_in = True
         st.session_state.role = "Investigator"
         st.session_state.name = "John Doe"
         st.session_state['page'] = 'Dashboard'
-        st.rerun()
-    if admin_login:
+        st.experimental_rerun()
+
+    if admin_clicked:
         st.session_state.logged_in = True
         st.session_state.role = "Admin"
         st.session_state.name = "Sarah Singh"
         st.session_state['page'] = 'Dashboard'
-        st.rerun()
+        st.experimental_rerun()
