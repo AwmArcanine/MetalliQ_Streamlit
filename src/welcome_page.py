@@ -1,91 +1,112 @@
 import streamlit as st
 
 def show_welcome_page():
-    # ========== THEME & STYLES ==========
+    # ========== STYLES ==========
     st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Poppins:wght@400;600&display=swap');
 
-    /* App background and base */
+    /* Global background and fonts */
     .stApp {
         background: linear-gradient(135deg, #00494D 0%, #006D77 45%, #83C5BE 100%) !important;
-        color: #073B4C;
         font-family: 'Poppins', sans-serif;
+        color: #073B4C;
     }
 
-    /* Header sizing - keep small margins so layout does not push down */
+    /* Headers */
     h1.app-title {
         font-family: 'Orbitron', sans-serif;
-        font-size: 34px;
-        margin: 8px 0 4px 0;
+        font-size: 2.2rem;
         text-align: center;
-        color: #00494D;
-    }
-    h4.app-sub {
-        margin: 0 0 14px 0;
-        text-align: center;
-        color: #00494D;
-        font-weight: 600;
+        margin-bottom: 0.3rem;
+        color: #7FFFD4;  /* light aqua */
+        text-shadow: 0 0 6px rgba(127, 255, 212, 0.6),
+                     0 0 12px rgba(0, 200, 180, 0.4);
+        letter-spacing: 0.5px;
     }
 
-    /* Features wrapper - centered and constrained width */
+    h4.app-sub {
+        text-align: center;
+        color: #C4FFF9;
+        font-weight: 600;
+        margin-bottom: 1.8rem;
+        text-shadow: 0 0 4px rgba(180, 255, 240, 0.5);
+    }
+
+    /* Feature grid wrapper */
     .features-wrapper {
         max-width: 1100px;
         margin: 0 auto;
-        padding: 6px 18px;
+        padding: 0 18px;
     }
 
-    /* Card style */
+    /* Feature card styling */
     .feature-card {
-        background: rgba(255,255,255,0.62);
-        border-radius: 14px;
-        border: 1px solid rgba(0,109,119,0.18);
-        box-shadow: 0 3px 10px rgba(0,109,119,0.12);
-        padding: 18px;
+        background: rgba(255,255,255,0.58);
+        border-radius: 16px;
+        border: 1px solid rgba(0,109,119,0.25);
+        box-shadow: 0 3px 10px rgba(0,109,119,0.15);
+        padding: 22px 16px;
         text-align: center;
-        min-height: 160px; /* keeps consistent height */
+        min-height: 170px;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
+        transition: all 0.3s ease;
+        margin: 10px; /* Adds spacing between cards */
     }
+
+    .feature-card:hover {
+        transform: translateY(-8px) scale(1.02);
+        box-shadow: 0 10px 22px rgba(0, 200, 180, 0.25),
+                    0 4px 12px rgba(0,109,119,0.2);
+        background: rgba(255,255,255,0.65);
+    }
+
     .feature-card .icon {
-        font-size: 2.2rem;
+        font-size: 2.3rem;
         margin-bottom: 8px;
     }
+
     .feature-card .title {
         font-weight: 700;
         color: #00494D;
         margin-bottom: 6px;
+        font-size: 1.1rem;
     }
+
     .feature-card .desc {
         color: #073B4C;
         font-size: 0.95rem;
         opacity: 0.95;
     }
 
-    /* Start button (styled global buttons too) */
+    /* Start Platform button */
     div.stButton > button.start-btn {
-        background: linear-gradient(90deg, #006D77 0%, #00A896 100%);
+        background: linear-gradient(90deg, #009688 0%, #00C2A8 100%);
         color: #ffffff !important;
         border: none;
         border-radius: 10px;
         padding: 0.9em 2.2em;
         font-weight: 600;
-        box-shadow: 0 4px 14px rgba(0,109,119,0.20);
-        transition: transform .15s ease, box-shadow .15s ease;
-        display: inline-block;
-        margin: 0 auto;
-    }
-    div.stButton > button.start-btn:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 6px 20px rgba(0,150,160,0.22);
+        font-size: 1.05rem;
+        box-shadow: 0 4px 14px rgba(0,109,119,0.25);
+        transition: all 0.3s ease;
+        margin: 1.2rem auto 2rem auto;
+        display: block;
+        letter-spacing: 0.03em;
     }
 
-    /* Small responsive tweaks */
+    div.stButton > button.start-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 22px rgba(0,200,180,0.25);
+        background: linear-gradient(90deg, #00A896 0%, #00D8B5 100%);
+    }
+
     @media (max-width: 900px) {
-        .feature-card { min-height: 150px; padding: 14px; }
-        h1.app-title { font-size: 28px; }
+        .feature-card { min-height: 150px; padding: 16px; }
+        h1.app-title { font-size: 1.8rem; }
     }
     </style>
     """, unsafe_allow_html=True)
@@ -94,7 +115,7 @@ def show_welcome_page():
     st.markdown("<h1 class='app-title'>MetalliQ Sustainability Platform</h1>", unsafe_allow_html=True)
     st.markdown("<h4 class='app-sub'>AI-Powered Life Cycle Intelligence for Metals & Alloys</h4>", unsafe_allow_html=True)
 
-    # ========== FEATURES GRID (3 x 2) ==========
+    # ========== FEATURE GRID ==========
     st.markdown("<div class='features-wrapper'>", unsafe_allow_html=True)
 
     features = [
@@ -106,7 +127,7 @@ def show_welcome_page():
         ("📄", "Automated Reports", "Generate ISO-compliant sustainability reports."),
     ]
 
-    # Two rows of three columns — Streamlit columns used for stable layout
+    # Two rows × three columns
     for row_start in (0, 3):
         cols = st.columns(3)
         for col_index, col in enumerate(cols):
@@ -124,22 +145,15 @@ def show_welcome_page():
                         """,
                         unsafe_allow_html=True
                     )
-
     st.markdown("</div>", unsafe_allow_html=True)
 
-    # ========== START BUTTON (centered beneath the grid) ==========
-    # Use three columns so the center column holds the button exactly in the middle
-    c1, c2, c3 = st.columns([1, 0.6, 1])
-    with c2:
-        # two ways to ensure styling + functionality:
-        # - assign a CSS class to the Streamlit button via the global selector using the "start-btn" class.
-        # Streamlit doesn't let us attach a class attribute directly, but we can reuse global button styling.
-        # To make it explicit, we style all buttons above; here we create a streamlit button and apply the start-btn
-        btn = st.button("🚀 Start Platform", key="start_btn")
-        # add a small JS-free visual duplicate (optional) — NOT NEEDED because our global button CSS styles the st.button already.
-
-    # trigger login if clicked
-    if st.session_state.get("start_btn", False) or btn:
-        # Some versions of Streamlit set the button return to True in `btn`.
-        # Ensure the session flag is set and the navigation is triggered.
-        st.session_state.show_login = True
+    # ========== BUTTON ==========
+    center = st.columns([1, 0.6, 1])[1]
+    with center:
+        st.markdown(
+            "<div style='text-align:center;'>",
+            unsafe_allow_html=True
+        )
+        if st.button("🚀 Start Platform", key="start_btn"):
+            st.session_state.show_login = True
+        st.markdown("</div>", unsafe_allow_html=True)
