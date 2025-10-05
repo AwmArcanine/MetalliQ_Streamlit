@@ -214,8 +214,10 @@ def dashboard_page(workspace=None):
     df_impact = pd.DataFrame(results["key_impact_profiles"], columns=["Category", "Value"])
     bar = px.bar(df_impact, x="Category", y="Value", color="Category",
                  color_discrete_sequence=["#00EFFF", "#00B8CC", "#009EBB", "#0080A4", "#00494D"])
-    bar.update_layout(showlegend=False, paper_bgcolor="rgba(0,0,0,0)",
-                      plot_bgcolor="rgba(0,0,0,0)", font=dict(color="#FFFFFF"))
+    bar.update_layout(showlegend=False, paper_bgcolor="rgba(0,0,0,0)",xaxis_title=None,
+                      yaxis_title=None,font=dict(family="Poppins,sans-serif",color="#FFFFFF"),
+                      plot_bgcolor="rgba(0,0,0,0)", font=dict(color="#FFFFFF"),
+                      xaxis = dict(color="#FFFFFF"),yaxis = dict(color="#FFFFFF"))
     st.plotly_chart(bar, use_container_width=True)
 
     # --- Latest Report ---
