@@ -1,4 +1,6 @@
 import streamlit as st
+from welcome_page import show_welcome_page
+from login_page import login_page
 from lca_study_form import full_lca_study_form
 from lca_simulation import run_simulation
 from dashboard import dashboard_page
@@ -8,218 +10,116 @@ from admin_dashboard import show_admin_dashboard, users_df, datasets_df, ai_mode
 from Compare_Scenarios import compare_scenarios_page
 from view_reports import view_reports_page
 
-st.set_page_config(layout="wide", initial_sidebar_state="expanded")
+# Streamlit configuration
+st.set_page_config(layout="wide", initial_sidebar_state="expanded", page_title="MetalliQ Sustainability Platform")
 
-# === METALLIQ THEME: TECH & NATURE HARMONY ===
+# ===================== GLOBAL STYLE =====================
 st.markdown("""
-    <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=Orbitron:wght@500;700&display=swap');
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Poppins:wght@400;600&display=swap');
 
-    /* ===== APP BACKGROUND ===== */
-    .stApp {
-        background: linear-gradient(135deg, #00494D 0%, #006D77 45%, #83C5BE 100%);
-        font-family: 'Poppins', sans-serif;
-        color: #073B4C;
-    }
+.stApp {
+  background: linear-gradient(135deg, #00494D 0%, #006D77 45%, #83C5BE 100%) !important;
+  color: #073B4C;
+  font-family: 'Poppins', sans-serif;
+}
 
-    /* ===== HEADINGS ===== */
-    h1, h2, h3, h4, h5 {
-        color: #00494D !important;
-        font-family: 'Orbitron', sans-serif;
-        letter-spacing: 0.03em;
-        text-shadow: 0 0 8px rgba(0,77,91,0.15);
-    }
+/* Sidebar */
+section[data-testid="stSidebar"] {
+  background: rgba(0, 73, 77, 0.96);
+  border-right: 2px solid rgba(0,168,150,0.35);
+  box-shadow: 2px 0 12px rgba(0,109,119,0.25);
+}
+section[data-testid="stSidebar"] * {
+  color: #EAF4F4 !important;
+  font-weight: 600;
+  font-size: 1.05rem;
+}
+section[data-testid="stSidebar"] h2 {
+  color: #00A896 !important;
+  text-shadow: 0 0 8px rgba(0,168,150,0.3);
+}
 
-    /* ===== SIDEBAR ===== */
-    section[data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #013B44 0%, #00494D 90%) !important;
-        border-right: 1px solid #007F8E;
-        box-shadow: 3px 0 12px rgba(0,80,90,0.3);
-        transition: all 0.3s ease-in-out;
-    }
+/* Buttons */
+div.stButton > button {
+  background: linear-gradient(90deg, #006D77 0%, #00A896 100%);
+  color: white !important;
+  border: none;
+  border-radius: 10px;
+  padding: 0.6em 1.8em;
+  font-weight: 600;
+  box-shadow: 0 4px 14px rgba(0,109,119,0.25);
+  transition: all 0.3s ease;
+}
+div.stButton > button:hover {
+  background: linear-gradient(90deg, #007F8E 0%, #00BFA5 100%);
+  transform: scale(1.05);
+}
 
-    /* Sidebar text */
-    section[data-testid="stSidebar"] * {
-        color: #E0FBFC !important;
-        font-weight: 500 !important;
-    }
-
-    /* Collapsed sidebar visibility */
-    [data-testid="collapsedControl"] {
-        visibility: visible !important;
-        opacity: 1 !important;
-    }
-
-    /* ===== BUTTONS ===== */
-    div.stButton > button {
-        background: linear-gradient(90deg, #006D77 0%, #00A896 100%);
-        color: #FFFFFF !important;
-        border: none;
-        border-radius: 8px;
-        padding: 0.55em 1.8em;
-        font-weight: 600;
-        transition: all 0.25s ease;
-        box-shadow: 0 4px 12px rgba(0,109,119,0.25);
-    }
-    div.stButton > button:hover {
-        background: linear-gradient(90deg, #007F8E 0%, #009C9A 100%);
-        box-shadow: 0 6px 18px rgba(0,150,160,0.3);
-        transform: scale(1.03);
-    }
-
-    /* ===== INPUTS ===== */
-    input, textarea, select {
-        background: rgba(255,255,255,0.9) !important;
-        color: #00494D !important;
-        border: 1px solid #83C5BE !important;
-        border-radius: 6px !important;
-        font-size: 1rem;
-    }
-
-    /* ===== CARDS ===== */
-    .card, .stContainer {
-        background: rgba(255,255,255,0.5);
-        border-radius: 12px;
-        border: 1px solid rgba(0,109,119,0.25);
-        box-shadow: 0 4px 12px rgba(0,109,119,0.15);
-        padding: 18px;
-        backdrop-filter: blur(10px);
-    }
-
-    /* ===== TOP BAR ===== */
-    .main-top-bar {
-        background: linear-gradient(90deg, #006D77 0%, #00A896 100%);
-        color: #FFFFFF;
-        box-shadow: 0 4px 12px rgba(0,109,119,0.25);
-        border-radius: 0 0 25px 25px;
-        font-weight: 600;
-        padding: 20px 3vw;
-        font-size: 1.5rem;
-        letter-spacing: 0.02em;
-    }
-
-    /* ===== TEXT ===== */
-    p, li, span {
-        color: #073B4C;
-    }
-
-    /* ===== CHART BACKGROUND ===== */
-    .plotly, canvas {
-        background-color: transparent !important;
-    }
-
-    /* ===== SCROLLBAR ===== */
-    ::-webkit-scrollbar {
-        width: 8px;
-    }
-    ::-webkit-scrollbar-thumb {
-        background: #006D77;
-        border-radius: 4px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-        background: #008C9E;
-    }
-
-    #MainMenu, footer, header {visibility: hidden;}
-    </style>
+/* Card */
+.card {
+  background: rgba(255, 255, 255, 0.55);
+  border-radius: 15px;
+  box-shadow: 0 4px 18px rgba(0,109,119,0.15);
+  padding: 1.5rem;
+  border: 1px solid rgba(0,109,119,0.25);
+}
+footer, #MainMenu {visibility: hidden;}
+</style>
 """, unsafe_allow_html=True)
 
 
-# --- Sidebar branding ---
-def workspace_selector():
-    st.sidebar.markdown("""
-        <div style='display:flex;align-items:center;gap:13px;margin-bottom:27px;margin-top:4px'>
-            <span style='font-size:2rem;'>🌿</span>
-            <div>
-                <div style='font-weight:900;font-size:1.3rem;
-                            background:linear-gradient(90deg,#00A896,#83C5BE);
-                            -webkit-background-clip:text;
-                            -webkit-text-fill-color:transparent;'>
-                    MetalliQ
-                </div>
-                <div style='color:#DEF6FF;font-size:.9rem;'>Sustainable AI for Metallurgy</div>
-            </div>
-        </div>
-    """, unsafe_allow_html=True)
-
-    ws_choice = st.sidebar.radio(
-        "", st.session_state.get("workspaces", ["John's Workspace", "Project Phoenix"]),
-        index=st.session_state.get("workspaces", ["John's Workspace", "Project Phoenix"]).index(
-            st.session_state.get("current_workspace", "John's Workspace")),
-        key="workspace_radio"
-    )
-    st.session_state["current_workspace"] = ws_choice
-    st.sidebar.markdown("---")
-    return ws_choice
-
-
-def sidebar_navigation(active):
-    menu = [
-        {"name": "Dashboard", "icon": "🏠"},
-        {"name": "Create Study", "icon": "🧪"},
-        {"name": "View Reports", "icon": "📊"},
-        {"name": "Compare Scenarios", "icon": "🔄"},
-        {"name": "Sign Out", "icon": "🚪"}
-    ]
-    nav_options = [f"{item['icon']} {item['name']}" for item in menu]
-    selected = st.sidebar.radio("Main Menu", nav_options, index=0)
-    st.sidebar.markdown("---")
-    return selected.split(" ", 1)[1]
-
-
+# ===================== MAIN APP =====================
 def main_app():
     if "show_login" not in st.session_state:
         st.session_state.show_login = False
+
+    # Welcome page first
     if not st.session_state.show_login:
-        from welcome_page import show_welcome_page
         show_welcome_page()
         return
 
-    if "workspaces" not in st.session_state:
-        st.session_state["workspaces"] = ["John's Workspace", "Project Phoenix"]
-    if "current_workspace" not in st.session_state:
-        st.session_state["current_workspace"] = st.session_state["workspaces"][0]
-
+    # Login next
     if not st.session_state.get('logged_in'):
-        from login_page import login_page
         login_page()
         return
 
-    workspace = workspace_selector()
-    nav_page = sidebar_navigation("Dashboard")
-    st.sidebar.markdown(f"<div style='margin-bottom:10px;'>Active Workspace: <b>{workspace}</b></div>", unsafe_allow_html=True)
+    # Sidebar always visible when logged in
+    st.sidebar.title("🌿 MetalliQ")
+    st.sidebar.markdown("**Sustainability Platform**")
+    page = st.sidebar.radio("Navigation", ["Dashboard", "Create Study", "View Reports", "Compare Scenarios", "Sign Out"])
 
-    # --- Pages ---
-    if nav_page == "Dashboard":
-        st.markdown("<div class='main-top-bar'>MetalliQ: AI-Powered Sustainability</div>", unsafe_allow_html=True)
+    if page == "Dashboard":
         if st.session_state.get('role') == "Admin":
-            show_admin_dashboard({"active_users": 33, "lca_studies": 12, "reports_generated": 67},
-                                 users_df, datasets_df, ai_models_df)
+            user_info = {"active_users": 33, "lca_studies": 12, "reports_generated": 67}
+            show_admin_dashboard(user_info, users_df, datasets_df, ai_models_df)
         else:
             dashboard_page()
         if st.session_state.get('ai_recommendations'):
             display_ai_recommendations(st.session_state['ai_recommendations'])
-    elif nav_page == "Create Study":
+
+    elif page == "Create Study":
         full_lca_study_form()
         if st.session_state.get('lca_form_submitted'):
             inputs = st.session_state['lca_form_data']
-            with st.spinner("Running LCA Simulation..."):
+            with st.spinner("Performing LCA analysis..."):
                 results = run_simulation(inputs)
             st.session_state['simulation_results'] = results
             st.session_state['ai_recommendations'] = ai_data_example
             st.session_state['lca_form_submitted'] = False
             st.success("Analysis Completed!")
-            results_page(st.session_state['simulation_results'],
-                         st.session_state['ai_recommendations'])
-    elif nav_page == "View Reports":
+            results_page(st.session_state['simulation_results'], st.session_state['ai_recommendations'])
+
+    elif page == "View Reports":
         view_reports_page()
-    elif nav_page == "Compare Scenarios":
+
+    elif page == "Compare Scenarios":
         compare_scenarios_page()
-    elif nav_page == "Sign Out":
+
+    elif page == "Sign Out":
         st.session_state.clear()
         st.rerun()
-    else:
-        st.info("Page under development.")
+
 
 if __name__ == "__main__":
     main_app()

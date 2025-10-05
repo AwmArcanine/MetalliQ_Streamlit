@@ -1,27 +1,15 @@
-def login_page():
-    import streamlit as st
+import streamlit as st
 
+def login_page():
     st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700&family=Poppins:wght@400;600&display=swap');
 
-    /* ===== GLOBAL BACKGROUND ===== */
-    body, .stApp {
+    .stApp {
         background: linear-gradient(135deg, #00494D 0%, #006D77 45%, #83C5BE 100%) !important;
         font-family: 'Poppins', sans-serif;
-        color: #073B4C;
     }
 
-    /* ===== FLEX WRAPPER ===== */
-    .login-wrapper {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 85vh;
-        width: 100%;
-    }
-
-    /* ===== LOGIN CARD ===== */
     .login-card {
         background: rgba(255, 255, 255, 0.55);
         border-radius: 18px;
@@ -33,6 +21,7 @@ def login_page():
         max-width: 400px;
         width: 90%;
         transition: all 0.3s ease;
+        margin: auto;
     }
 
     .login-card:hover {
@@ -40,21 +29,12 @@ def login_page():
         box-shadow: 0 8px 22px rgba(0,150,160,0.25);
     }
 
-    /* ===== TITLE SECTION ===== */
-    .login-logo {
-        font-size: 3rem;
-        color: #006D77;
-        margin-bottom: 10px;
-        text-shadow: 0 2px 8px rgba(0,109,119,0.25);
-    }
-
     .login-title {
         font-family: 'Orbitron', sans-serif;
         color: #00494D;
         font-size: 1.8rem;
         font-weight: 700;
-        letter-spacing: 0.03em;
-        margin-bottom: 0.2em;
+        margin-bottom: 0.4em;
     }
 
     .login-sub {
@@ -62,16 +42,6 @@ def login_page():
         font-size: 1.05rem;
         margin-bottom: 1.3em;
         font-weight: 600;
-    }
-
-    /* ===== BUTTON CONTAINER ===== */
-    .button-row {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 1rem;
-        flex-wrap: wrap;
-        margin-top: 0.5em;
     }
 
     .stButton>button {
@@ -93,57 +63,49 @@ def login_page():
         box-shadow: 0 6px 18px rgba(0,150,160,0.3);
     }
 
-    /* ===== FOOTER ===== */
-    .login-footer {
+    .button-row {
+        display: flex;
+        justify-content: center;
+        gap: 1.2rem;
+        flex-wrap: wrap;
+        margin-top: 1rem;
+    }
+
+    .footer {
         text-align: center;
         color: #00494D;
         font-size: 0.9rem;
-        margin-top: 1.8em;
+        margin-top: 1.5em;
         opacity: 0.8;
-    }
-
-    /* ===== RESPONSIVE ===== */
-    @media (max-width: 600px) {
-        .button-row {
-            flex-direction: column;
-            gap: 0.8rem;
-        }
-        .stButton>button {
-            width: 100%;
-        }
     }
     </style>
     """, unsafe_allow_html=True)
 
-    # ===== LAYOUT =====
-    st.markdown("<div class='login-wrapper'><div class='login-card'>", unsafe_allow_html=True)
+    # Centering container
+    st.markdown("<div style='height:75vh; display:flex; justify-content:center; align-items:center;'>", unsafe_allow_html=True)
 
-    # --- Title Section ---
-    st.markdown("""
-        <div class="login-logo">🌿</div>
-        <div class="login-title">MetalliQ Portal</div>
-        <div class="login-sub">AI-Powered Sustainability</div>
-    """, unsafe_allow_html=True)
+    # Login card
+    st.markdown("<div class='login-card'>", unsafe_allow_html=True)
+    st.markdown("<div class='login-title'>MetalliQ Portal</div>", unsafe_allow_html=True)
+    st.markdown("<div class='login-sub'>AI-Powered Sustainability</div>", unsafe_allow_html=True)
 
-    # --- Button Row ---
     col1, col2 = st.columns(2)
     with col1:
         user = st.button("👤 User Login")
     with col2:
         admin = st.button("🛠️ Admin Login")
 
-    # --- Footer ---
-    st.markdown("<div class='login-footer'>Powered by MetalliQ AI • Enabling Circular Futures</div>", unsafe_allow_html=True)
-    st.markdown("</div></div>", unsafe_allow_html=True)
+    st.markdown("<div class='footer'>Powered by MetalliQ AI • Enabling Circular Futures</div>", unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown("</div>", unsafe_allow_html=True)
 
-    # ===== FUNCTIONALITY =====
+    # Login logic
     if user:
         st.session_state.logged_in = True
         st.session_state.role = "Investigator"
         st.session_state.name = "John Doe"
         st.session_state['page'] = 'Dashboard'
         st.rerun()
-
     if admin:
         st.session_state.logged_in = True
         st.session_state.role = "Admin"
