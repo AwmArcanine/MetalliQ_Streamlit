@@ -125,7 +125,7 @@ def dashboard_page(workspace=None):
     # --- Header ---
     col1, col2 = st.columns([8, 2])
     with col1:
-        st.markdown("<h1 style='margin-bottom:2px;'>John's Workspace Dashboard</h1>", unsafe_allow_html=True)
+        st.markdown("<h1 style='color: #00EFFF;text-shadow: 0 0 18px rgba(0, 239, 255, 0.8);margin-bottom:2px;'>John's Workspace Dashboard</h1>", unsafe_allow_html=True)
         st.markdown("<p style='color:#00EFFF;font-size:0.9rem;'>An overview of your workspace's sustainability metrics.</p>", unsafe_allow_html=True)
     with col2:
         if st.button("➕ New Study", use_container_width=True):
