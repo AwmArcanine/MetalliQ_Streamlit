@@ -11,7 +11,7 @@ def login_page():
     """
 
     # 1) If the URL contains ?login=user or ?login=admin -> handle and redirect
-    params = st.experimental_get_query_params()
+    params = st.query_params()
     if "login" in params:
         choice = params.get("login", [""])[0].lower()
         if choice == "user":
@@ -20,15 +20,15 @@ def login_page():
             st.session_state.name = "John Doe"
             st.session_state["page"] = "Dashboard"
             # clear query params and rerun to avoid repeated triggers
-            st.experimental_set_query_params()
-            st.experimental_rerun()
+            st.query_params()
+            st.rerun()
         elif choice == "admin":
             st.session_state.logged_in = True
             st.session_state.role = "Admin"
             st.session_state.name = "Sarah Singh"
             st.session_state["page"] = "Dashboard"
-            st.experimental_set_query_params()
-            st.experimental_rerun()
+            st.query_params()
+            st.rerun()
 
     # 2) Styles + HTML card (matches your theme, centered and stable)
     st.markdown(
