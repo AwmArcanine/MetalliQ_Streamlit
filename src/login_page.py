@@ -26,17 +26,17 @@ def login_page():
             max-width: 92%;
             background: rgba(255,255,255,0.22);
             border-radius: 16px;
-            padding: 36px 30px;
+            padding: 30px 30px; /* reduced padding slightly */
             box-shadow: 0 10px 30px rgba(0,109,119,0.22);
             border: 1px solid rgba(255,255,255,0.18);
             backdrop-filter: blur(8px);
             text-align: center;
             color: #06343a;
-            margin-bottom: 20px;
+            margin-bottom: 12px; /* reduced from 20px */
         }
 
         .login-logo {
-            font-size: 46px;
+            font-size: 42px;
             margin-bottom: 8px;
             color: #00A896;
         }
@@ -47,13 +47,13 @@ def login_page():
             font-weight: 700;
             color: #6FFFE9; /* neon cyan */
             text-shadow: 0 0 10px rgba(111,255,233,0.8), 0 0 20px rgba(111,255,233,0.4);
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         .login-sub {
             color: #043f45;
             font-weight: 600;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         .login-desc {
@@ -61,11 +61,12 @@ def login_page():
             margin-bottom: 2px;
         }
 
-        /* Proper buttons theme */
+        /* Button styling */
         .stButton>button {
             display: block;
-            width: 260px !important;
-            margin: 8px auto;
+            width: 420px !important;  /* same width as card */
+            max-width: 92%;
+            margin: 6px auto;
             border-radius: 10px;
             padding: 10px 0px;
             font-weight: 700;
@@ -99,13 +100,13 @@ def login_page():
         .footer {
             font-size: 0.88rem;
             color: rgba(255,255,255,0.75);
-            margin-top: 14px;
+            margin-top: 10px;
             text-align:center;
         }
 
         @media (max-width:680px) {
             .centered-login-card { width: 90%; }
-            .stButton>button { width: 80% !important; }
+            .stButton>button { width: 90% !important; }
         }
         </style>
         """,
@@ -126,7 +127,7 @@ def login_page():
         unsafe_allow_html=True,
     )
 
-    # Buttons aligned under the card
+    # Buttons perfectly aligned under card
     c1, c2, c3 = st.columns([2.5, 3, 2.5])
     with c2:
         user_clicked = st.button("👤 User Login")
