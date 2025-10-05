@@ -3,7 +3,7 @@ import streamlit as st
 def login_page():
     st.set_page_config(layout="wide")
 
-    # --- Styling ---
+    # --- CSS Styling ---
     st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Poppins:wght@400;500;600&display=swap');
@@ -14,10 +14,9 @@ def login_page():
         padding: 0;
         background: linear-gradient(135deg, #00494D 0%, #006D77 40%, #83C5BE 100%) !important;
         font-family: 'Poppins', sans-serif;
-        overflow: hidden !important;
+        overflow: hidden;
     }
 
-    /* Center all elements */
     .main-container {
         display: flex;
         flex-direction: column;
@@ -25,10 +24,8 @@ def login_page():
         align-items: center;
         height: 100vh;
         text-align: center;
-        gap: 8px; /* spacing between card and buttons */
     }
 
-    /* Card Styling */
     .login-card {
         width: 90%;
         max-width: 400px;
@@ -38,6 +35,7 @@ def login_page():
         box-shadow: 0 8px 25px rgba(0, 109, 119, 0.3);
         border: 1px solid rgba(255, 255, 255, 0.2);
         backdrop-filter: blur(10px);
+        margin-bottom: 8px; /* small gap */
     }
 
     .login-logo {
@@ -66,7 +64,6 @@ def login_page():
         margin-bottom: 0;
     }
 
-    /* Button Container (right below card) */
     .button-container {
         display: flex;
         flex-direction: column;
@@ -76,7 +73,6 @@ def login_page():
         max-width: 400px;
     }
 
-    /* Buttons */
     .stButton>button {
         width: 100% !important;
         border: none;
@@ -88,31 +84,30 @@ def login_page():
         cursor: pointer;
     }
 
-    /* User Login */
-    .stButton>button:first-child {
+    .user-btn button {
         background: linear-gradient(90deg, #00A896 0%, #02C39A 100%);
         color: white !important;
         box-shadow: 0 0 10px rgba(0,168,150,0.6);
     }
-    .stButton>button:first-child:hover {
+
+    .user-btn button:hover {
         transform: scale(1.03);
         box-shadow: 0 0 20px rgba(0,168,150,0.9);
     }
 
-    /* Admin Login */
-    .stButton>button:last-child {
+    .admin-btn button {
         background: linear-gradient(90deg, #007C91 0%, #006D77 100%);
         color: #E7FDFC !important;
         box-shadow: 0 0 10px rgba(0,109,119,0.5);
     }
-    .stButton>button:last-child:hover {
+
+    .admin-btn button:hover {
         transform: scale(1.03);
         box-shadow: 0 0 20px rgba(0,109,119,0.8);
     }
 
-    /* Footer */
     .footer {
-        margin-top: 10px;
+        margin-top: 14px;
         font-size: 0.9rem;
         color: rgba(255,255,255,0.9);
         text-align: center;
@@ -138,27 +133,30 @@ def login_page():
             <div class="login-sub">AI-Powered Sustainability</div>
             <div class="login-desc">Sign in to the official platform</div>
         </div>
-
-        <div class="button-container">
+    </div>
     """, unsafe_allow_html=True)
 
-    # Functional buttons (kept responsive and glowing)
-    user = st.button("👤 User Login")
-    admin = st.button("🛠️ Admin Login")
+    # --- Buttons ---
+    st.markdown("<div class='button-container'>", unsafe_allow_html=True)
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        user = st.button("👤 User Login", key="user_btn", use_container_width=True)
+        admin = st.button("🛠️ Admin Login", key="admin_btn", use_container_width=True)
+    st.markdown("</div>", unsafe_allow_html=True)
 
+    # --- Footer ---
     st.markdown("""
-        </div>
         <div class="footer">
             This is a simulated login. No password required.<br>
             Powered by MetalliQ AI • Enabling Circular Futures
         </div>
-    </div>
     """, unsafe_allow_html=True)
 
-    # --- Logic (unchanged) ---
+    # --- Navigation (OLD WORKING METHOD) ---
     if user:
-        st.session_state.page = "User Dashboard"
-        st.rerun()
+        st.query_params["page"] = "user_dashboard"
+        st.experimental_rerun()
+
     if admin:
-        st.session_state.page = "Admin Dashboard"
-        st.rerun()
+        st.query_params["page"] = "admin_dashboard"
+        st.experimental_rerun()
