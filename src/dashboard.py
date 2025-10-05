@@ -4,124 +4,125 @@ import plotly.graph_objects as go
 import plotly.express as px
 
 # --- Neon Futuristic Theme with Pulse Glow ---
-st.markdown("""
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Poppins:wght@400;500;600&display=swap');
 
-body, .stApp {
-    background: linear-gradient(135deg, #00494D 0%, #006D77 40%, #83C5BE 100%) !important;
-    color: #E0FFFF;
-    font-family: 'Poppins', sans-serif;
-    overflow-x: hidden;
-}
-
-/* Text Styles */
-h1, h2, h3, h4, h5, h6 {
-    font-family: 'Orbitron', sans-serif;
-    color: #00EFFF;
-    text-shadow: 0 0 18px rgba(0, 239, 255, 0.8);
-}
-
-.section-title {
-    color: #00EFFF !important;
-    font-weight: 700;
-    margin-top: 40px;
-    margin-bottom: 10px;
-    font-size: 1.4rem !important;
-}
-
-/* Pulse Animation */
-@keyframes pulseGlow {
-  0% { box-shadow: 0 0 10px rgba(0,239,255,0.4), 0 0 20px rgba(0,239,255,0.2); }
-  50% { box-shadow: 0 0 25px rgba(0,239,255,0.7), 0 0 40px rgba(0,239,255,0.5); }
-  100% { box-shadow: 0 0 10px rgba(0,239,255,0.4), 0 0 20px rgba(0,239,255,0.2); }
-}
-
-/* Metric Cards */
-.metriccard {
-    background: rgba(255, 255, 255, 0.08);
-    border-radius: 18px;
-    border: 1px solid rgba(0, 239, 255, 0.25);
-    padding: 18px 22px;
-    text-align: left;
-    margin-top: 8px;
-    animation: pulseGlow 4s infinite ease-in-out;
-}
-
-.metricheader {
-    font-size: 1.15rem;
-    color: #A7FAFF;
-    margin-bottom: 7px;
-}
-
-.metricvalue {
-    font-size: 2rem;
-    font-weight: 800;
-    color: #00EFFF;
-}
-
-/* Extended Circularity Cards */
-.ext-card {
-    background: rgba(255, 255, 255, 0.07);
-    border: 1px solid rgba(0, 239, 255, 0.2);
-    border-radius: 14px;
-    text-align: center;
-    padding: 15px 8px;
-    margin-bottom: 10px;
-    animation: pulseGlow 5s infinite ease-in-out;
-    color: #E0FFFF;
-}
-
-.ext-card b {
-    color: #00EFFF;
-}
-
-/* Table Styles */
-table {
-    border: 1.5px solid rgba(0, 239, 255, 0.3) !important;
-    border-radius: 12px;
-    background: rgba(255,255,255,0.05);
-}
-thead tr {
-    background: rgba(0,239,255,0.15) !important;
-    color: #00EFFF !important;
-    font-weight: 600;
-}
-tbody tr {
-    color: #E0FFFF !important;
-}
-
-/* Project Leaderboard */
-.leaderboard-badge {
-    background: rgba(0, 239, 255, 0.2);
-    border: 1px solid rgba(0,239,255,0.4);
-    border-radius: 14px;
-    color: #00EFFF;
-    font-weight: 600;
-    padding: 4px 14px;
-}
-
-/* Latest Report Cards */
-.report-card {
-    background: rgba(255, 255, 255, 0.07);
-    border: 1px solid rgba(0,239,255,0.3);
-    border-radius: 16px;
-    padding: 18px;
-    text-align: center;
-    animation: pulseGlow 6s infinite ease-in-out;
-    color: #E0FFFF;
-}
-
-/* Chart Container */
-.stPlotlyChart {
-    margin-top: 10px;
-    margin-bottom: 30px;
-}
-</style>
-""", unsafe_allow_html=True)
 
 
 def dashboard_page(workspace=None):
+    st.markdown("""
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Poppins:wght@400;500;600&display=swap');
+
+    body, .stApp {
+        background: linear-gradient(135deg, #00494D 0%, #006D77 40%, #83C5BE 100%) !important;
+        color: #E0FFFF;
+        font-family: 'Poppins', sans-serif;
+        overflow-x: hidden;
+    }
+
+    /* Text Styles */
+    h1, h2, h3, h4, h5, h6 {
+        font-family: 'Orbitron', sans-serif;
+        color: #00EFFF;
+        text-shadow: 0 0 18px rgba(0, 239, 255, 0.8);
+    }
+
+    .section-title {
+        color: #00EFFF !important;
+        font-weight: 700;
+        margin-top: 40px;
+        margin-bottom: 10px;
+        font-size: 1.4rem !important;
+    }
+
+    /* Pulse Animation */
+    @keyframes pulseGlow {
+    0% { box-shadow: 0 0 10px rgba(0,239,255,0.4), 0 0 20px rgba(0,239,255,0.2); }
+    50% { box-shadow: 0 0 25px rgba(0,239,255,0.7), 0 0 40px rgba(0,239,255,0.5); }
+    100% { box-shadow: 0 0 10px rgba(0,239,255,0.4), 0 0 20px rgba(0,239,255,0.2); }
+    }
+
+    /* Metric Cards */
+    .metriccard {
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 18px;
+        border: 1px solid rgba(0, 239, 255, 0.25);
+        padding: 18px 22px;
+        text-align: left;
+        margin-top: 8px;
+        animation: pulseGlow 4s infinite ease-in-out;
+    }
+
+    .metricheader {
+        font-size: 1.15rem;
+        color: #A7FAFF;
+        margin-bottom: 7px;
+    }
+
+    .metricvalue {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #00EFFF;
+    }
+
+    /* Extended Circularity Cards */
+    .ext-card {
+        background: rgba(255, 255, 255, 0.07);
+        border: 1px solid rgba(0, 239, 255, 0.2);
+        border-radius: 14px;
+        text-align: center;
+        padding: 15px 8px;
+        margin-bottom: 10px;
+        animation: pulseGlow 5s infinite ease-in-out;
+        color: #E0FFFF;
+    }
+
+    .ext-card b {
+        color: #00EFFF;
+    }
+
+    /* Table Styles */
+    table {
+        border: 1.5px solid rgba(0, 239, 255, 0.3) !important;
+        border-radius: 12px;
+        background: rgba(255,255,255,0.05);
+    }
+    thead tr {
+        background: rgba(0,239,255,0.15) !important;
+        color: #00EFFF !important;
+        font-weight: 600;
+    }
+    tbody tr {
+        color: #E0FFFF !important;
+    }
+
+    /* Project Leaderboard */
+    .leaderboard-badge {
+        background: rgba(0, 239, 255, 0.2);
+        border: 1px solid rgba(0,239,255,0.4);
+        border-radius: 14px;
+        color: #00EFFF;
+        font-weight: 600;
+        padding: 4px 14px;
+    }
+
+    /* Latest Report Cards */
+    .report-card {
+        background: rgba(255, 255, 255, 0.07);
+        border: 1px solid rgba(0,239,255,0.3);
+        border-radius: 16px;
+        padding: 18px;
+        text-align: center;
+        animation: pulseGlow 6s infinite ease-in-out;
+        color: #E0FFFF;
+    }
+
+    /* Chart Container */
+    .stPlotlyChart {
+        margin-top: 10px;
+        margin-bottom: 30px;
+    }
+    </style>
+    """, unsafe_allow_html=True)
     # --- Header ---
     col1, col2 = st.columns([8, 2])
     with col1:
