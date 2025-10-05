@@ -1,7 +1,7 @@
 import streamlit as st
 
 def login_page():
-    # --- Handle login redirect via st.query_params ---
+    # --- Handle URL-based login using st.query_params ---
     params = st.query_params
     if "login" in params:
         choice = params.get("login", "").lower()
@@ -20,7 +20,7 @@ def login_page():
             st.query_params.clear()
             st.rerun()
 
-    # --- Styling ---
+    # --- Page style ---
     st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Poppins:wght@400;600&display=swap');
@@ -30,7 +30,7 @@ def login_page():
         font-family: 'Poppins', sans-serif;
     }
 
-    .login-container {
+    .login-wrapper {
         height: 90vh;
         display: flex;
         justify-content: center;
@@ -38,15 +38,14 @@ def login_page():
     }
 
     .login-card {
-        background: rgba(255, 255, 255, 0.65);
-        border-radius: 18px;
-        padding: 45px 35px 35px 35px;
-        box-shadow: 0 10px 28px rgba(0, 109, 119, 0.25);
-        backdrop-filter: blur(8px);
-        text-align: center;
-        color: #00494D;
         width: 400px;
+        background: rgba(255, 255, 255, 0.6);
+        border-radius: 18px;
+        box-shadow: 0 10px 28px rgba(0, 109, 119, 0.25);
+        padding: 45px 35px;
+        text-align: center;
         border: 1px solid rgba(0, 109, 119, 0.2);
+        backdrop-filter: blur(8px);
     }
 
     .login-icon {
@@ -66,33 +65,34 @@ def login_page():
     .login-subtitle {
         font-size: 1rem;
         font-weight: 600;
-        opacity: 0.85;
-        margin-bottom: 16px;
+        opacity: 0.9;
+        margin-bottom: 12px;
     }
 
     .login-desc {
         font-size: 0.95rem;
         opacity: 0.9;
-        margin-bottom: 20px;
+        margin-bottom: 18px;
     }
 
     .btn {
         display: inline-block;
         width: 100%;
-        border-radius: 10px;
         padding: 12px 0;
         font-weight: 600;
         font-size: 1rem;
-        margin-top: 10px;
+        border-radius: 10px;
         text-decoration: none;
-        text-align: center;
+        margin-top: 10px;
         transition: all 0.25s ease;
+        box-sizing: border-box;
     }
 
     .btn-primary {
         background: linear-gradient(90deg, #006D77 0%, #00A896 100%);
         color: #fff !important;
         box-shadow: 0 6px 18px rgba(0, 109, 119, 0.25);
+        border: none;
     }
 
     .btn-primary:hover {
@@ -118,18 +118,16 @@ def login_page():
     </style>
     """, unsafe_allow_html=True)
 
-    # --- Properly scoped HTML layout ---
-    html_code = """
-    <div class="login-container">
+    # --- HTML Layout ---
+    html_content = """
+    <div class="login-wrapper">
         <div class="login-card">
             <div class="login-icon">🏛️</div>
             <div class="login-title">MetalliQ Portal</div>
             <div class="login-subtitle">AI-Powered Sustainability</div>
             <div class="login-desc">Sign in to the official platform</div>
-
             <a href="?login=user" class="btn btn-primary">👤 Sign In as User (John Doe)</a>
             <a href="?login=admin" class="btn btn-secondary">🛠️ Sign In as Admin (Sarah Singh)</a>
-
             <div class="login-footer">
                 This is a simulated login. No password required.<br>
                 Powered by MetalliQ AI • Enabling Circular Futures
@@ -137,4 +135,5 @@ def login_page():
         </div>
     </div>
     """
-    st.markdown(html_code, unsafe_allow_html=True)
+
+    st.components.v1.html(html_content, height=600)
