@@ -158,7 +158,7 @@ def dashboard_page(workspace=None):
             xaxis_title=None, yaxis_title="Recycling Rate (%)",
             margin=dict(l=20, r=20, t=10, b=25),
             plot_bgcolor="#f8f9fb",
-            paper_bgcolor="#f8f9fb",
+            paper_bgcolor="#f8f9fb00",
             font=dict(family="Inter,Segoe UI,Poppins,sans-serif", color="#15447a"),
             height=230)
         st.plotly_chart(line_fig, use_container_width=True)
@@ -179,7 +179,7 @@ def dashboard_page(workspace=None):
             margin=dict(l=10, r=10, t=10, b=10),
             height=220,
             plot_bgcolor="#f8f9fb",
-            paper_bgcolor="#f8f9fb",
+            paper_bgcolor="#f8f9fb00",
             font=dict(family="Inter,Segoe UI,Poppins,sans-serif", color="#15447a")
         )
         st.plotly_chart(pie_fig, use_container_width=True)
@@ -229,7 +229,7 @@ def dashboard_page(workspace=None):
         height=310,
         margin=dict(l=32, r=15, t=12, b=8),
         plot_bgcolor="#e8eefa",
-        paper_bgcolor="#d6d6d6"
+        paper_bgcolor="#ffffff00"
     )
     st.plotly_chart(bar, use_container_width=True)
 
