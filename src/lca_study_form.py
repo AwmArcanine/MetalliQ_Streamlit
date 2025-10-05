@@ -8,86 +8,82 @@ def full_lca_study_form():
 
         body, .stApp {
             background: linear-gradient(135deg, #00494D 0%, #006D77 40%, #83C5BE 100%) !important;
-            color: #E0FFFF !important;
-            font-family: 'Poppins', sans-serif !important;
+            color: #E0FFFF;
+            font-family: 'Poppins', sans-serif;
         }
 
-        /* Headings */
-        h1 {
-            font-family: 'Orbitron', sans-serif !important;
-            font-size: 2.1rem !important;
+        /* --- Form Container --- */
+        .stForm {
+            border: 1.8px solid rgba(0, 239, 255, 0.6);
+            border-radius: 16px !important;
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 0 25px rgba(0, 239, 255, 0.2);
+            padding: 20px !important;
+        }
+
+        /* --- Headings --- */
+        h1, h2, h3 {
+            font-family: 'Orbitron', sans-serif;
             color: #00EFFF !important;
-            text-shadow: 0 0 15px rgba(0,239,255,0.8);
-            margin-bottom: 10px !important;
+            text-shadow: 0 0 18px rgba(0,239,255,0.8);
+        }
+        h3 {
+            margin-top: 35px !important;
         }
 
-        h2, h3, h4, h5, h6 {
-            color: #C8FAF8 !important;
-            font-weight: 600 !important;
+        /* --- Labels and Field Text --- */
+        label, p, span, div, .stMarkdown {
+            color: #E0FFFF !important;
         }
 
-        /* Labels & Inputs */
-        label, .stTextInput label, .stSelectbox label, .stNumberInput label, .stTextArea label {
-            color: #E6FFFF !important;
-            font-size: 0.95rem !important;
-            font-weight: 500 !important;
-        }
-
-        .stTextInput, .stSelectbox, .stNumberInput, .stTextArea {
-            color: #E6FFFF !important;
-        }
-
-        /* Buttons */
-        div.stButton > button {
-            background: linear-gradient(90deg, #00A896 0%, #02C39A 100%) !important;
+        /* --- Input Fields --- */
+        input, select, textarea {
+            background: rgba(255,255,255,0.1) !important;
             color: #FFFFFF !important;
-            border: none !important;
+            border: 1px solid rgba(0,239,255,0.3) !important;
             border-radius: 10px !important;
+            font-size: 0.95rem !important;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none !important;
+            border-color: #00EFFF !important;
+            box-shadow: 0 0 10px rgba(0,239,255,0.4);
+        }
+
+        /* --- Buttons --- */
+        div.stButton > button {
+            background: linear-gradient(90deg, #00EFFF 0%, #00B8CC 100%) !important;
+            color: #002B36 !important;
+            border-radius: 12px !important;
             font-weight: 700 !important;
-            box-shadow: 0 0 15px rgba(0,168,150,0.4);
-            transition: all 0.25s ease-in-out;
+            border: none !important;
+            padding: 0.6em 2.4em !important;
+            font-size: 1.05rem !important;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0 0 15px rgba(0,239,255,0.3);
         }
         div.stButton > button:hover {
-            box-shadow: 0 0 20px rgba(0,239,255,0.8);
-            transform: scale(1.04);
+            background: linear-gradient(90deg, #00B8CC 0%, #00EFFF 100%) !important;
+            box-shadow: 0 0 30px rgba(0,239,255,0.6);
+            transform: scale(1.03);
         }
 
-        /* Form fields */
-        .stTextInput input, .stNumberInput input, textarea {
-            background: rgba(255,255,255,0.1) !important;
-            color: #E6FFFF !important;
-            border-radius: 8px !important;
-            border: 1px solid rgba(255,255,255,0.25) !important;
-        }
-
-        /* Radio buttons and sliders */
-        .stRadio label {
+        /* --- Radio, Slider, etc --- */
+        .stRadio > label, .stSlider, .stSelectbox {
             color: #E0FFFF !important;
         }
-        .stSlider label {
-            color: #C8FAF8 !important;
+        .stSlider > div > div {
+            background: linear-gradient(90deg, #00EFFF, #00B8CC) !important;
         }
 
-        /* Section Titles */
-        .stMarkdown h3 {
-            color: #7CF4E3 !important;
-            text-shadow: 0 0 10px rgba(124,244,227,0.6);
+        /* --- Section Captions --- */
+        caption, .stCaption {
+            color: #A7FAFF !important;
+            font-size: 0.85rem;
         }
+    </style>
+    """, unsafe_allow_html=True)
 
-        /* Captions */
-        .stCaption, .stMarkdown small {
-            color: #B5EDE9 !important;
-        }
-
-        /* Success message */
-        .stSuccess {
-            background: rgba(0,239,255,0.1) !important;
-            color: #00EFFF !important;
-            border: 1px solid rgba(0,239,255,0.4) !important;
-            border-radius: 8px !important;
-        }
-        </style>
-        """, unsafe_allow_html=True)
     st.title("AI-Powered Metals Sustainability")
 
     with st.form("lca_full_study"):
