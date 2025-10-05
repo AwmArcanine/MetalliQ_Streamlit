@@ -39,7 +39,7 @@ def full_lca_study_form():
         /* --- Input Fields --- */
         input, select, textarea {
             background: rgba(255,255,255,0.1) !important;
-            color: #FFFFFF !important;
+            color: #033E3E !important;
             border: 1px solid rgba(0,239,255,0.3) !important;
             border-radius: 10px !important;
             font-size: 0.95rem !important;
