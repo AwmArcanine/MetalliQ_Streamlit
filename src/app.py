@@ -10,6 +10,7 @@ from admin_dashboard import show_admin_dashboard, users_df, datasets_df, ai_mode
 from Compare_Scenarios import compare_scenarios_page
 from view_reports import view_reports_page
 from collaborative_workspace_page import collaborative_workspace_page
+from pathlib import Path
 
 
 # ===================== PAGE CONFIG =====================
@@ -20,8 +21,6 @@ st.set_page_config(
 )
 
 
-from pathlib import Path
-
 # ===================== LOAD EXTERNAL CSS SAFELY =====================
 def load_css(file_path: str):
     css_path = Path(__file__).parent / file_path  # ensures correct relative path
@@ -30,7 +29,6 @@ def load_css(file_path: str):
             st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
     else:
         st.warning(f"⚠️ CSS file not found: {css_path.name}. Using default theme.")
-
 
 
 # ===================== MAIN APP =====================
@@ -50,6 +48,8 @@ def main_app():
     username = st.session_state.get("username", "John Doe")
 
     # ---------- SIDEBAR ----------
+    load_css("app.css")
+
     with st.sidebar:
         # --- Header ---
         st.markdown("""
@@ -59,21 +59,9 @@ def main_app():
             <p style="color:#A4E0DD;font-size:0.8rem;margin-bottom:1rem;">Sustainability Platform</p>
         </div>
 
-        <div style="padding:0 1.2rem;">
-            <h4 style="font-size:0.8rem;font-weight:700;color:#8EDDD0;letter-spacing:0.8px;margin-bottom:6px;">WORKSPACES</h4>
-
-            <div style="background:rgba(255,255,255,0.08);border-radius:10px;padding:8px 10px;margin:4px 0 8px 0;display:flex;align-items:center;backdrop-filter:blur(6px);">
-                <div style="background:#E84393;color:white;font-weight:700;border-radius:6px;width:26px;height:26px;text-align:center;line-height:26px;margin-right:10px;box-shadow:0 0 6px #e8439380;">J</div>
-                <div style="font-weight:600;color:#EAF4F4;">John's Workspace</div>
-            </div>
-
-            <div style="background:rgba(255,255,255,0.08);border-radius:10px;padding:8px 10px;margin:4px 0 8px 0;display:flex;align-items:center;backdrop-filter:blur(6px);">
-                <div style="background:#4F46E5;color:white;font-weight:700;border-radius:6px;width:26px;height:26px;text-align:center;line-height:26px;margin-right:10px;box-shadow:0 0 6px #4f46e580;">P</div>
-                <div style="font-weight:600;color:#EAF4F4;">Project Phoenix</div>
-            </div>
-        </div>
-
-        <div style="margin-top:1.2rem; background:rgba(255,255,255,0.1);border-radius:14px;padding:12px 16px 10px 16px;margin:1rem 1.2rem;box-shadow:0 6px 16px rgba(0,109,119,0.2);backdrop-filter:blur(8px);">
+        <div style="margin-top:1.2rem; background:rgba(255,255,255,0.1);
+             border-radius:14px;padding:12px 16px 10px 16px;margin:1rem 1.2rem;
+             box-shadow:0 6px 16px rgba(0,109,119,0.2);backdrop-filter:blur(8px);">
         """, unsafe_allow_html=True)
 
         # --- Navigation ---
@@ -95,7 +83,9 @@ def main_app():
         # --- User Footer ---
         st.markdown(f"""
         <div style="text-align:center; margin-top:40px;">
-            <div style="background:linear-gradient(90deg,#006D77,#00A896);color:white;padding:6px 10px;border-radius:50%;display:inline-block;font-weight:700;">
+            <div style="background:linear-gradient(90deg,#006D77,#00A896);
+                color:white;padding:6px 10px;border-radius:50%;
+                display:inline-block;font-weight:700;">
                 {username[:2].upper()}
             </div>
             <div style="color:#CFECEC;margin-top:6px;font-size:0.9em;">
