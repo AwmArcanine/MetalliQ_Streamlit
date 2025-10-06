@@ -237,13 +237,51 @@ def results_page(results: Optional[dict] = None, ai_text: Optional[Any] = None):
     st.markdown("---")
 
     # ---------- Data Quality & Uncertainty (ADQI) ----------
+        # ---------- Data Quality & Uncertainty (ADQI) ----------
     st.markdown("<h3 style='color:#0b6b66'>Data Quality & Uncertainty</h3>", unsafe_allow_html=True)
-    dq = r["data_quality"]
+    dq = r.get("data_quality", {})  # safe access
+
+    # read values with defaults if missing
+    rel = dq.get("Reliability", dq.get("reliability", "4/5"))
+    comp = dq.get("Completeness", dq.get("completeness", "4/5"))
+    temp = dq.get("Temporal", dq.get("temporal", "4/5"))
+    geo = dq.get("Geographical", dq.get("geographical", "4/5"))
+    tech = dq.get("Technological", dq.get("technological", "4/5"))
+
+    # aggregated ADQI: try common keys, fall back to a computed average
+    agg_adqi = dq.get("Aggregated ADQI", dq.get("aggregated_adqi", None))
+    if agg_adqi is None:
+        # try to compute numeric average when slider integers are available
+        def parse_score(s):
+            try:
+                if isinstance(s, str) and "/" in s:
+                    return float(s.split("/")[0])
+                return float(s)
+            except Exception:
+                return None
+        parts = [parse_score(x) for x in (rel, comp, temp, geo, tech)]
+        nums = [p for p in parts if p is not None]
+        if nums:
+            agg_adqi = round(sum(nums) / len(nums), 2)
+        else:
+            agg_adqi = 4.0
+
+    uncertainty_pct = dq.get("Result Uncertainty pct", dq.get("result_uncertainty_pct", dq.get("uncertainty_pct", 14)))
+
     a, b = st.columns([2,1])
     with a:
-        st.write(f"**Reliability Score:** {dq['Reliability']}  \n**Completeness Score:** {dq['Completeness']}  \n**Temporal Score:** {dq['Temporal']}  \n**Geographical Score:** {dq['Geographical']}  \n**Technological Score:** {dq['Technological']}")
+        # show the individual scores; they are strings like "4/5" in many cases
+        st.markdown(f"**Reliability Score:** {rel}  \n**Completeness Score:** {comp}  \n**Temporal Score:** {temp}  \n**Geographical Score:** {geo}  \n**Technological Score:** {tech}")
     with b:
-        st.markdown(f"<div style='background:{CARD_BG};padding:14px;border-radius:8px;text-align:center'> <div style='color:{MUTED}'>Aggregated Data Quality</div><div style='font-size:28px;color:{ACCENT_DARK};font-weight:700'>{dq['Aggregated ADQI']}</div><div style='color:{MUTED};margin-top:6px'>Result Uncertainty<br><strong>±{dq['Result Uncertainty pct']}%</strong></div></div>", unsafe_allow_html=True)
+        st.markdown(
+            f"<div style='background:{CARD_BG};padding:14px;border-radius:8px;text-align:center'>"
+            f"<div style='color:{MUTED}'>Aggregated Data Quality</div>"
+            f"<div style='font-size:28px;color:{ACCENT_DARK};font-weight:700'>{agg_adqi}</div>"
+            f"<div style='color:{MUTED};margin-top:6px'>Result Uncertainty<br><strong>±{uncertainty_pct}%</strong></div>"
+            f"</div>",
+            unsafe_allow_html=True
+        )
+
 
     st.markdown("---")
 

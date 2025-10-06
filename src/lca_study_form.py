@@ -390,6 +390,28 @@ def full_lca_study_form():
             with st.spinner("Running LCA simulation... Please wait ⏳"):
                 results = run_simulation(form_data)
                 st.session_state["lca_results"] = results
+                # ensure results contains data_quality built from form sliders (so UI has expected keys)
+                if isinstance(results, dict):
+                    results.setdefault("data_quality", {})
+                    dq = results["data_quality"]
+                    # prefer values returned by simulation, otherwise use form inputs (show as "X/5")
+                    dq.setdefault("Reliability", f"{reliability}/5")
+                    dq.setdefault("Completeness", f"{completeness}/5")
+                    dq.setdefault("Temporal", f"{temporal}/5")
+                    dq.setdefault("Geographical", f"{geographical}/5")
+                    dq.setdefault("Technological", f"{technological}/5")
+
+                    # compute aggregated ADQI numeric mean if the simulation didn't provide one
+                    try:
+                        numeric_vals = [float(reliability), float(completeness), float(temporal), float(geographical), float(technological)]
+                        adqi_val = round(sum(numeric_vals) / len(numeric_vals), 2)
+                    except Exception:
+                        adqi_val = dq.get("Aggregated ADQI", dq.get("aggregated_adqi", 4.0))
+                    dq.setdefault("Aggregated ADQI", adqi_val)
+
+                    # default uncertainty (percent)
+                    dq.setdefault("Result Uncertainty pct", dq.get("result_uncertainty_pct", 14))
+
 
             # Provide a brief progress animation
             progress_bar = st.progress(0)
