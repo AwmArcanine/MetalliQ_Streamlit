@@ -221,12 +221,6 @@ def full_lca_study_form():
                 ["Packaging", "Structural", "Automotive", "Construction", "Aerospace", "Railways", "Defence", "Electronics", "Power Transmission", "Other"],
                 index=0
             )
-            ore_conc = st.number_input("Metal Ore Concentration (%)", min_value=0.0, max_value=100.0, value=45.0, step=0.1)
-            alloy_complexity = st.selectbox(
-                "Alloy Complexity",
-                ["Simple Alloy (High Purity)", "Ferritic", "Austenitic", "Martensitic", "High Carbon", "Low Alloy", "Medium Alloy", "High Alloy"],
-                index=0
-            )
         with col2:
             material = st.selectbox(
                 "Material",
