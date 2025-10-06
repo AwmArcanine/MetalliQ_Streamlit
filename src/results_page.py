@@ -192,9 +192,24 @@ def results_page(results: Optional[dict] = None, ai_text: Optional[Any] = None):
 
       /* small card shading override for readability */
       .card-override {
-        background: rgba(255,255,255,0.94) !important;
-        color: #083a38 !important;
-      }
+        background: rgba(255, 255, 255, 0.18) !important; /* glassy transparency */
+        backdrop-filter: blur(12px) saturate(160%) !important;
+        -webkit-backdrop-filter: blur(12px) saturate(160%) !important;
+        border: 1px solid rgba(255, 255, 255, 0.25) !important;
+        color: rgba(6, 55, 53, 0.92) !important;  /* slightly darker teal text */
+        font-weight: 500 !important;  /* make text less faint */
+        text-shadow: 0 0 6px rgba(255, 255, 255, 0.35); /* gentle glow for contrast */
+        box-shadow: 0 4px 25px rgba(0, 0, 0, 0.08);
+        border-radius: 12px !important;
+        padding: 14px !important;
+        transition: all 0.3s ease-in-out;
+    }
+    .card-override:hover {
+        background: rgba(255, 255, 255, 0.24) !important;
+        transform: scale(1.02);
+    }
+
+
     </style>
     """,
     unsafe_allow_html=True,
@@ -603,14 +618,31 @@ def results_page(results: Optional[dict] = None, ai_text: Optional[Any] = None):
     # ---------- Primary vs. Recycled Scenario Comparison (table + charts) ----------
     st.markdown("<h3 style='color:#0b6b66'>Primary vs. Recycled Route Comparison</h3>", unsafe_allow_html=True)
 
-    # defensive: make sure results variable exists
+    # defensive: ensure results variable exists
     if results is None:
         results = {}
 
-    # Build DataFrame from results (safe access)
+    # try to get data
     df_pvr = pd.DataFrame(results.get("primary_vs_recycled", []))
-    if df_pvr.empty:
-        # fallback mock if missing
+
+    # --- Auto-fix: if columns are lowercase or wrong ---
+    if not df_pvr.empty:
+        # normalize columns
+        df_pvr.columns = [str(c).strip().capitalize() for c in df_pvr.columns]
+        # check if we have needed columns, otherwise rename known variants
+        rename_map = {}
+        for col in df_pvr.columns:
+            if col.lower() == "primary":
+                rename_map[col] = "Primary"
+            elif col.lower() == "recycled":
+                rename_map[col] = "Recycled"
+            elif col.lower() == "metric":
+                rename_map[col] = "Metric"
+        if rename_map:
+            df_pvr.rename(columns=rename_map, inplace=True)
+
+    # --- If still empty or missing columns, build mock fallback ---
+    if df_pvr.empty or not all(c in df_pvr.columns for c in ["Metric", "Primary", "Recycled"]):
         df_pvr = pd.DataFrame([
             {"Metric": "GWP (kg CO2-eq)", "Primary": 2485, "Recycled": 597},
             {"Metric": "Energy (GJ)", "Primary": 28.77, "Recycled": 6.17},
@@ -619,7 +651,7 @@ def results_page(results: Optional[dict] = None, ai_text: Optional[Any] = None):
             {"Metric": "Eutrophication (kg PO4-eq)", "Primary": 1.24, "Recycled": 0.30},
         ])
 
-    # compute savings and friendly display column
+    # --- Compute savings ---
     def compute_savings(p, r):
         try:
             if p == 0:
@@ -629,28 +661,36 @@ def results_page(results: Optional[dict] = None, ai_text: Optional[Any] = None):
         except Exception:
             return "—"
 
-    df_pvr["Savings"] = df_pvr.apply(lambda row: compute_savings(row["Primary"], row["Recycled"]), axis=1)
+    df_pvr["Savings"] = df_pvr.apply(
+        lambda row: compute_savings(row.get("Primary", 0), row.get("Recycled", 0)),
+        axis=1,
+    )
 
-    # Reorder / format for display (create a display copy so original numeric values remain numeric)
+    # --- Format table display ---
     display_df = df_pvr.copy()
     for col in ["Primary", "Recycled"]:
         if pd.api.types.is_numeric_dtype(display_df[col]):
-            display_df[col] = display_df[col].apply(lambda v: f"{v:,.2f}" if isinstance(v, (int, float)) else v)
+            display_df[col] = display_df[col].apply(lambda v: f"{v:,.2f}")
 
-    # Show table with a light card background for readability
     st.markdown("<div class='card-override' style='padding:10px;border-radius:8px'>", unsafe_allow_html=True)
-    st.table(display_df)   # st.table gives a clean static table (good for reports)
+    st.table(display_df)
     st.markdown("</div>", unsafe_allow_html=True)
 
     st.markdown("")  # spacing
 
-    # Plot: grouped bar chart (Primary vs Recycled) — good for per-metric comparison
+    # --- Charts ---
     try:
-        df_melt = df_pvr.melt(id_vars=["Metric", "Savings"], value_vars=["Primary", "Recycled"], var_name="Scenario", value_name="Value")
-        PRIMARY_COLOR = "#6c757d"     # muted gray
-        RECYCLED_COLOR = "#0f8f88"    # accent teal
+        df_melt = df_pvr.melt(
+            id_vars=["Metric", "Savings"],
+            value_vars=["Primary", "Recycled"],
+            var_name="Scenario",
+            value_name="Value"
+        )
+        PRIMARY_COLOR = "#6c757d"
+        RECYCLED_COLOR = "#0f8f88"
         color_map = {"Primary": PRIMARY_COLOR, "Recycled": RECYCLED_COLOR}
 
+        # grouped bar chart
         fig_cmp = px.bar(
             df_melt,
             x="Metric",
@@ -658,8 +698,7 @@ def results_page(results: Optional[dict] = None, ai_text: Optional[Any] = None):
             color="Scenario",
             barmode="group",
             text="Value",
-            color_discrete_map=color_map,
-            category_orders={"Scenario": ["Primary", "Recycled"]}
+            color_discrete_map=color_map
         )
         fig_cmp.update_traces(texttemplate="%{text:.2s}", textposition="outside")
         fig_cmp.update_layout(
@@ -670,17 +709,9 @@ def results_page(results: Optional[dict] = None, ai_text: Optional[Any] = None):
         )
         plot_style(fig_cmp, height=380)
         st.plotly_chart(fig_cmp, use_container_width=True)
-    except Exception as e:
-        st.error("Comparison chart not available")
-        st.write(str(e))
 
-    st.markdown("---")
-
-    # Plot: Key Metrics Visual Comparison (large horizontal bars)
-    try:
-        df_vis = df_pvr.copy()
-        df_vis = df_vis.sort_values("Primary", ascending=False)
-
+        # horizontal bar chart
+        df_vis = df_pvr.sort_values("Primary", ascending=False)
         fig_vis = go.Figure()
         fig_vis.add_trace(go.Bar(
             y=df_vis["Metric"],
@@ -698,12 +729,17 @@ def results_page(results: Optional[dict] = None, ai_text: Optional[Any] = None):
             marker=dict(color=RECYCLED_COLOR),
             hovertemplate='%{y}<br>Recycled: %{x}<extra></extra>'
         ))
-        fig_vis.update_layout(barmode='group', height=360, margin=dict(l=150, r=40, t=30, b=30))
+        fig_vis.update_layout(
+            barmode='group',
+            height=360,
+            margin=dict(l=150, r=40, t=30, b=30)
+        )
         plot_style(fig_vis, height=360)
         st.plotly_chart(fig_vis, use_container_width=True)
     except Exception as e:
-        st.error("Visual comparison chart not available")
+        st.error("Comparison chart failed to render")
         st.write(str(e))
+
 
 
 
