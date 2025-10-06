@@ -9,6 +9,27 @@ def load_theme():
     theme_path = Path("theme.css")
     if theme_path.exists():
         st.markdown(f"<style>{theme_path.read_text()}</style>", unsafe_allow_html=True)
+st.markdown("""
+<style>
+/* --- Fix for white radio button text --- */
+div[role="radiogroup"] label span {
+    color: #024B49 !important;   /* dark teal text */
+    font-weight: 600 !important;
+    letter-spacing: -0.3px;
+}
+
+/* Highlight the selected one with teal background + white text */
+div[role="radiogroup"] label[data-baseweb="radio"] > div:first-child {
+    background: rgba(0,255,255,0.15) !important;
+    border-radius: 6px !important;
+    transition: 0.2s ease-in-out;
+}
+div[role="radiogroup"] label[data-baseweb="radio"][aria-checked="true"] span {
+    color: #00A896 !important;
+    font-weight: 700 !important;
+}
+</style>
+""", unsafe_allow_html=True)
 
 
 # Mock Data
