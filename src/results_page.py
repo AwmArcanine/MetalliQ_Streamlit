@@ -28,7 +28,7 @@ except Exception:
 
 # ---------------- Theme colors (soft teal + glass)
 ACCENT = "#0f8f88"
-ACCENT_DARK = "#0c6f66"
+ACCENT_DARK = "#16f3e0"
 CARD_BG = "rgba(255,255,255,0.30)"
 MUTED = "#fcfcfc"
 TITLE = "#11ebe4"
