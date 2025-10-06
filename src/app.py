@@ -11,6 +11,7 @@ from Compare_Scenarios import compare_scenarios_page
 from view_reports import view_reports_page
 from collaborative_workspace_page import collaborative_workspace_page
 
+
 # ===================== PAGE CONFIG =====================
 st.set_page_config(
     layout="wide",
@@ -18,22 +19,15 @@ st.set_page_config(
     page_title="MetalliQ Sustainability Platform"
 )
 
-# ===================== GLOBAL SIDEBAR STYLE =====================
-st.markdown("""
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
 
-section[data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #0A2C33 0%, #003F46 60%, #00494D 100%);
-    padding: 0 !important;
-    font-family: 'Poppins', sans-serif;
-    box-shadow: 3px 0 14px rgba(0, 109, 119, 0.35);
-}
+# ===================== LOAD EXTERNAL CSS =====================
+def load_css(file_path: str):
+    with open(file_path, "r") as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-/* Hide Streamlit footer & menu */
-footer, #MainMenu {visibility: hidden;}
-</style>
-""", unsafe_allow_html=True)
+# Load sidebar styles only (doesn't affect other pages)
+load_css("app.css")
+
 
 # ===================== MAIN APP =====================
 def main_app():

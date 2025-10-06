@@ -1,0 +1,121 @@
+/* ==================== GLOBAL THEME: MetalliQ ==================== */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+
+html, body, [class*="css"] {
+    font-family: 'Poppins', sans-serif;
+}
+
+/* ==================== COLORS ==================== */
+:root {
+    --teal-primary: #00A896;
+    --teal-dark: #006D77;
+    --teal-light: #8EDDD0;
+    --white-glass: rgba(255, 255, 255, 0.75);
+    --shadow-soft: 0 8px 24px rgba(0, 109, 119, 0.2);
+}
+
+/* ==================== TEXT & HEADERS ==================== */
+h1, h2, h3, h4, h5, h6 {
+    color: #F8FEFD !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.3px;
+}
+p, label, span, div, li {
+    color: #E0F6F4 !important;
+}
+
+/* ==================== BUTTONS ==================== */
+div[data-testid="stButton"] > button {
+    background: linear-gradient(90deg, var(--teal-dark), var(--teal-primary));
+    color: white;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    padding: 0.55rem 1.3rem;
+    box-shadow: 0 4px 10px rgba(0,168,150,0.25);
+    transition: all 0.25s ease;
+}
+div[data-testid="stButton"] > button:hover {
+    transform: scale(1.03);
+    box-shadow: 0 6px 16px rgba(0,168,150,0.35);
+    background: linear-gradient(90deg, #009C8B, #00C2A2);
+}
+
+/* ==================== INPUTS ==================== */
+div[data-baseweb="input"], textarea, select {
+    background: var(--white-glass) !important;
+    border-radius: 10px !important;
+    border: 1px solid rgba(0,168,150,0.2) !important;
+    color: #043F43 !important;
+    font-weight: 500 !important;
+}
+div[data-baseweb="input"]:focus-within {
+    border: 1.5px solid var(--teal-primary) !important;
+    box-shadow: 0 0 0 3px rgba(0,168,150,0.25);
+}
+
+/* ==================== CARDS ==================== */
+.card, .stContainer {
+    background: var(--white-glass);
+    border-radius: 16px;
+    box-shadow: var(--shadow-soft);
+    padding: 20px;
+    backdrop-filter: blur(10px);
+}
+
+/* ==================== METRICS ==================== */
+[data-testid="stMetricLabel"] {
+    color: var(--teal-light) !important;
+    font-weight: 600 !important;
+}
+[data-testid="stMetricValue"] {
+    color: white !important;
+    font-weight: 800 !important;
+}
+
+/* ==================== PLOT TITLES & LABELS ==================== */
+.js-plotly-plot .plotly .main-svg .infolayer text,
+.gtitle, .xtitle, .ytitle {
+    fill: #FFFFFF !important;
+    font-weight: 600 !important;
+}
+
+/* ==================== TABLES ==================== */
+table {
+    background: rgba(255,255,255,0.85);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-soft);
+}
+thead tr th {
+    background: linear-gradient(90deg, var(--teal-dark), var(--teal-primary));
+    color: white !important;
+    font-weight: 700;
+}
+tbody tr:nth-child(even) {
+    background: rgba(240,255,252,0.75);
+}
+
+/* ==================== ANIMATIONS ==================== */
+@keyframes fadeIn {
+    from {opacity: 0; transform: translateY(8px);}
+    to {opacity: 1; transform: translateY(0);}
+}
+.fade-in {
+    animation: fadeIn 0.6s ease-in-out;
+}
+
+/* ==================== LINKS ==================== */
+a, a:visited {
+    color: var(--teal-light) !important;
+    text-decoration: none !important;
+    font-weight: 600;
+}
+a:hover {
+    color: var(--teal-primary) !important;
+}
+
+/* ==================== FOOTER CLEANUP ==================== */
+footer, #MainMenu {
+    visibility: hidden !important;
+}
