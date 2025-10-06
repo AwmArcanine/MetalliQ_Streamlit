@@ -9,37 +9,66 @@ st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Poppins:wght@400;500;600&display=swap');
 
+/* Global Background */
 body, .stApp {
     background: linear-gradient(135deg, #00494D 0%, #006D77 40%, #83C5BE 100%) !important;
     color: #ffffff !important;
     font-family: 'Poppins', sans-serif;
 }
 
+/* Headings with Neon Accent */
 h1, h2, h3, h4, h5, h6 {
     font-family: 'Orbitron', sans-serif;
-    color: #00EFFF;
+    color: #00EFFF !important;
     text-shadow: 0 0 18px rgba(0, 239, 255, 0.8);
 }
 
+/* DataFrames */
 .stDataFrame, .stTable {
     color: #ffffff !important;
+    background-color: rgba(255,255,255,0.06) !important;
 }
 
+/* Frosted Glass Metric & Results Cards */
 .metric-card, .results-card {
-    background: rgba(255, 255, 255, 0.08) !important;
-    border: 1px solid rgba(0, 239, 255, 0.25) !important;
+    background: rgba(255, 255, 255, 0.3) !important;
+    border: 1px solid rgba(0, 239, 255, 0.35) !important;
     border-radius: 16px !important;
-    color: #E0FFFF !important;
-    box-shadow: 0 0 10px rgba(0,239,255,0.2);
+    color: #0B1A26 !important;
+    box-shadow: 0 4px 20px rgba(255,255,255,0.15), inset 0 1px 10px rgba(255,255,255,0.25);
+    backdrop-filter: blur(14px);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
+.metric-card:hover, .results-card:hover {
+    transform: scale(1.02);
+    box-shadow: 0 6px 24px rgba(255,255,255,0.25);
+}
+
+/* Inner text in metric cards */
+.metric-card span {
+    color: #0B1A26 !important;
+}
+
+/* Frosted ISO 14044 Banner */
+.results-card.iso-banner {
+    background: rgba(255, 255, 255, 0.3) !important;
+    border: 1px solid rgba(0, 239, 255, 0.3) !important;
+    color: #0B1A26 !important;
+    box-shadow: 0 4px 20px rgba(255,255,255,0.15), inset 0 1px 8px rgba(255,255,255,0.25);
+    backdrop-filter: blur(12px);
+    font-size: 1.05em;
+}
+
+/* Neon Action Button */
 div.stButton > button {
     background: linear-gradient(90deg, #00EFFF 0%, #00B8D4 100%) !important;
-    color: #001f26 !important;
+    color: #002026 !important;
     font-weight: 700 !important;
     border-radius: 10px !important;
     border: 1px solid rgba(0,255,255,0.3) !important;
     box-shadow: 0 0 18px rgba(0,239,255,0.4);
+    transition: all 0.2s ease;
 }
 
 div.stButton > button:hover {
@@ -47,26 +76,22 @@ div.stButton > button:hover {
     box-shadow: 0 0 25px rgba(0,239,255,0.6);
 }
 
+/* Divider */
 hr, .stDivider {
     border-color: rgba(0,255,255,0.3);
 }
-</style>
-""", unsafe_allow_html=True)
 
-# Original card CSS (kept exactly as before)
-st.markdown("""
-<style>
-.results-card {
-    background: #f2f4f6;
-    border-radius: 14px;
-    box-shadow: 0 2.5px 15px #d4d5de71;
-    padding: 18px 20px 16px 22px;
-    margin-bottom: 1.1em;
+/* Transparent Chart Backgrounds */
+.js-plotly-plot .plotly, .plotly, .main-svg {
+    background-color: rgba(255,255,255,0.15) !important;
+    backdrop-filter: blur(8px);
+    border-radius: 12px;
 }
-
+svg g.cartesianlayer rect.bg {
+    fill: rgba(255,255,255,0.05) !important;
+}
 </style>
 """, unsafe_allow_html=True)
-
 
 
 def results_page(results, ai_text):
@@ -76,7 +101,7 @@ def results_page(results, ai_text):
     # ISO 14044 Compliance banner
     st.markdown(
         """
-        <div class='results-card' style='background:#eef3fc; border-radius:16px; padding:21px 25px 17px 40px; margin-bottom: 20px; font-size:1.07em; border: 1px solid #c5dbfc;'>
+        <div class='results-card iso-banner' style='background:#eef3fc; border-radius:16px; padding:21px 25px 17px 40px; margin-bottom: 20px; font-size:1.07em; border: 1px solid #c5dbfc;'>
             <b>ISO 14044 Conformance</b><br>
             This is a screening-level LCA designed to be broadly consistent with ISO 14044 principles for internal decision-making.
             For public comparative assertions, a formal third-party critical review of this report is required.
