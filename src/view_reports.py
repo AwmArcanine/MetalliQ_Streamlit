@@ -30,7 +30,7 @@ def view_reports_page():
         font-family: 'Poppins', sans-serif;
     }
     .report-caption {
-        color: #0a3c42;
+        color: #ffffff;
         font-weight: 500;
         margin-bottom: 18px;
         font-family: 'Inter', sans-serif;
