@@ -21,7 +21,7 @@ def view_reports_page():
 
     /* ---------- Header ---------- */
     .report-title {
-        font-size: 2.1em;
+        font-size: 3em;
         font-weight: 800;
         letter-spacing: -1px;
         color: #00FFFF;
@@ -65,7 +65,7 @@ def view_reports_page():
     }
     .report-table thead tr th {
         background: linear-gradient(90deg, #007F8E, #00A896);
-        color: #fff;
+        color: #ffffff;
         font-weight: 800;
         font-size: 1.05em;
         padding: 12px 6px;
@@ -87,7 +87,7 @@ def view_reports_page():
     .report-table td {
         font-size: 1.02em;
         padding: 11px 6px;
-        color: #043b3b;
+        color: #ffffff;
         text-align: center;
         border-bottom: 1.2px solid rgba(0,109,119,0.15);
     }
