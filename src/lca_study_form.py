@@ -2,7 +2,7 @@ import streamlit as st
 import time
 from lca_simulation import run_simulation
 from results_page import results_page
-from ai_recommendation import ai_data_example
+# from ai_recommendation import ai_data_example
 import traceback
 
 # --- MetalliQ Neon-Teal Theme for LCA Study Form ---
