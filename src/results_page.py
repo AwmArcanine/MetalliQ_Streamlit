@@ -5,96 +5,96 @@ import pandas as pd
 import ai_recommendation
 import numpy as np
 # Add a general card CSS for all cards at the top:
-st.markdown("""
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Poppins:wght@400;500;600&display=swap');
-
-/* Global Background */
-body, .stApp {
-    background: linear-gradient(135deg, #00494D 0%, #006D77 40%, #83C5BE 100%) !important;
-    color: #ffffff !important;
-    font-family: 'Poppins', sans-serif;
-}
-
-/* Headings with Neon Accent */
-h1, h2, h3, h4, h5, h6 {
-    font-family: 'Orbitron', sans-serif;
-    color: #00EFFF !important;
-    text-shadow: 0 0 18px rgba(0, 239, 255, 0.8);
-}
-
-/* DataFrames */
-.stDataFrame, .stTable {
-    color: #ffffff !important;
-    background-color: rgba(255,255,255,0.06) !important;
-}
-
-/* Frosted Glass Metric & Results Cards */
-.metric-card, .results-card {
-    background: rgba(255, 255, 255, 0.3) !important;
-    border: 1px solid rgba(0, 239, 255, 0.35) !important;
-    border-radius: 16px !important;
-    color: #0B1A26 !important;
-    box-shadow: 0 4px 20px rgba(255,255,255,0.15), inset 0 1px 10px rgba(255,255,255,0.25);
-    backdrop-filter: blur(14px);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.metric-card:hover, .results-card:hover {
-    transform: scale(1.02);
-    box-shadow: 0 6px 24px rgba(255,255,255,0.25);
-}
-
-/* Inner text in metric cards */
-.metric-card span {
-    color: #0B1A26 !important;
-}
-
-/* Frosted ISO 14044 Banner */
-.results-card.iso-banner {
-    background: rgba(255, 255, 255, 0.3) !important;
-    border: 1px solid rgba(0, 239, 255, 0.3) !important;
-    color: #0B1A26 !important;
-    box-shadow: 0 4px 20px rgba(255,255,255,0.15), inset 0 1px 8px rgba(255,255,255,0.25);
-    backdrop-filter: blur(12px);
-    font-size: 1.05em;
-}
-
-/* Neon Action Button */
-div.stButton > button {
-    background: linear-gradient(90deg, #00EFFF 0%, #00B8D4 100%) !important;
-    color: #002026 !important;
-    font-weight: 700 !important;
-    border-radius: 10px !important;
-    border: 1px solid rgba(0,255,255,0.3) !important;
-    box-shadow: 0 0 18px rgba(0,239,255,0.4);
-    transition: all 0.2s ease;
-}
-
-div.stButton > button:hover {
-    transform: scale(1.03);
-    box-shadow: 0 0 25px rgba(0,239,255,0.6);
-}
-
-/* Divider */
-hr, .stDivider {
-    border-color: rgba(0,255,255,0.3);
-}
-
-/* Transparent Chart Backgrounds */
-.js-plotly-plot .plotly, .plotly, .main-svg {
-    background-color: rgba(255,255,255,0.15) !important;
-    backdrop-filter: blur(8px);
-    border-radius: 12px;
-}
-svg g.cartesianlayer rect.bg {
-    fill: rgba(255,255,255,0.05) !important;
-}
-</style>
-""", unsafe_allow_html=True)
 
 
 def results_page(results, ai_text):
+    st.markdown("""
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Poppins:wght@400;500;600&display=swap');
+
+    /* Global Background */
+    body, .stApp {
+        background: linear-gradient(135deg, #00494D 0%, #006D77 40%, #83C5BE 100%) !important;
+        color: #ffffff !important;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    /* Headings with Neon Accent */
+    h1, h2, h3, h4, h5, h6 {
+        font-family: 'Orbitron', sans-serif;
+        color: #00EFFF !important;
+        text-shadow: 0 0 18px rgba(0, 239, 255, 0.8);
+    }
+
+    /* DataFrames */
+    .stDataFrame, .stTable {
+        color: #ffffff !important;
+        background-color: rgba(255,255,255,0.06) !important;
+    }
+
+    /* Frosted Glass Metric & Results Cards */
+    .metric-card, .results-card {
+        background: rgba(255, 255, 255, 0.3) !important;
+        border: 1px solid rgba(0, 239, 255, 0.35) !important;
+        border-radius: 16px !important;
+        color: #0B1A26 !important;
+        box-shadow: 0 4px 20px rgba(255,255,255,0.15), inset 0 1px 10px rgba(255,255,255,0.25);
+        backdrop-filter: blur(14px);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .metric-card:hover, .results-card:hover {
+        transform: scale(1.02);
+        box-shadow: 0 6px 24px rgba(255,255,255,0.25);
+    }
+
+    /* Inner text in metric cards */
+    .metric-card span {
+        color: #0B1A26 !important;
+    }
+
+    /* Frosted ISO 14044 Banner */
+    .results-card.iso-banner {
+        background: rgba(255, 255, 255, 0.3) !important;
+        border: 1px solid rgba(0, 239, 255, 0.3) !important;
+        color: #0B1A26 !important;
+        box-shadow: 0 4px 20px rgba(255,255,255,0.15), inset 0 1px 8px rgba(255,255,255,0.25);
+        backdrop-filter: blur(12px);
+        font-size: 1.05em;
+    }
+
+    /* Neon Action Button */
+    div.stButton > button {
+        background: linear-gradient(90deg, #00EFFF 0%, #00B8D4 100%) !important;
+        color: #002026 !important;
+        font-weight: 700 !important;
+        border-radius: 10px !important;
+        border: 1px solid rgba(0,255,255,0.3) !important;
+        box-shadow: 0 0 18px rgba(0,239,255,0.4);
+        transition: all 0.2s ease;
+    }
+
+    div.stButton > button:hover {
+        transform: scale(1.03);
+        box-shadow: 0 0 25px rgba(0,239,255,0.6);
+    }
+
+    /* Divider */
+    hr, .stDivider {
+        border-color: rgba(0,255,255,0.3);
+    }
+
+    /* Transparent Chart Backgrounds */
+    .js-plotly-plot .plotly, .plotly, .main-svg {
+        background-color: rgba(255,255,255,0.15) !important;
+        backdrop-filter: blur(8px);
+        border-radius: 12px;
+    }
+    svg g.cartesianlayer rect.bg {
+        fill: rgba(255,255,255,0.05) !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
     st.title("Steel for New Building Frame")
     st.markdown("---")
 
