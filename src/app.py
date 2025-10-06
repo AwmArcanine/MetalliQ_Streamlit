@@ -23,7 +23,7 @@ st.markdown("""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
 
-/* Sidebar base */
+/* Sidebar Base */
 section[data-testid="stSidebar"] {
     background: linear-gradient(180deg, #0A2C33 0%, #003F46 60%, #00494D 100%);
     padding: 0 !important;
@@ -31,7 +31,7 @@ section[data-testid="stSidebar"] {
     box-shadow: 3px 0 14px rgba(0, 109, 119, 0.35);
 }
 
-/* Logo header */
+/* Logo Header */
 .sidebar-header {
     text-align: center;
     padding: 1.4rem 0 0.8rem 0;
@@ -42,14 +42,15 @@ section[data-testid="stSidebar"] {
 }
 .sidebar-header h2 {
     font-weight: 800;
-    font-size: 1.35rem;
+    font-size: 1.38rem;
     color: #FFFFFF;
     margin-bottom: -3px;
 }
 .sidebar-header p {
     color: #A4E0DD;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     margin-bottom: 1.2rem;
+    letter-spacing: 0.4px;
 }
 
 /* Workspaces */
@@ -57,20 +58,20 @@ section[data-testid="stSidebar"] {
     padding: 0 1.2rem;
 }
 .workspace-section h4 {
-    font-size: 0.8rem;
+    font-size: 0.82rem;
     font-weight: 700;
     color: #8EDDD0;
-    letter-spacing: 0.8px;
-    margin-bottom: 6px;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
 }
 .workspace-box {
-    background: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.09);
     border-radius: 10px;
     padding: 8px 10px;
-    margin: 4px 0 8px 0;
-    transition: all 0.25s ease;
+    margin: 5px 0 9px 0;
     display: flex;
     align-items: center;
+    transition: all 0.25s ease;
 }
 .workspace-box:hover {
     background: rgba(255, 255, 255, 0.18);
@@ -89,64 +90,72 @@ section[data-testid="stSidebar"] {
 .workspace-title {
     font-weight: 600;
     color: #EAF4F4;
+    font-size: 0.95rem;
 }
 
 /* Navigation */
 .sidebar-nav {
-    margin-top: 1.2rem;
+    margin-top: 1.3rem;
     padding: 0 1.2rem;
 }
-.nav-item {
+.sidebar-nav div[role="radiogroup"] label {
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #D9F5F0 !important;
+    transition: all 0.25s ease;
+}
+.sidebar-nav div[role="radiogroup"] label:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+}
+.sidebar-nav div[role="radiogroup"] label[data-testid="stMarkdownContainer"] {
+    color: #EAF4F4 !important;
+}
+.sidebar-nav div[role="radiogroup"] label div {
     display: flex;
     align-items: center;
-    padding: 8px 12px;
-    border-radius: 8px;
-    margin: 3px 0;
-    color: #D8F3DC;
-    font-weight: 500;
-    transition: all 0.2s ease;
+    gap: 0.6rem;
 }
-.nav-item:hover {
-    background: rgba(255, 255, 255, 0.1);
-}
+
+/* Buttons / Active States */
 .nav-active {
-    background: rgba(255, 255, 255, 0.15);
+    background: linear-gradient(90deg, #006D77 0%, #00A896 100%) !important;
+    color: white !important;
+    font-weight: 700;
     border-left: 4px solid #00A896;
-}
-.nav-icon {
-    margin-right: 10px;
-    font-size: 1.05em;
 }
 
 /* Footer */
 .sidebar-footer {
     position: absolute;
-    bottom: 20px;
+    bottom: 30px;
     width: 100%;
     text-align: center;
 }
 .user-badge {
-    background: #00494D;
+    background: linear-gradient(90deg, #006D77, #00A896);
     color: white;
     border-radius: 50%;
-    width: 36px;
-    height: 36px;
+    width: 40px;
+    height: 40px;
     text-align: center;
-    line-height: 36px;
+    line-height: 40px;
     display: inline-block;
     font-weight: 700;
-    font-size: 0.9em;
+    font-size: 1em;
+    box-shadow: 0 2px 8px rgba(0,168,150,0.25);
 }
 .user-name {
-    color: #CFECEC;
-    margin-top: 6px;
-    font-size: 0.9em;
+    color: #DFF6F2;
+    margin-top: 8px;
+    font-size: 0.95em;
     font-weight: 600;
+    letter-spacing: 0.3px;
 }
 footer, #MainMenu {visibility: hidden;}
 </style>
 """, unsafe_allow_html=True)
-
 # ===================== MAIN APP =====================
 def main_app():
     if "show_login" not in st.session_state:
