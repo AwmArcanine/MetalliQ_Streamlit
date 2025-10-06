@@ -30,7 +30,7 @@ except Exception:
 ACCENT = "#0f8f88"
 ACCENT_DARK = "#0c6f66"
 CARD_BG = "rgba(255,255,255,0.30)"
-MUTED = "#6a7f7c"
+MUTED = "#fcfcfc"
 TITLE = "#083a38"
 
 # ---------------- Helpers ----------------
