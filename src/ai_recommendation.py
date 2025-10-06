@@ -3,7 +3,7 @@ import pandas as pd
 
 def display_ai_recommendations(ai_data, extra_context=None):
     """Display AI-powered insights and recommendations styled like MetalliQ UI demo."""
-    st.header("AI-Powered Insights & Recommendations")
+    # st.header("AI-Powered Insights & Recommendations")
 
     # --- 0. Always show Ore Grade Warning ---
     if extra_context and "ore_conc" in extra_context:
