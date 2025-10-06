@@ -1,6 +1,8 @@
 import streamlit as st
 import time
 from lca_simulation import run_simulation
+from results_page import results_page
+from ai_recommendation import ai_data_example
 # --- MetalliQ Neon-Teal Theme for LCA Study Form ---
 def full_lca_study_form():
     st.markdown("""
@@ -265,10 +267,15 @@ def full_lca_study_form():
                 st.info("Running LCA simulation... Please wait ⏳")
                 results = run_simulation(form_data)
                 st.session_state["lca_results"] = results
-                st.success("✅ LCA Simulation completed successfully!")
                 progress_bar = st.progress(0)
+                st.success("✅ LCA Simulation completed successfully!")
                 for i in range(101):
                     time.sleep(0.05)
                     progress_bar.progress(i)
+                ai_text = results.get("ai_lifecycle_interpretation","")
+                st.markdown("<hr>",unsafe_allow_html=True)
+                results_page(results,ai_text)
+
+                
             except Exception as e:
                 st.error(f"❌ Simulation failed: {e}")
