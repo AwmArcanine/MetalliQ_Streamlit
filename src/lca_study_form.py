@@ -1,5 +1,5 @@
 import streamlit as st
-
+from lca_simulation import run_simulation
 # --- MetalliQ Neon-Teal Theme for LCA Study Form ---
 def full_lca_study_form():
     st.markdown("""
@@ -234,5 +234,37 @@ def full_lca_study_form():
         technological = st.slider("Technological Correlation", 1, 5, 4)
 
         submitted = st.form_submit_button("Run Analysis")
+
         if submitted:
-            st.success("Inputs saved and sent for LCA simulation.", icon="✅")
+            # Collect form data
+            form_data = {
+                "intended_app": intended_app,
+                "intended_audience": intended_audience,
+                "system_boundary": system_boundary,
+                "study_limitations": study_limitations,
+                "comparative_assertion": comparative_assertion,
+                "project_name": project_name,
+                "category": category,
+                "material": material,
+                "region": analysis_region,
+                "ore_type": ore_type,
+                "ore_conc": ore_conc,
+                "reliability": reliability,
+                "completeness": completeness,
+                "temporal": temporal,
+                "geographical": geographical,
+                "technological": technological
+            }
+
+            # Save to session
+            st.session_state["lca_form_data"] = form_data
+
+            try:
+                # ✅ Run your simulation function directly
+                st.info("Running LCA simulation... Please wait ⏳")
+                results = run_simulation(form_data)
+                st.session_state["lca_results"] = results
+                st.success("✅ LCA Simulation completed successfully!")
+                st.balloons()
+            except Exception as e:
+                st.error(f"❌ Simulation failed: {e}")
