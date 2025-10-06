@@ -37,27 +37,47 @@ def full_lca_study_form():
         }
 
         /* --- Input Fields --- */
-        input, select, textarea {
+        input, textarea {
             background: rgba(255,255,255,0.1) !important;
             color: #033E3E !important;
             border: 1px solid rgba(0,239,255,0.3) !important;
             border-radius: 10px !important;
             font-size: 0.95rem !important;
         }
-        input:focus, select:focus, textarea:focus {
+        input:focus, textarea:focus {
             outline: none !important;
             border-color: #00EFFF !important;
             box-shadow: 0 0 10px rgba(0,239,255,0.4);
         }
-
-        /* --- Buttons --- */
-        div.stButton > button {
+        /* --- FIX for SELECTBOX TEXT COLOR --- */
+        div[data-baseweb="select"] > div {
+            background-color: rgba(255,255,255,0.1) !important;
+            border: 1px solid rgba(0,239,255,0.3) !important;
+            border-radius: 10px !important;
+            color: #033E3E !important;
+        }
+        div[data-baseweb="select"] > div:hover {
+            border-color: #00EFFF !important;
+        }
+        div[data-baseweb="select"] > div > div {
+            color: #033E3E !important; /* selected text color */
+        }
+        div[data-baseweb="popover"] li {
+            background-color: rgba(0,73,77,0.9) !important;
+            color: #033E3E !important; /* dropdown option text color */
+        }
+        div[data-baseweb="popover"] li:hover {
+            background-color: rgba(0,239,255,0.2) !important;
+            color: #033E3E !important;
+        }
+        /* --- Neon Button (Run Analysis) --- */
+        div.stButton > button, div[data-testid="baseButton-secondary"] button {
             background: linear-gradient(90deg, #00EFFF 0%, #00B8CC 100%) !important;
             color: #002B36 !important;
             border-radius: 12px !important;
             font-weight: 700 !important;
             border: none !important;
-            padding: 0.6em 2.4em !important;
+            padding: 0.7em 2.6em !important;
             font-size: 1.05rem !important;
             transition: all 0.3s ease-in-out;
             box-shadow: 0 0 15px rgba(0,239,255,0.3);
@@ -65,8 +85,7 @@ def full_lca_study_form():
         div.stButton > button:hover {
             background: linear-gradient(90deg, #00B8CC 0%, #00EFFF 100%) !important;
             box-shadow: 0 0 30px rgba(0,239,255,0.6);
-            transform: scale(1.03);
-        }
+            transform: scale(1.04);
 
         /* --- Radio, Slider, etc --- */
         .stRadio > label, .stSlider, .stSelectbox {
