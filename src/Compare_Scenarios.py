@@ -61,8 +61,7 @@ def compare_scenarios_page():
     """, unsafe_allow_html=True)
 
     # ---------- PAGE CONTENT ----------
-    st.markdown("<div class='compare-container'>", unsafe_allow_html=True)
-    st.markdown("<h2 style='color:#006D77;font-weight:800;letter-spacing:-0.5px;'>⚖️ Compare Scenarios & Reports</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 style='color:#00FFFF;font-weight:800;letter-spacing:-0.5px;'>⚖️ Compare Scenarios & Reports</h2>", unsafe_allow_html=True)
 
     # ---- INPUT PANE ----
     st.markdown("<div class='section-title'>1️⃣ Define New Scenario for Comparison</div>", unsafe_allow_html=True)
