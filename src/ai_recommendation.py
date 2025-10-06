@@ -143,3 +143,62 @@ def display_ai_recommendations(ai_data, extra_context=None):
     # --- 5. Always show at end ---
     st.markdown("---")
     st.caption("AI insights are for internal sustainability evaluation and not for external public claims.")
+
+# --- Example AI data (used when real AI generation isn't active) ---
+ai_data_example = {
+    "summary": "AI analysis highlights key areas for sustainability improvement across production and recycling phases.",
+    "findings": [
+        {
+            "title": "Reduce Global Warming Potential in Production",
+            "priority": "High Priority",
+            "evidence": "Production accounts for ~65% of GWP due to fossil-based energy sources.",
+            "root_cause": "High dependency on coal-based electricity and low recycled input share.",
+            "action_plan": [
+                {
+                    "title": "Increase Recycled Material Input",
+                    "desc": "Raise recycled feedstock share from 10% to 40%.",
+                    "impact": "Expected reduction of 35% in GWP and 25% in energy demand.",
+                    "effort": "Medium Effort",
+                    "confidence": 90
+                },
+                {
+                    "title": "Adopt Renewable Power for Smelting",
+                    "desc": "Shift 50% of smelter electricity to solar/wind contracts.",
+                    "impact": "Large reduction in Scope 2 emissions.",
+                    "effort": "High Effort",
+                    "confidence": 80
+                }
+            ]
+        },
+        {
+            "title": "Optimize Water Consumption in Cooling",
+            "priority": "Medium Priority",
+            "evidence": "Water usage intensity in process stages exceeds benchmark by ~40%.",
+            "root_cause": "Open-loop cooling system without heat recovery.",
+            "action_plan": [
+                {
+                    "title": "Install Closed-loop Cooling Systems",
+                    "desc": "Capture and reuse process water.",
+                    "impact": "Cuts freshwater withdrawal by up to 60%.",
+                    "effort": "Medium Effort",
+                    "confidence": 85
+                }
+            ]
+        },
+        {
+            "title": "Enhance Material Circularity",
+            "priority": "Low Priority",
+            "evidence": "Circularity score currently 50%.",
+            "root_cause": "Insufficient recovery and reuse streams.",
+            "action_plan": [
+                {
+                    "title": "Establish Take-back Programs",
+                    "desc": "Implement return channels for end-of-life components.",
+                    "impact": "Boosts closed-loop potential by 25%.",
+                    "effort": "Low Effort",
+                    "confidence": 75
+                }
+            ]
+        }
+    ]
+}
