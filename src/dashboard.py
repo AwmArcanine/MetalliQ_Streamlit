@@ -7,106 +7,124 @@ def dashboard_page(workspace=None):
     st.set_page_config(layout="wide")
     st.cache_data.clear()
 
-    # ---------------------- THEME STYLING ----------------------
+    # --- THEME (matches Collaborative Workspace) ---
     st.markdown("""
         <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Orbitron:wght@600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
         body, .stApp {
-            background: linear-gradient(135deg, #00494D 0%, #006D77 40%, #83C5BE 100%) !important;
-            color: #E6FFFF !important;
+            background: linear-gradient(120deg, #f7fdfc 0%, #e6fffb 100%) !important;
+            color: #003E3E;
             font-family: 'Poppins', sans-serif;
         }
 
-        /* Headings */
-        h1, h2, h3, h4 {
-            font-family: 'Orbitron', sans-serif;
-            color: #7CF4E3 !important;
-            text-shadow: 0 0 10px rgba(124, 244, 227, 0.6);
-        }
-
-        /* Section Titles */
-        .section-title {
-            color: #7CF4E3 !important;
+        /* Center Header */
+        h1 {
+            text-align: center;
+            color: #006D77 !important;
             font-weight: 700;
-            margin-top: 40px;
-            margin-bottom: 15px;
-            font-size: 1.35rem !important;
+            margin-bottom: 4px;
+            letter-spacing: -0.3px;
         }
 
-        /* Glass Cards */
+        h3.section-title {
+            color: #00494D !important;
+            font-weight: 600;
+            font-size: 1.2rem;
+            margin-top: 32px;
+            border-left: 4px solid #00A896;
+            padding-left: 8px;
+        }
+
+        /* Card Styling */
         .metriccard, .ext-card, .report-card {
-            background: rgba(255, 255, 255, 0.18);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border-radius: 16px;
+            border: 1px solid rgba(0, 73, 77, 0.15);
             padding: 18px 22px;
-            box-shadow: 0 8px 25px rgba(0, 109, 119, 0.25);
-            transition: 0.3s;
+            box-shadow: 0 4px 20px rgba(0, 109, 119, 0.08);
+            transition: all 0.3s ease-in-out;
         }
         .metriccard:hover, .ext-card:hover, .report-card:hover {
-            box-shadow: 0 0 25px rgba(124, 244, 227, 0.85);
+            box-shadow: 0 4px 25px rgba(0, 168, 150, 0.25);
             transform: translateY(-3px);
         }
 
-        /* Metric text */
-        .metricheader { font-size: 1.1rem; color: #D8FFFF; margin-bottom: 6px; }
-        .metricvalue { font-size: 1.9rem; font-weight: 800; color: #00F5D4; }
+        .metricheader {
+            font-size: 1rem;
+            color: #00494D;
+            margin-bottom: 4px;
+        }
 
-        /* Tables */
+        .metricvalue {
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: #00A896;
+        }
+
+        .ext-card {
+            text-align: center;
+            margin-bottom: 12px;
+        }
+
+        /* Table */
         table {
-            border: 1.5px solid rgba(124, 244, 227, 0.35) !important;
+            border: 1.5px solid rgba(0, 168, 150, 0.25) !important;
             border-radius: 10px;
-            background: rgba(255,255,255,0.05);
+            background: rgba(255,255,255,0.6);
         }
         thead tr {
-            background: rgba(124, 244, 227, 0.15) !important;
-            color: #7CF4E3 !important;
+            background: rgba(0,168,150,0.1) !important;
+            color: #00494D !important;
             font-weight: 600;
         }
-        tbody tr { color: #E6FFFF !important; }
+        tbody tr {
+            color: #00494D !important;
+        }
 
-        /* Reuse badges */
+        /* Project Badge */
         .leaderboard-badge {
-            background: rgba(124, 244, 227, 0.25);
+            background: rgba(0, 168, 150, 0.1);
             border-radius: 12px;
-            color: #7CF4E3;
+            color: #006D77;
             font-weight: 600;
             padding: 3px 12px;
         }
 
+        /* Chart Margins */
+        .stPlotlyChart {
+            margin-top: 10px;
+            margin-bottom: 40px;
+        }
+
         /* Button */
-        div.stButton > button {
-            background: linear-gradient(90deg, #00A896, #02C39A);
-            color: white;
+        .stButton button {
+            background: linear-gradient(90deg,#00A896,#02C39A);
+            color: white !important;
             border: none;
             border-radius: 10px;
             font-weight: 600;
-            padding: 8px 16px;
-            box-shadow: 0 0 8px rgba(124, 244, 227, 0.3);
-            transition: all 0.2s ease-in-out;
+            padding: 0.6rem 1.3rem;
+            transition: all 0.3s ease;
         }
-        div.stButton > button:hover {
-            background: linear-gradient(90deg, #02C39A, #00F5D4);
-            box-shadow: 0 0 15px rgba(124, 244, 227, 0.8);
+        .stButton button:hover {
+            box-shadow: 0 0 12px rgba(0,168,150,0.6);
             transform: translateY(-2px);
         }
-
-        .stPlotlyChart { margin-top: 10px; margin-bottom: 40px; }
         </style>
     """, unsafe_allow_html=True)
 
-    # ---------------------- HEADER ----------------------
-    col1, col2 = st.columns([8, 2])
-    with col1:
-        st.markdown("<h1>MetalliQ Sustainability Dashboard</h1>", unsafe_allow_html=True)
-        st.markdown("<p style='color:#E6FFFF;font-size:0.95rem;'>An overview of your workspace’s sustainability intelligence.</p>", unsafe_allow_html=True)
-    with col2:
-        st.markdown("<div style='margin-top:20px;'>", unsafe_allow_html=True)
-        st.button("➕ New Study", use_container_width=True)
-        st.markdown("</div>", unsafe_allow_html=True)
+    # --- Header ---
+    st.markdown("<h1>🌍 MetalliQ Sustainability Dashboard</h1>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align:center;color:#00494D;font-size:0.95rem;'>Your workspace’s unified sustainability intelligence overview</p>", unsafe_allow_html=True)
 
-    # ---------------------- MOCK DATA ----------------------
+    if st.button("➕ New Study", use_container_width=True):
+        st.session_state["page"] = "Create Study"
+        st.rerun()
+
+    # --- Mock Data ---
     recycling_rate_data = pd.Series(
         [82, 81, 83, 86, 86, 88, 90, 91, 93, 95, 97],
         index=pd.date_range("2024-10-01", periods=11, freq="M"))
@@ -135,75 +153,76 @@ def dashboard_page(workspace=None):
                     'Water Consumption': {'mean': 4.7, 'unit': 'm³'}}
     }
 
-    # ---------------------- METRIC CARDS ----------------------
+    # --- Metric Cards ---
     st.markdown("<h3 class='section-title'>Core Metrics</h3>", unsafe_allow_html=True)
-    cols = st.columns(3)
-    metrics = [
-        ("Average Recycling Rate", f"{results['metrics']['avg_recycling_rate']}%"),
-        ("Total Recycled Material", f"{results['metrics']['total_recycled_material']} tonnes"),
-        ("Average Circularity Score", f"{results['metrics']['avg_circularity_score']}/100")
-    ]
-    for i, (label, val) in enumerate(metrics):
-        cols[i].markdown(f"<div class='metriccard'><div class='metricheader'>{label}</div><div class='metricvalue'>{val}</div></div>", unsafe_allow_html=True)
+    col1, col2, col3 = st.columns(3)
+    col1.markdown(f"<div class='metriccard'><div class='metricheader'>Average Recycling Rate</div><div class='metricvalue'>{results['metrics']['avg_recycling_rate']}%</div></div>", unsafe_allow_html=True)
+    col2.markdown(f"<div class='metriccard'><div class='metricheader'>Total Recycled Material</div><div class='metricvalue'>{results['metrics']['total_recycled_material']} tonnes</div></div>", unsafe_allow_html=True)
+    col3.markdown(f"<div class='metriccard'><div class='metricheader'>Average Circularity Score</div><div class='metricvalue'>{results['metrics']['avg_circularity_score']}/100</div></div>", unsafe_allow_html=True)
 
-    # ---------------------- LINE CHART ----------------------
+    # --- Line Chart ---
     st.markdown("<h3 class='section-title'>Recycling Rate Over Time</h3>", unsafe_allow_html=True)
     line_fig = go.Figure()
+    trendx = [str(d.date()) for d in results["recycling_rate_trend"].index]
     line_fig.add_trace(go.Scatter(
-        x=[str(d.date()) for d in results["recycling_rate_trend"].index],
+        x=trendx,
         y=results["recycling_rate_trend"].values,
         fill='tozeroy',
         mode='lines+markers',
-        line=dict(color="#00F5D4", width=3),
-        marker=dict(size=7, color="#7CF4E3", line=dict(color="#00494D", width=1.5))
+        line=dict(color="#00A896", width=3),
+        marker=dict(size=7, color="#006D77", line=dict(color="#00F5D4", width=1.5))
     ))
     line_fig.update_layout(
         yaxis_title="Recycling Rate (%)",
         paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(color="#E6FFFF"),
-        xaxis=dict(showgrid=True, gridcolor="rgba(255,255,255,0.1)", tickfont=dict(color="#E6FFFF")),
-        yaxis=dict(showgrid=True, gridcolor="rgba(255,255,255,0.1)", tickfont=dict(color="#E6FFFF")),
+        plot_bgcolor="rgba(255,255,255,0.4)",
+        font=dict(color="#00494D"),
+        xaxis=dict(showgrid=True, gridcolor="rgba(0,73,77,0.1)"),
+        yaxis=dict(showgrid=True, gridcolor="rgba(0,73,77,0.1)"),
         height=400
     )
     st.plotly_chart(line_fig, use_container_width=True)
 
-    # ---------------------- PIE CHART ----------------------
+    # --- Pie Chart ---
     st.markdown("<h3 class='section-title'>Recycled vs Primary Material Share</h3>", unsafe_allow_html=True)
     pie_fig = go.Figure(go.Pie(
         labels=["Recycled Route", "Primary Route"],
         values=results["pie_share"],
         hole=0.6,
-        marker=dict(colors=["#00F5D4", "#006D77"]),
+        marker=dict(colors=["#00A896", "#83C5BE"]),
         textinfo='percent+label'
     ))
-    pie_fig.update_layout(paper_bgcolor="rgba(0,0,0,0)", font=dict(color="#E6FFFF"), height=350)
+    pie_fig.update_layout(
+        paper_bgcolor="rgba(0,0,0,0)",
+        font=dict(color="#00494D"),
+        height=350
+    )
     st.plotly_chart(pie_fig, use_container_width=True)
 
-    # ---------------------- EXTENDED CIRCULARITY ----------------------
+    # --- Extended Circularity ---
     st.markdown("<h3 class='section-title'>Extended Circularity Metrics</h3>", unsafe_allow_html=True)
     cardcols = st.columns(4)
     for i, (label, value) in enumerate(results["extended_circularity"]):
         cardcols[i % 4].markdown(
-            f"<div class='ext-card'><b>{label}</b><br><span style='font-size:1.25rem;font-weight:700;color:#00F5D4;'>{value}</span></div>",
+            f"<div class='ext-card'><b style='color:#00494D'>{label}</b><br><span style='font-size:1.25rem;font-weight:700;color:#00A896;'>{value}</span></div>",
             unsafe_allow_html=True
         )
 
-    # ---------------------- HOTSPOT TABLE ----------------------
+    # --- Table ---
     st.markdown("<h3 class='section-title'>Sustainability Hotspots – Top 3 Materials</h3>", unsafe_allow_html=True)
     df = pd.DataFrame(results["hotspots_materials"], columns=["Material", "Recycled Content (%)"])
     st.dataframe(df, use_container_width=True, hide_index=True)
 
-    # ---------------------- REUSE PROJECTS ----------------------
+    # --- Projects ---
     st.markdown("<h3 class='section-title'>Projects with Highest Reuse Potential</h3>", unsafe_allow_html=True)
     for proj, mat, pct in results["reuse_projects"]:
         st.markdown(
-            f"<div style='background:rgba(255,255,255,0.1);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.25);border-radius:14px;padding:10px 16px;margin-bottom:6px;display:flex;justify-content:space-between;'>"
-            f"<span><b>{proj}</b> ({mat})</span><span class='leaderboard-badge'>{pct}%</span></div>",
+            f"<div style='background:rgba(255,255,255,0.65);border:1px solid rgba(0,109,119,0.15);border-radius:14px;padding:10px 16px;margin-bottom:6px;display:flex;justify-content:space-between;'>"
+            f"<span style='color:#00494D'><b>{proj}</b> ({mat})</span><span class='leaderboard-badge'>{pct}%</span></div>",
             unsafe_allow_html=True
         )
 
-    # ---------------------- IMPACT BAR CHART ----------------------
+    # --- Impact Bar Chart ---
     st.markdown("<h3 class='section-title'>Key Impact Profiles</h3>", unsafe_allow_html=True)
     df_impact = pd.DataFrame(results["key_impact_profiles"], columns=["Category", "Value"])
     bar = px.bar(
@@ -211,25 +230,25 @@ def dashboard_page(workspace=None):
         x="Category",
         y="Value",
         color="Category",
-        color_discrete_sequence=["#00F5D4", "#7CF4E3", "#02C39A", "#00A896", "#006D77"]
+        color_discrete_sequence=["#00A896", "#006D77", "#02C39A", "#83C5BE", "#00F5D4"]
     )
     bar.update_layout(
         showlegend=False,
         paper_bgcolor="rgba(0,0,0,0)",
-        plot_bgcolor="rgba(0,0,0,0)",
-        font=dict(color="#E6FFFF"),
-        xaxis=dict(gridcolor="rgba(255,255,255,0.1)", tickfont=dict(color="#E6FFFF")),
-        yaxis=dict(gridcolor="rgba(255,255,255,0.1)", tickfont=dict(color="#E6FFFF")),
+        plot_bgcolor="rgba(255,255,255,0.4)",
+        font=dict(color="#00494D"),
+        xaxis=dict(gridcolor="rgba(0,73,77,0.1)"),
+        yaxis=dict(gridcolor="rgba(0,73,77,0.1)"),
         height=400
     )
     st.plotly_chart(bar, use_container_width=True)
 
-    # ---------------------- SUMMARY CARDS ----------------------
+    # --- Latest Report ---
     st.markdown("<h3 class='section-title'>Latest Report Analysis</h3>", unsafe_allow_html=True)
     s = results["summary"]
     cols = st.columns(4)
     for i, (k, v) in enumerate(s.items()):
         cols[i % 4].markdown(
-            f"<div class='report-card'><b>{k}</b><br><span style='font-size:1.35rem;font-weight:700;color:#00F5D4;'>{v['mean']} <small>{v['unit']}</small></span></div>",
+            f"<div class='report-card'><b style='color:#00494D'>{k}</b><br><span style='font-size:1.35rem;font-weight:700;color:#00A896;'>{v['mean']} <small>{v['unit']}</small></span></div>",
             unsafe_allow_html=True
         )
