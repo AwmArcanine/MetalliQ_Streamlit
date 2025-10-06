@@ -13,8 +13,8 @@ import pandas as pd
 import numpy as np
 import json
 import datetime
-import plotly.graph_objects as go
 import plotly.express as px
+import plotly.graph_objects as go
 import base64
 from typing import Optional, Any, Dict
 
@@ -678,7 +678,6 @@ def results_page(results: Optional[dict] = None, ai_text: Optional[Any] = None):
 
     # Plot: Key Metrics Visual Comparison (large horizontal bars)
     try:
-        import plotly.graph_objects as go
         df_vis = df_pvr.copy()
         df_vis = df_vis.sort_values("Primary", ascending=False)
 
