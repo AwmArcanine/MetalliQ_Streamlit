@@ -24,7 +24,7 @@ def view_reports_page():
         font-size: 2.1em;
         font-weight: 800;
         letter-spacing: -1px;
-        color: #006D77;
+        color: #00FFFF;
         margin-top: 10px;
         margin-bottom: 4px;
         font-family: 'Poppins', sans-serif;
