@@ -63,18 +63,7 @@ st.markdown("""
     padding: 18px 20px 16px 22px;
     margin-bottom: 1.1em;
 }
-.metric-card {
-    background: #f2f4f6;
-    border-radius: 14px;
-    box-shadow: 0 2.5px 15px #d4d5de71;
-    text-align: center;
-    min-width: 180px;
-    min-height: 96px;
-    padding: 28px 0 18px 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
+
 </style>
 """, unsafe_allow_html=True)
 
