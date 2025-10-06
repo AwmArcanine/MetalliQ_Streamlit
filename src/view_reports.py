@@ -4,81 +4,158 @@ import datetime
 import random
 
 def view_reports_page():
+    # ---------- THEME STYLING ----------
     st.markdown("""
     <style>
+    /* ---------- Page Container ---------- */
+    .report-container {
+        background: rgba(255,255,255,0.65);
+        border-radius: 16px;
+        box-shadow: 0 8px 28px rgba(0,109,119,0.15);
+        padding: 25px 30px;
+        backdrop-filter: blur(10px);
+        width: 98%;
+        margin: 20px auto;
+        animation: fadeIn 0.5s ease-in-out;
+    }
+
+    /* ---------- Header ---------- */
+    .report-title {
+        font-size: 2.1em;
+        font-weight: 800;
+        letter-spacing: -1px;
+        color: #006D77;
+        margin-top: 10px;
+        margin-bottom: 4px;
+        font-family: 'Poppins', sans-serif;
+    }
+    .report-caption {
+        color: #0a3c42;
+        font-weight: 500;
+        margin-bottom: 18px;
+        font-family: 'Inter', sans-serif;
+    }
+
+    /* ---------- Filter Cards ---------- */
+    .filter-card {
+        background: rgba(255,255,255,0.7);
+        border-radius: 12px;
+        box-shadow: 0 3px 14px rgba(0,109,119,0.1);
+        padding: 15px 20px 8px 20px;
+        backdrop-filter: blur(8px);
+        margin-bottom: 20px;
+        transition: all 0.2s ease-in-out;
+    }
+    .filter-card:hover {
+        box-shadow: 0 5px 18px rgba(0,109,119,0.15);
+    }
+
+    /* ---------- Table Styling ---------- */
     .report-table {
         border-collapse: separate !important;
         border-spacing: 0;
-        width: 98%;
-        margin: auto;
+        width: 100%;
+        margin: 10px auto;
         font-family: 'Inter', 'Segoe UI', Arial, sans-serif;
         table-layout: fixed;
-        background: #fff;
+        background: rgba(255,255,255,0.75);
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 6px 18px rgba(0,109,119,0.08);
     }
     .report-table thead tr th {
-        background: #171c23;
+        background: linear-gradient(90deg, #007F8E, #00A896);
         color: #fff;
         font-weight: 800;
-        font-size: 1.04em;
+        font-size: 1.05em;
         padding: 12px 6px;
-        border-right: 2px solid #fff1;
         text-align: center;
-        letter-spacing: -.2px;
-    }
-    .report-table thead tr th:first-child {
-        border-top-left-radius: 10px;
-    }
-    .report-table thead tr th:last-child {
-        border-top-right-radius: 10px;
-        border-right: none;
+        border-right: 2px solid rgba(255,255,255,0.1);
     }
     .report-table tbody tr {
-        background: #fff;
-        transition: background 0.13s;
+        position: relative;
+        overflow: hidden;
+        background: rgba(255,255,255,0.6);
+        transition: background 0.15s ease-in-out;
     }
     .report-table tbody tr:nth-child(even) {
-        background: #f3f6fa;
+        background: rgba(245,250,250,0.7);
     }
     .report-table tbody tr:hover {
-        background: #e8f2ff;
+        background: rgba(0,168,150,0.07);
     }
     .report-table td {
-        font-size: 1.05em;
+        font-size: 1.02em;
         padding: 11px 6px;
-        color: #22333b;
+        color: #043b3b;
         text-align: center;
-        border-bottom: 1.5px solid #e8e8ef;
+        border-bottom: 1.2px solid rgba(0,109,119,0.15);
     }
     .report-table td.title {
         text-align: left;
-        font-weight: 500;
-        color: #0c232f;
+        font-weight: 600;
+        color: #00494D;
         padding-left: 18px;
     }
     .serial-no {
-        color: #3780e8;
+        color: #00A896;
         font-weight: 700;
-        text-align: center;
     }
+
+    /* ---------- Shimmer Animation ---------- */
+    .report-table tbody tr::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -75%;
+        width: 50%;
+        height: 100%;
+        background: linear-gradient(
+            120deg,
+            rgba(255,255,255,0) 0%,
+            rgba(255,255,255,0.6) 50%,
+            rgba(255,255,255,0) 100%
+        );
+        transform: skewX(-20deg);
+        opacity: 0;
+        transition: opacity 0.2s ease-in-out;
+    }
+    .report-table tbody tr:hover::after {
+        animation: shimmer 1s forwards;
+        opacity: 1;
+    }
+    @keyframes shimmer {
+        from { left: -75%; }
+        to { left: 125%; }
+    }
+
+    /* ---------- View Button ---------- */
     .view-btn {
-        background: #eaf3fb;
-        color: #1766a7;
-        font-weight: 700;
-        border-radius: 7px;
-        border: 1.5px solid #bbe2fa;
+        background: linear-gradient(90deg, #006D77, #00A896);
+        color: white;
+        font-weight: 600;
+        border-radius: 8px;
+        border: none;
         padding: 7px 15px;
-        font-size: 1.05em;
+        font-size: 1.02em;
         text-align: center;
         cursor: pointer;
-        transition: background 0.18s, border 0.18s;
+        transition: all 0.25s ease;
     }
     .view-btn:hover {
-        background: #d0eafd;
-        border: 1.7px solid #89c7f4;
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(0,168,150,0.25);
+    }
+
+    /* ---------- Fade In ---------- */
+    @keyframes fadeIn {
+        from {opacity: 0; transform: translateY(10px);}
+        to {opacity: 1; transform: translateY(0);}
     }
     </style>
     """, unsafe_allow_html=True)
 
+    # ---------- DATA GENERATION ----------
     authors = ["John Doe", "Sarah Singh", "Alice Brown", "David Kumar", "Priya Patel", "Alex Wang"]
     titles = [
         "Steel for New Building Frame", "Steel for Residential Building", "Aluminium for Automotive Chassis",
@@ -111,14 +188,21 @@ def view_reports_page():
         })
     df = pd.DataFrame(reports)
 
-    st.markdown("<div style='font-size:2.2em; font-weight:800; letter-spacing:-1px; color:#10132d; margin-top:12px;'>All Reports</div>", unsafe_allow_html=True)
-    st.caption("Browse all your generated LCA and scenario reports. Click to view any report in detail.")
+    # ---------- MAIN CONTENT ----------
+    st.markdown("<div class='report-container'>", unsafe_allow_html=True)
+    st.markdown("<div class='report-title'>📄 All Reports</div>", unsafe_allow_html=True)
+    st.markdown("<div class='report-caption'>Browse all your generated LCA and scenario reports. Click to view any report in detail.</div>", unsafe_allow_html=True)
 
+    # Filter Cards
     c1, c2 = st.columns(2)
     with c1:
+        st.markdown("<div class='filter-card'>", unsafe_allow_html=True)
         f_author = st.selectbox("Filter by Author", ["All"] + authors)
+        st.markdown("</div>", unsafe_allow_html=True)
     with c2:
+        st.markdown("<div class='filter-card'>", unsafe_allow_html=True)
         f_material = st.selectbox("Filter by Material", ["All"] + materials)
+        st.markdown("</div>", unsafe_allow_html=True)
 
     filtered_df = df.copy()
     if f_author != "All":
@@ -127,7 +211,8 @@ def view_reports_page():
         filtered_df = filtered_df[filtered_df["Material"] == f_material]
     filtered_df = filtered_df.reset_index(drop=True)
 
-    st.markdown(f"""
+    # ---------- TABLE RENDER ----------
+    st.markdown("""
     <table class="report-table">
     <thead>
         <tr>
@@ -143,7 +228,7 @@ def view_reports_page():
     <tbody>
     """, unsafe_allow_html=True)
 
-    for idx, row in filtered_df.iterrows():
+    for _, row in filtered_df.iterrows():
         st.markdown(
             f"<tr>"
             f"<td class='serial-no'>{row['Serial']}</td>"
@@ -156,4 +241,4 @@ def view_reports_page():
             f"</tr>", unsafe_allow_html=True
         )
 
-    st.markdown("</tbody></table>", unsafe_allow_html=True)
+    st.markdown("</tbody></table></div>", unsafe_allow_html=True)
