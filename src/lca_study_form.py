@@ -4,6 +4,83 @@ from lca_simulation import run_simulation
 from results_page import results_page
 from ai_recommendation import ai_data_example
 # --- MetalliQ Neon-Teal Theme for LCA Study Form ---
+
+MATERIALS = [
+    "Steel", "Stainless Steel", "Aluminum", "Copper", "Zinc", "Lead",
+    "Chromium", "Nickel", "Magnesium", "Tin", "Titanium"
+]
+
+CATEGORY_APPS = [
+    "Construction", "Automotive", "Aerospace", "Electrical & Electronics",
+    "Packaging", "Railways", "Defence", "Consumer Goods", "Power Transmission"
+]
+
+INDIA_REGIONS = [
+    "North India", "South India", "East India", "West India", "Central India", "North-East India",
+    "Maharashtra", "Odisha", "Gujarat", "Jharkhand", "Tamil Nadu", "Chhattisgarh",
+    "Karnataka", "West Bengal", "Andhra Pradesh", "Rajasthan", "Punjab", "Uttar Pradesh", "Telangana"
+]
+
+ALLOY_COMPLEXITY = [
+    "Ferritic", "Austenitic", "Martensitic", "High Carbon", "Low Alloy", "Medium Alloy", "High Alloy"
+]
+
+COATINGS = [
+    "Galvanized (Zinc)", "Anodized (Aluminum)", "Painted/Epoxy", "Chromium plated", "Nickel plated",
+    "Phosphate", "Tin plating", "Powder coated", "None"
+]
+
+PRODUCTION_PROCESSES = [
+    "Blast Furnace", "Electric Arc Furnace", "DRI (Direct Reduced Iron)", "Bauxite Refining",
+    "Smelting", "Rolling Mill", "Casting", "Forging", "Extrusion"
+]
+
+FUEL_TYPES = [
+    "Diesel", "Petrol", "LPG", "CNG", "Bio-Diesel", "Coal", "Natural Gas", "Electricity"
+]
+
+CHARGING_POWER = [
+    "Grid Electricity", "Solar", "Wind", "Biomass", "Hydro", "Battery Swapping"
+]
+
+GRID_MIX = [
+    "Western Grid", "Northern Grid", "Eastern Grid", "Southern Grid", "Central Grid",
+    "North-Eastern Grid", "Maharashtra State Grid", "Tamil Nadu State Grid", "Gujarat State Grid"
+]
+
+WATER_SOURCES = [
+    "Municipal Supply", "Groundwater", "Ganga River", "Yamuna River", "Godavari River", "Brahmaputra River",
+    "Rainwater", "Recycled/Reuse"
+]
+
+WASTE_METHODS = [
+    "Landfill", "Chemical Precipitation", "Incineration", "Recycling", "Pyrometallurgical Processing",
+    "Biological Treatment", "Coagulation/Flocculation"
+]
+
+ORE_AUTOFILLS = {
+    "Odisha": {"concentration": 55, "type": "Hematite"},
+    "Maharashtra": {"concentration": 46, "type": "Magnetite"},
+    "Jharkhand": {"concentration": 60, "type": "Hematite"},
+    "Chhattisgarh": {"concentration": 62, "type": "Hematite"},
+    "Gujarat": {"concentration": 50, "type": "Magnetite"},
+    "Tamil Nadu": {"concentration": 48, "type": "Hematite"},
+    "Karnataka": {"concentration": 52, "type": "Magnetite"},
+    "West Bengal": {"concentration": 54, "type": "Goethite"},
+    "Andhra Pradesh": {"concentration": 49, "type": "Hematite"},
+    "Rajasthan": {"concentration": 45, "type": "Magnetite"},
+    "Punjab": {"concentration": 47, "type": "Hematite"},
+    "Uttar Pradesh": {"concentration": 44, "type": "Goethite"},
+    "Telangana": {"concentration": 53, "type": "Hematite"},
+    "North India": {"concentration": 41, "type": "Magnetite"},
+    "South India": {"concentration": 50, "type": "Hematite"},
+    "East India": {"concentration": 55, "type": "Hematite"},
+    "West India": {"concentration": 47, "type": "Magnetite"},
+    "Central India": {"concentration": 53, "type": "Hematite"},
+    "North-East India": {"concentration": 40, "type": "Goethite"},
+}
+
+
 def full_lca_study_form():
     st.markdown("""
     <style>
@@ -156,12 +233,44 @@ def full_lca_study_form():
                 ["Aluminum", "Steel", "Copper", "Zinc", "Lead", "Nickel", "Magnesium", "Titanium", "Stainless Steel", "Other"],
                 index=0
             )
+            ORE_AUTOFILLS = {
+                "India - Odisha (Barbil)": {"concentration": 55, "type": "Hematite"},
+                "India - Gujarat": {"concentration": 50, "type": "Magnetite"},
+                "India - Jharkhand (Singhbhum)": {"concentration": 60, "type": "Hematite"},
+                "India - Chhattisgarh": {"concentration": 62, "type": "Hematite"},
+                "India - Maharashtra": {"concentration": 46, "type": "Magnetite"},
+                "India - West Bengal": {"concentration": 54, "type": "Goethite"},
+            }
+
             analysis_region = st.selectbox(
                 "Analysis Region",
-                ["India - Odisha (Barbil)", "India - Gujarat", "India - Jharkhand (Singhbhum)", "India - Chhattisgarh", "India - Maharashtra", "India - West Bengal", "China", "EU", "USA", "Other Asia", "Global - Average", "Other"],
-                index=0
+                list(ORE_AUTOFILLS.keys()) + ["China", "EU", "USA", "Other Asia", "Global - Average", "Other"],
+                index=0,
+                key="region"
             )
-            ore_type = st.text_input("Type of Ore (Optional)", value="Bauxite")
+
+            # Instant autofill logic
+            if analysis_region in ORE_AUTOFILLS:
+                st.session_state["ore_conc"] = ORE_AUTOFILLS[analysis_region]["concentration"]
+                st.session_state["ore_type"] = ORE_AUTOFILLS[analysis_region]["type"]
+            else:
+                st.session_state.setdefault("ore_conc", 45.0)
+                st.session_state.setdefault("ore_type", "Bauxite")
+
+            # Editable autofilled fields
+            ore_conc = st.number_input(
+                "Metal Ore Concentration (%)",
+                min_value=0.0,
+                max_value=100.0,
+                value=st.session_state["ore_conc"],
+                step=0.1,
+                key="ore_conc_input",
+            )
+            ore_type = st.text_input(
+                "Type of Ore (Optional)",
+                value=st.session_state["ore_type"],
+                key="ore_type_input",
+            )
             coatings = st.selectbox(
                 "Coatings / Additives",
                 ["None", "Anodized", "Painted/Epoxy", "Chromium plated", "Nickel plated", "Powder coated", "Galvanized Zinc", "Other"],
@@ -261,6 +370,7 @@ def full_lca_study_form():
 
             # Save to session
             st.session_state["lca_form_data"] = form_data
+            st.session_state["lca_form_submitted"] = True
 
             try:
                 # ✅ Run your simulation function directly
