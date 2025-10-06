@@ -3,6 +3,8 @@ import time
 from lca_simulation import run_simulation
 from results_page import results_page
 from ai_recommendation import ai_data_example
+import traceback
+
 # --- MetalliQ Neon-Teal Theme for LCA Study Form ---
 
 MATERIALS = [
@@ -79,7 +81,6 @@ ORE_AUTOFILLS = {
     "Central India": {"concentration": 53, "type": "Hematite"},
     "North-East India": {"concentration": 40, "type": "Goethite"},
 }
-
 
 def full_lca_study_form():
     st.markdown("""
@@ -166,6 +167,7 @@ def full_lca_study_form():
             background: linear-gradient(90deg, #00B8CC 0%, #00EFFF 100%) !important;
             box-shadow: 0 0 30px rgba(0,239,255,0.6);
             transform: scale(1.04);
+        }
 
         /* --- Radio, Slider, etc --- */
         .stRadio > label, .stSlider, .stSelectbox {
@@ -185,6 +187,9 @@ def full_lca_study_form():
 
     st.title("AI-Powered Metals Sustainability")
 
+    # ---------------------------
+    # Start the form (only UI widgets inside this block)
+    # ---------------------------
     with st.form("lca_full_study"):
         # -------- SECTION 1 --------
         st.markdown("### 🎯 Goal & Scope Definition (ISO 14044)")
@@ -227,14 +232,6 @@ def full_lca_study_form():
                 ["Aluminum", "Steel", "Copper", "Zinc", "Lead", "Nickel", "Magnesium", "Titanium", "Stainless Steel", "Other"],
                 index=0
             )
-            ORE_AUTOFILLS = {
-                "India - Odisha (Barbil)": {"concentration": 55, "type": "Hematite"},
-                "India - Gujarat": {"concentration": 50, "type": "Magnetite"},
-                "India - Jharkhand (Singhbhum)": {"concentration": 60, "type": "Hematite"},
-                "India - Chhattisgarh": {"concentration": 62, "type": "Hematite"},
-                "India - Maharashtra": {"concentration": 46, "type": "Magnetite"},
-                "India - West Bengal": {"concentration": 54, "type": "Goethite"},
-            }
 
             analysis_region = st.selectbox(
                 "Analysis Region",
@@ -339,47 +336,75 @@ def full_lca_study_form():
         geographical = st.slider("Geographical Correlation", 1, 5, 4)
         technological = st.slider("Technological Correlation", 1, 5, 4)
 
+        # Submit button inside the form (correct)
         submitted = st.form_submit_button("Run Analysis")
 
-        if submitted:
-            # Collect form data
-            form_data = {
-                "intended_app": intended_app,
-                "intended_audience": intended_audience,
-                "system_boundary": system_boundary,
-                "study_limitations": study_limitations,
-                "comparative_assertion": comparative_assertion,
-                "project_name": project_name,
-                "category": category,
-                "material": material,
-                "region": analysis_region,
-                "ore_type": ore_type,
-                "ore_conc": ore_conc,
-                "reliability": reliability,
-                "completeness": completeness,
-                "temporal": temporal,
-                "geographical": geographical,
-                "technological": technological
-            }
+    # ---------------------------
+    # Outside the form block: handle submission, run simulation, show results.
+    # ---------------------------
+    if submitted:
+        # Collect form data into a dict (safe: variables are defined by the widgets above)
+        form_data = {
+            "intended_app": intended_app,
+            "intended_audience": intended_audience,
+            "system_boundary": system_boundary,
+            "study_limitations": study_limitations,
+            "comparative_assertion": comparative_assertion,
+            "project_name": project_name,
+            "category": category,
+            "material": material,
+            "region": analysis_region,
+            "ore_type": ore_type,
+            "ore_conc": ore_conc,
+            "coatings": coatings,
+            "functional_unit": functional_unit,
+            "sec_material_content": sec_material_content,
+            "production_process": production_process,
+            "use_duration": use_duration,
+            "end_life_scenario": end_life_scenario,
+            "transport1_stage": transport1_stage,
+            "transport1_mode": transport1_mode,
+            "transport1_fuel": transport1_fuel,
+            "transport1_dist": transport1_dist,
+            "transport2_stage": transport2_stage,
+            "transport2_mode": transport2_mode,
+            "transport2_fuel": transport2_fuel,
+            "transport2_dist": transport2_dist,
+            "grid_elec_mix": grid_elec_mix,
+            "water_source": water_source,
+            "proceff": proceff,
+            "lifetime_ext": lifetime_ext,
+            "waste_method": waste_method,
+            "reliability": reliability,
+            "completeness": completeness,
+            "temporal": temporal,
+            "geographical": geographical,
+            "technological": technological
+        }
 
-            # Save to session
-            st.session_state["lca_form_data"] = form_data
-            # st.session_state["lca_form_submitted"] = True
+        # Save to session
+        st.session_state["lca_form_data"] = form_data
 
-            try:
-                # ✅ Run your simulation function directly
-                st.info("Running LCA simulation... Please wait ⏳")
+        try:
+            # Run simulation outside the form (so form context is closed)
+            with st.spinner("Running LCA simulation... Please wait ⏳"):
                 results = run_simulation(form_data)
                 st.session_state["lca_results"] = results
-                progress_bar = st.progress(0)
-                st.success("✅ LCA Simulation completed successfully!")
-                for i in range(101):
-                    time.sleep(0.05)
-                    progress_bar.progress(i)
-                ai_text = results.get("ai_lifecycle_interpretation","")
-                st.markdown("<hr>",unsafe_allow_html=True)
-                results_page(results,ai_text)
 
-                
-            except Exception as e:
-                st.error(f"❌ Simulation failed: {e}")
+            # Provide a brief progress animation
+            progress_bar = st.progress(0)
+            for i in range(101):
+                time.sleep(0.02)
+                progress_bar.progress(i)
+            st.success("✅ LCA Simulation completed successfully!")
+
+            # Extract AI text if available and pass to results_page
+            ai_text = results.get("ai_lifecycle_interpretation", "") if isinstance(results, dict) else ""
+            st.markdown("<hr>", unsafe_allow_html=True)
+
+            # Call the results page OUTSIDE the form context
+            results_page(results, ai_text)
+
+        except Exception as e:
+            st.error(f"❌ Simulation failed: {e}")
+            st.text(traceback.format_exc())
