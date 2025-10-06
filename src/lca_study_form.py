@@ -364,7 +364,7 @@ def full_lca_study_form():
 
             # Save to session
             st.session_state["lca_form_data"] = form_data
-            st.session_state["lca_form_submitted"] = True
+            # st.session_state["lca_form_submitted"] = True
 
             try:
                 # ✅ Run your simulation function directly
