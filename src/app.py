@@ -12,19 +12,29 @@ from view_reports import view_reports_page
 from collaborative_workspace_page import collaborative_workspace_page
 from pathlib import Path
 
-hide_streamlit_style = """
+hide_streamlit_ui = """
     <style>
-    /* Hide Streamlit Cloud navbar */
-    header[data-testid="stHeader"] {visibility: hidden;}
-    /* Hide Streamlit hamburger and top-right buttons */
-    div[data-testid="stToolbar"] {visibility: hidden !important;}
-    /* Hide bottom right 'Manage app' button */
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    div[data-testid="stStatusWidget"] {display: none;}
+    /* Hide top header (navbar with Share, etc.) */
+    header[data-testid="stHeader"] {visibility: hidden !important;}
+    div[data-testid="stToolbar"] {display: none !important;}
+
+    /* Hide Streamlit footer */
+    footer {visibility: hidden !important;}
+    div[data-testid="stStatusWidget"] {display: none !important;}
+
+    /* Hide hamburger menu */
+    #MainMenu {visibility: hidden !important;}
+
+    /* Hide bottom-right Manage app button (new Streamlit Cloud UI) */
+    button[title="Manage app"] {display: none !important;}
+    div[data-testid="stActionButtonContainer"] {display: none !important;}
+    div[data-testid="stDecoration"] {display: none !important;}
+
+    /* Optional: remove spacing left by hidden header/footer */
+    section[data-testid="stSidebar"] > div:first-child {padding-top: 1rem !important;}
     </style>
 """
-st.markdown(hide_streamlit_style, unsafe_allow_html=True)
+st.markdown(hide_streamlit_ui, unsafe_allow_html=True)
 # ===================== PAGE CONFIG =====================
 st.set_page_config(
     layout="wide",
