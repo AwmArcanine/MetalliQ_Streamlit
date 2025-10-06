@@ -3,30 +3,29 @@ import pandas as pd
 import plotly.graph_objects as go
 import plotly.express as px
 
-
 def dashboard_page(workspace=None):
     st.set_page_config(layout="wide")
     st.cache_data.clear()
 
+    # ---------------------- THEME STYLING ----------------------
     st.markdown("""
         <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Poppins:wght@400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Orbitron:wght@600&display=swap');
 
-        /* Global App Background */
         body, .stApp {
             background: linear-gradient(135deg, #00494D 0%, #006D77 40%, #83C5BE 100%) !important;
-            color: #E6FFFF;
+            color: #E6FFFF !important;
             font-family: 'Poppins', sans-serif;
-            overflow-x: hidden;
         }
 
         /* Headings */
-        h1, h2, h3, h4, h5, h6 {
+        h1, h2, h3, h4 {
             font-family: 'Orbitron', sans-serif;
             color: #7CF4E3 !important;
-            text-shadow: 0 0 15px rgba(124, 244, 227, 0.6);
+            text-shadow: 0 0 10px rgba(124, 244, 227, 0.6);
         }
 
+        /* Section Titles */
         .section-title {
             color: #7CF4E3 !important;
             font-weight: 700;
@@ -35,39 +34,26 @@ def dashboard_page(workspace=None):
             font-size: 1.35rem !important;
         }
 
-        /* Cards */
+        /* Glass Cards */
         .metriccard, .ext-card, .report-card {
-            background: rgba(255, 255, 255, 0.12);
-            border: 1px solid rgba(255, 255, 255, 0.25);
+            background: rgba(255, 255, 255, 0.18);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 16px;
             padding: 18px 22px;
-            box-shadow: 0 6px 20px rgba(0, 109, 119, 0.35);
-            transition: all 0.3s ease-in-out;
+            box-shadow: 0 8px 25px rgba(0, 109, 119, 0.25);
+            transition: 0.3s;
         }
-
         .metriccard:hover, .ext-card:hover, .report-card:hover {
             box-shadow: 0 0 25px rgba(124, 244, 227, 0.85);
             transform: translateY(-3px);
         }
 
-        .metricheader {
-            font-size: 1.1rem;
-            color: #D8FFFF;
-            margin-bottom: 6px;
-        }
+        /* Metric text */
+        .metricheader { font-size: 1.1rem; color: #D8FFFF; margin-bottom: 6px; }
+        .metricvalue { font-size: 1.9rem; font-weight: 800; color: #00F5D4; }
 
-        .metricvalue {
-            font-size: 1.9rem;
-            font-weight: 800;
-            color: #7CF4E3;
-        }
-
-        .ext-card {
-            text-align: center;
-            margin-bottom: 10px;
-        }
-
-        /* Table */
+        /* Tables */
         table {
             border: 1.5px solid rgba(124, 244, 227, 0.35) !important;
             border-radius: 10px;
@@ -78,11 +64,9 @@ def dashboard_page(workspace=None):
             color: #7CF4E3 !important;
             font-weight: 600;
         }
-        tbody tr {
-            color: #E6FFFF !important;
-        }
+        tbody tr { color: #E6FFFF !important; }
 
-        /* Leaderboard */
+        /* Reuse badges */
         .leaderboard-badge {
             background: rgba(124, 244, 227, 0.25);
             border-radius: 12px;
@@ -91,25 +75,38 @@ def dashboard_page(workspace=None):
             padding: 3px 12px;
         }
 
-        /* Chart Margins */
-        .stPlotlyChart {
-            margin-top: 10px;
-            margin-bottom: 40px;
+        /* Button */
+        div.stButton > button {
+            background: linear-gradient(90deg, #00A896, #02C39A);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            padding: 8px 16px;
+            box-shadow: 0 0 8px rgba(124, 244, 227, 0.3);
+            transition: all 0.2s ease-in-out;
         }
+        div.stButton > button:hover {
+            background: linear-gradient(90deg, #02C39A, #00F5D4);
+            box-shadow: 0 0 15px rgba(124, 244, 227, 0.8);
+            transform: translateY(-2px);
+        }
+
+        .stPlotlyChart { margin-top: 10px; margin-bottom: 40px; }
         </style>
     """, unsafe_allow_html=True)
 
-    # --- Header ---
+    # ---------------------- HEADER ----------------------
     col1, col2 = st.columns([8, 2])
     with col1:
         st.markdown("<h1>MetalliQ Sustainability Dashboard</h1>", unsafe_allow_html=True)
         st.markdown("<p style='color:#E6FFFF;font-size:0.95rem;'>An overview of your workspace’s sustainability intelligence.</p>", unsafe_allow_html=True)
     with col2:
-        if st.button("➕ New Study", use_container_width=True):
-            st.session_state["page"] = "Create Study"
-            st.rerun()
+        st.markdown("<div style='margin-top:20px;'>", unsafe_allow_html=True)
+        st.button("➕ New Study", use_container_width=True)
+        st.markdown("</div>", unsafe_allow_html=True)
 
-    # --- Mock Data ---
+    # ---------------------- MOCK DATA ----------------------
     recycling_rate_data = pd.Series(
         [82, 81, 83, 86, 86, 88, 90, 91, 93, 95, 97],
         index=pd.date_range("2024-10-01", periods=11, freq="M"))
@@ -138,24 +135,27 @@ def dashboard_page(workspace=None):
                     'Water Consumption': {'mean': 4.7, 'unit': 'm³'}}
     }
 
-    # --- Metric Cards ---
+    # ---------------------- METRIC CARDS ----------------------
     st.markdown("<h3 class='section-title'>Core Metrics</h3>", unsafe_allow_html=True)
-    col1, col2, col3 = st.columns(3)
-    col1.markdown(f"<div class='metriccard'><div class='metricheader'>Average Recycling Rate</div><div class='metricvalue'>{results['metrics']['avg_recycling_rate']}%</div></div>", unsafe_allow_html=True)
-    col2.markdown(f"<div class='metriccard'><div class='metricheader'>Total Recycled Material</div><div class='metricvalue'>{results['metrics']['total_recycled_material']} tonnes</div></div>", unsafe_allow_html=True)
-    col3.markdown(f"<div class='metriccard'><div class='metricheader'>Average Circularity Score</div><div class='metricvalue'>{results['metrics']['avg_circularity_score']}/100</div></div>", unsafe_allow_html=True)
+    cols = st.columns(3)
+    metrics = [
+        ("Average Recycling Rate", f"{results['metrics']['avg_recycling_rate']}%"),
+        ("Total Recycled Material", f"{results['metrics']['total_recycled_material']} tonnes"),
+        ("Average Circularity Score", f"{results['metrics']['avg_circularity_score']}/100")
+    ]
+    for i, (label, val) in enumerate(metrics):
+        cols[i].markdown(f"<div class='metriccard'><div class='metricheader'>{label}</div><div class='metricvalue'>{val}</div></div>", unsafe_allow_html=True)
 
-    # --- Line Chart ---
+    # ---------------------- LINE CHART ----------------------
     st.markdown("<h3 class='section-title'>Recycling Rate Over Time</h3>", unsafe_allow_html=True)
-    trendx = [str(d.date()) for d in results["recycling_rate_trend"].index]
     line_fig = go.Figure()
     line_fig.add_trace(go.Scatter(
-        x=trendx,
+        x=[str(d.date()) for d in results["recycling_rate_trend"].index],
         y=results["recycling_rate_trend"].values,
         fill='tozeroy',
         mode='lines+markers',
-        line=dict(color="#7CF4E3", width=3),
-        marker=dict(size=7, color="#00F5D4", line=dict(color="#00494D", width=1.5))
+        line=dict(color="#00F5D4", width=3),
+        marker=dict(size=7, color="#7CF4E3", line=dict(color="#00494D", width=1.5))
     ))
     line_fig.update_layout(
         yaxis_title="Recycling Rate (%)",
@@ -168,7 +168,7 @@ def dashboard_page(workspace=None):
     )
     st.plotly_chart(line_fig, use_container_width=True)
 
-    # --- Pie Chart ---
+    # ---------------------- PIE CHART ----------------------
     st.markdown("<h3 class='section-title'>Recycled vs Primary Material Share</h3>", unsafe_allow_html=True)
     pie_fig = go.Figure(go.Pie(
         labels=["Recycled Route", "Primary Route"],
@@ -177,37 +177,33 @@ def dashboard_page(workspace=None):
         marker=dict(colors=["#00F5D4", "#006D77"]),
         textinfo='percent+label'
     ))
-    pie_fig.update_layout(
-        paper_bgcolor="rgba(0,0,0,0)",
-        font=dict(color="#E6FFFF"),
-        height=350
-    )
+    pie_fig.update_layout(paper_bgcolor="rgba(0,0,0,0)", font=dict(color="#E6FFFF"), height=350)
     st.plotly_chart(pie_fig, use_container_width=True)
 
-    # --- Extended Circularity ---
+    # ---------------------- EXTENDED CIRCULARITY ----------------------
     st.markdown("<h3 class='section-title'>Extended Circularity Metrics</h3>", unsafe_allow_html=True)
     cardcols = st.columns(4)
     for i, (label, value) in enumerate(results["extended_circularity"]):
         cardcols[i % 4].markdown(
-            f"<div class='ext-card'><b>{label}</b><br><span style='font-size:1.25rem;font-weight:700;color:#7CF4E3;'>{value}</span></div>",
+            f"<div class='ext-card'><b>{label}</b><br><span style='font-size:1.25rem;font-weight:700;color:#00F5D4;'>{value}</span></div>",
             unsafe_allow_html=True
         )
 
-    # --- Table ---
+    # ---------------------- HOTSPOT TABLE ----------------------
     st.markdown("<h3 class='section-title'>Sustainability Hotspots – Top 3 Materials</h3>", unsafe_allow_html=True)
     df = pd.DataFrame(results["hotspots_materials"], columns=["Material", "Recycled Content (%)"])
     st.dataframe(df, use_container_width=True, hide_index=True)
 
-    # --- Projects ---
+    # ---------------------- REUSE PROJECTS ----------------------
     st.markdown("<h3 class='section-title'>Projects with Highest Reuse Potential</h3>", unsafe_allow_html=True)
     for proj, mat, pct in results["reuse_projects"]:
         st.markdown(
-            f"<div style='background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.25);border-radius:14px;padding:10px 16px;margin-bottom:6px;display:flex;justify-content:space-between;'>"
+            f"<div style='background:rgba(255,255,255,0.1);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.25);border-radius:14px;padding:10px 16px;margin-bottom:6px;display:flex;justify-content:space-between;'>"
             f"<span><b>{proj}</b> ({mat})</span><span class='leaderboard-badge'>{pct}%</span></div>",
             unsafe_allow_html=True
         )
 
-    # --- Impact Bar Chart ---
+    # ---------------------- IMPACT BAR CHART ----------------------
     st.markdown("<h3 class='section-title'>Key Impact Profiles</h3>", unsafe_allow_html=True)
     df_impact = pd.DataFrame(results["key_impact_profiles"], columns=["Category", "Value"])
     bar = px.bar(
@@ -228,7 +224,7 @@ def dashboard_page(workspace=None):
     )
     st.plotly_chart(bar, use_container_width=True)
 
-    # --- Latest Report ---
+    # ---------------------- SUMMARY CARDS ----------------------
     st.markdown("<h3 class='section-title'>Latest Report Analysis</h3>", unsafe_allow_html=True)
     s = results["summary"]
     cols = st.columns(4)
