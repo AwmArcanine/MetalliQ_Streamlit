@@ -49,25 +49,45 @@ def plot_style(fig: go.Figure, title: Optional[str] = None, height: Optional[int
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)',
         margin=dict(l=24, r=24, t=40 if title else 8, b=24),
-        font=dict(color=MUTED),
-        title=dict(x=0.5, xanchor="center"),
+        font=dict(color="#E5FEFF", family="Segoe UI, sans-serif", size=14),
+        title=dict(
+            text=title or "",
+            font=dict(color="#00f7ff", size=18, family="Orbitron, sans-serif"),
+            x=0.5, xanchor="center"
+        ),
         xaxis=dict(
-            color="white",           # ✅ X-axis labels white
-            title_font=dict(color="white"),
-            tickfont=dict(color="white")
+            color="#E5FEFF",
+            gridcolor="rgba(255,255,255,0.15)",
+            zerolinecolor="rgba(255,255,255,0.2)",
+            title_font=dict(color="#5effa1", size=14)
         ),
         yaxis=dict(
-            color="white",           # ✅ Y-axis labels white
-            title_font=dict(color="white"),
-            tickfont=dict(color="white")
+            color="#E5FEFF",
+            gridcolor="rgba(255,255,255,0.15)",
+            zerolinecolor="rgba(255,255,255,0.2)",
+            title_font=dict(color="#5effa1", size=14)
+        ),
+        legend=dict(
+            font=dict(color="#E5FEFF"),
+            bgcolor="rgba(0,0,0,0)",
+            bordercolor="rgba(255,255,255,0.15)"
         )
     )
     fig.update_layout(layout)
-    if title:
-        fig.update_layout(title_text=title)
+
+    # update bar and pie traces with neon theme
+    for trace in fig.data:
+        if isinstance(trace, go.Bar):
+            trace.marker.color = "#00f7ff"
+            trace.marker.line = dict(color="#5effa1", width=1.5)
+        if isinstance(trace, go.Pie):
+            trace.marker.colors = ["#00f7ff", "#11ebe4", "#5effa1", "#ff4b91"]
+            trace.textfont = dict(color="#ffffff", size=13)
+
     if height:
         fig.update_layout(height=height)
     return fig
+
 
 
 def ensure_ai_dict(ai_in: Optional[Any]):
