@@ -165,5 +165,5 @@ def run_simulation(inputs, num_runs=1000):
         return results
 
     except Exception as e:
-        st.error(f"❌ Error in run_simulation: {e}")
+        # st.error(f"❌ Error in run_simulation: {e}")
         return {}
