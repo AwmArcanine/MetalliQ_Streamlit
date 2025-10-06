@@ -35,7 +35,6 @@ footer, #MainMenu {visibility: hidden;}
 </style>
 """, unsafe_allow_html=True)
 
-
 # ===================== MAIN APP =====================
 def main_app():
     if "show_login" not in st.session_state:
@@ -65,17 +64,18 @@ def main_app():
         <div style="padding:0 1.2rem;">
             <h4 style="font-size:0.8rem;font-weight:700;color:#8EDDD0;letter-spacing:0.8px;margin-bottom:6px;">WORKSPACES</h4>
 
-            <div style="background:rgba(255,255,255,0.08);border-radius:10px;padding:8px 10px;margin:4px 0 8px 0;display:flex;align-items:center;">
-                <div style="background:#E84393;color:white;font-weight:700;border-radius:6px;width:26px;height:26px;text-align:center;line-height:26px;margin-right:10px;">J</div>
+            <div style="background:rgba(255,255,255,0.08);border-radius:10px;padding:8px 10px;margin:4px 0 8px 0;display:flex;align-items:center;backdrop-filter:blur(6px);">
+                <div style="background:#E84393;color:white;font-weight:700;border-radius:6px;width:26px;height:26px;text-align:center;line-height:26px;margin-right:10px;box-shadow:0 0 6px #e8439380;">J</div>
                 <div style="font-weight:600;color:#EAF4F4;">John's Workspace</div>
             </div>
-            <div style="background:rgba(255,255,255,0.08);border-radius:10px;padding:8px 10px;margin:4px 0 8px 0;display:flex;align-items:center;">
-                <div style="background:#4F46E5;color:white;font-weight:700;border-radius:6px;width:26px;height:26px;text-align:center;line-height:26px;margin-right:10px;">P</div>
+
+            <div style="background:rgba(255,255,255,0.08);border-radius:10px;padding:8px 10px;margin:4px 0 8px 0;display:flex;align-items:center;backdrop-filter:blur(6px);">
+                <div style="background:#4F46E5;color:white;font-weight:700;border-radius:6px;width:26px;height:26px;text-align:center;line-height:26px;margin-right:10px;box-shadow:0 0 6px #4f46e580;">P</div>
                 <div style="font-weight:600;color:#EAF4F4;">Project Phoenix</div>
             </div>
         </div>
 
-        <div style="margin-top:1.2rem; background:rgba(255,255,255,0.1);border-radius:14px;padding:12px 16px 10px 16px;margin:1rem 1.2rem;box-shadow:0 6px 16px rgba(0,109,119,0.2);">
+        <div style="margin-top:1.2rem; background:rgba(255,255,255,0.1);border-radius:14px;padding:12px 16px 10px 16px;margin:1rem 1.2rem;box-shadow:0 6px 16px rgba(0,109,119,0.2);backdrop-filter:blur(8px);">
         """, unsafe_allow_html=True)
 
         # --- Navigation ---

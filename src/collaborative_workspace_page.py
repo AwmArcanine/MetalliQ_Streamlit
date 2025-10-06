@@ -5,16 +5,6 @@ def collaborative_workspace_page():
     # ---------- PAGE STYLE ----------
     st.markdown("""
     <style>
-    .workspace-container {
-        background: rgba(255,255,255,0.65);
-        border-radius: 18px;
-        box-shadow: 0 8px 28px rgba(0,109,119,0.15);
-        padding: 28px 32px;
-        backdrop-filter: blur(10px);
-        width: 98%;
-        margin: 25px auto;
-        animation: fadeIn 0.5s ease-in-out;
-    }
     .section-title {
         font-size: 1.4em;
         font-weight: 800;
@@ -122,7 +112,6 @@ def collaborative_workspace_page():
     """, unsafe_allow_html=True)
 
     # ---------- PAGE STRUCTURE ----------
-    st.markdown("<div class='workspace-container'>", unsafe_allow_html=True)
     st.markdown("<h2 style='color:#006D77;font-weight:800;letter-spacing:-0.4px;'>🤝 Collaborative Workspace</h2>", unsafe_allow_html=True)
     st.caption("Work together on shared LCA studies — view, discuss, and manage progress in real time.")
 
