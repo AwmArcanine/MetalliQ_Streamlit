@@ -27,7 +27,7 @@ except Exception:
     ai_data_example = None
 
 # ---------------- Theme colors (soft teal + glass)
-ACCENT = "#0f8f88"
+ACCENT = "#5bfff1"
 ACCENT_DARK = "#16f3e0"
 CARD_BG = "rgba(255,255,255,0.30)"
 MUTED = "#fcfcfc"
