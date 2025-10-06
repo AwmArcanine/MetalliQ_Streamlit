@@ -151,6 +151,54 @@ def safe_results(results: Optional[dict]) -> dict:
 # ---------------- Main rendering function ----------------
 def results_page(results: Optional[dict] = None, ai_text: Optional[Any] = None):
     st.set_page_config(layout="wide", page_title="MetalliQ — Final LCA Report")
+    st.markdown(
+    """
+    <style>
+      /* Page body / base text for results page */
+      .stApp, body {
+        color: #083a38 !important; /* dark teal for high contrast */
+      }
+
+      /* Improve contrast inside cards */
+      .result-card, .stMarkdown, .stText, .stDataFrame {
+        color: #083a38 !important;
+      }
+
+      /* Make headings clearly visible */
+      h1, h2, h3, h4, h5, h6 {
+        color: #063735 !important;
+      }
+
+      /* Table fonts and header */
+      .stDataFrame table {
+        color: #063735 !important;
+        font-size: 14px;
+      }
+      .stDataFrame th {
+        background: rgba(6, 55, 53, 0.06) !important;
+        color: #022f2d !important;
+        font-weight: 700;
+      }
+
+      /* Buttons and links (dummy export etc) */
+      a, a:link, a:visited {
+        color: #0f8f88 !important;
+      }
+
+      /* tooltips/plot text */
+      .plotly .main-svg text {
+        fill: #083a38 !important;
+      }
+
+      /* small card shading override for readability */
+      .card-override {
+        background: rgba(255,255,255,0.94) !important;
+        color: #083a38 !important;
+      }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
     r = safe_results(results)
     ai_data = ensure_ai_dict(ai_text)
     # If no ai_data passed, prefer imported ai_data_example, otherwise fallback to default
@@ -552,20 +600,113 @@ def results_page(results: Optional[dict] = None, ai_text: Optional[Any] = None):
         st.write(str(e))
 
     st.markdown("---")
+    # ---------- Primary vs. Recycled Scenario Comparison (table + charts) ----------
+    st.markdown("<h3 style='color:#0b6b66'>Primary vs. Recycled Route Comparison</h3>", unsafe_allow_html=True)
 
-    # ---------- Primary vs Recycled Scenario Comparison ----------
-    st.markdown("<h3 style='color:#0b6b66'>Primary vs. Recycled Scenario Comparison</h3>", unsafe_allow_html=True)
-    df_pvr = pd.DataFrame(r["primary_vs_recycled"])
-    st.dataframe(df_pvr, use_container_width=True)
-    csv_download_link(df_pvr, filename="primary_vs_recycled.csv", label="📥 Download Comparison CSV")
-    # grouped bar chart
+    # defensive: make sure results variable exists
+    if results is None:
+        results = {}
+
+    # Build DataFrame from results (safe access)
+    df_pvr = pd.DataFrame(results.get("primary_vs_recycled", []))
+    if df_pvr.empty:
+        # fallback mock if missing
+        df_pvr = pd.DataFrame([
+            {"Metric": "GWP (kg CO2-eq)", "Primary": 2485, "Recycled": 597},
+            {"Metric": "Energy (GJ)", "Primary": 28.77, "Recycled": 6.17},
+            {"Metric": "Water (m³)", "Primary": 5.0, "Recycled": 2.0},
+            {"Metric": "Acidification (kg SO2-eq)", "Primary": 4.40, "Recycled": 1.35},
+            {"Metric": "Eutrophication (kg PO4-eq)", "Primary": 1.24, "Recycled": 0.30},
+        ])
+
+    # compute savings and friendly display column
+    def compute_savings(p, r):
+        try:
+            if p == 0:
+                return "—"
+            pct = (p - r) / float(p) * 100.0
+            return f"▼ {pct:.1f}%"
+        except Exception:
+            return "—"
+
+    df_pvr["Savings"] = df_pvr.apply(lambda row: compute_savings(row["Primary"], row["Recycled"]), axis=1)
+
+    # Reorder / format for display (create a display copy so original numeric values remain numeric)
+    display_df = df_pvr.copy()
+    for col in ["Primary", "Recycled"]:
+        if pd.api.types.is_numeric_dtype(display_df[col]):
+            display_df[col] = display_df[col].apply(lambda v: f"{v:,.2f}" if isinstance(v, (int, float)) else v)
+
+    # Show table with a light card background for readability
+    st.markdown("<div class='card-override' style='padding:10px;border-radius:8px'>", unsafe_allow_html=True)
+    st.table(display_df)   # st.table gives a clean static table (good for reports)
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    st.markdown("")  # spacing
+
+    # Plot: grouped bar chart (Primary vs Recycled) — good for per-metric comparison
     try:
-        df_melt = df_pvr.melt(id_vars="Metric", value_vars=["Primary", "Recycled"], var_name="Scenario", value_name="Value")
-        fig_cmp = px.bar(df_melt, x="Metric", y="Value", color="Scenario", barmode="group", text="Value")
+        df_melt = df_pvr.melt(id_vars=["Metric", "Savings"], value_vars=["Primary", "Recycled"], var_name="Scenario", value_name="Value")
+        PRIMARY_COLOR = "#6c757d"     # muted gray
+        RECYCLED_COLOR = "#0f8f88"    # accent teal
+        color_map = {"Primary": PRIMARY_COLOR, "Recycled": RECYCLED_COLOR}
+
+        fig_cmp = px.bar(
+            df_melt,
+            x="Metric",
+            y="Value",
+            color="Scenario",
+            barmode="group",
+            text="Value",
+            color_discrete_map=color_map,
+            category_orders={"Scenario": ["Primary", "Recycled"]}
+        )
+        fig_cmp.update_traces(texttemplate="%{text:.2s}", textposition="outside")
+        fig_cmp.update_layout(
+            height=380,
+            legend=dict(title="", orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+            xaxis_tickangle=-20,
+            margin=dict(l=40, r=30, t=40, b=80)
+        )
         plot_style(fig_cmp, height=380)
         st.plotly_chart(fig_cmp, use_container_width=True)
-    except Exception:
-        st.write("Comparison chart not available.")
+    except Exception as e:
+        st.error("Comparison chart not available")
+        st.write(str(e))
+
+    st.markdown("---")
+
+    # Plot: Key Metrics Visual Comparison (large horizontal bars)
+    try:
+        import plotly.graph_objects as go
+        df_vis = df_pvr.copy()
+        df_vis = df_vis.sort_values("Primary", ascending=False)
+
+        fig_vis = go.Figure()
+        fig_vis.add_trace(go.Bar(
+            y=df_vis["Metric"],
+            x=df_vis["Primary"],
+            orientation='h',
+            name='Primary Route',
+            marker=dict(color=PRIMARY_COLOR),
+            hovertemplate='%{y}<br>Primary: %{x}<extra></extra>'
+        ))
+        fig_vis.add_trace(go.Bar(
+            y=df_vis["Metric"],
+            x=df_vis["Recycled"],
+            orientation='h',
+            name='Recycled Route',
+            marker=dict(color=RECYCLED_COLOR),
+            hovertemplate='%{y}<br>Recycled: %{x}<extra></extra>'
+        ))
+        fig_vis.update_layout(barmode='group', height=360, margin=dict(l=150, r=40, t=30, b=30))
+        plot_style(fig_vis, height=360)
+        st.plotly_chart(fig_vis, use_container_width=True)
+    except Exception as e:
+        st.error("Visual comparison chart not available")
+        st.write(str(e))
+
+
 
     st.markdown("---")
 
