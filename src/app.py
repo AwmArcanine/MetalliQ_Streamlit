@@ -12,7 +12,19 @@ from view_reports import view_reports_page
 from collaborative_workspace_page import collaborative_workspace_page
 from pathlib import Path
 
-
+hide_streamlit_style = """
+    <style>
+    /* Hide Streamlit Cloud navbar */
+    header[data-testid="stHeader"] {visibility: hidden;}
+    /* Hide Streamlit hamburger and top-right buttons */
+    div[data-testid="stToolbar"] {visibility: hidden !important;}
+    /* Hide bottom right 'Manage app' button */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    div[data-testid="stStatusWidget"] {display: none;}
+    </style>
+"""
+st.markdown(hide_streamlit_style, unsafe_allow_html=True)
 # ===================== PAGE CONFIG =====================
 st.set_page_config(
     layout="wide",
