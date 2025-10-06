@@ -1,366 +1,468 @@
 # results_page.py
-# Rewritten results page for MetalliQ LCA platform
-# Expects: results (dict) and ai_text (dict or str)
-# Uses ai_recommendation.display_ai_recommendations for AI cards.
+"""
+Final results page for MetalliQ LCA platform (Plotly-based)
+- No st.download_button usage (data URIs used instead)
+- Mock-data safe: nothing is left empty
+- Integrates ai_recommendation display when available; otherwise renders built-in AI block
+- Always shows Ore Grade warning and EV charging recommendations in AI Insights
+"""
 
 import streamlit as st
 import pandas as pd
 import numpy as np
-import plotly.express as px
-import plotly.graph_objects as go
 import json
-import ai_recommendation
-from typing import Optional, Dict, Any
+import datetime
+import plotly.graph_objects as go
+import plotly.express as px
+import base64
+from typing import Optional, Any, Dict
 
-# ---------- Scoped CSS (won't override global app.css) ----------
-st.markdown(
-    """
-    <style>
-    /* Scoped classes for results page */
-    .mq-neon { border-radius:12px; padding:12px; margin-bottom:16px; border:1px solid rgba(0,150,130,0.12); background:rgba(255,255,255,0.02); }
-    .mq-title { font-weight:800; color:#006d66; font-size:1.12rem; }
-    .mq-sub { color:#2f6b66; font-size:0.95rem; margin-bottom:8px; }
-    .mq-card { background:linear-gradient(180deg, rgba(255,255,255,0.98), rgba(255,255,255,0.92)); padding:10px; border-radius:8px; box-shadow:0 8px 20px rgba(4,60,60,0.03); }
-    .mq-metric { font-weight:800; color:#073a38; font-size:1.4rem; }
-    .mq-small { color:#6c9b97; font-size:0.9rem; }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+# try importing ai helpers if available
+try:
+    import ai_recommendation
+    from ai_recommendation import ai_data_example
+except Exception:
+    ai_recommendation = None
+    ai_data_example = None
 
-# ---------- Helpers ----------
-def ensure_ai_dict(ai_in: Optional[Any]) -> Optional[Dict]:
+# ---------------- Theme colors (soft teal + glass)
+ACCENT = "#0f8f88"
+ACCENT_DARK = "#0c6f66"
+CARD_BG = "rgba(255,255,255,0.92)"
+MUTED = "#6a7f7c"
+TITLE = "#083a38"
+
+# ---------------- Helpers ----------------
+def json_download_link(obj: Any, filename: str = "report.json", label: str = "Download JSON"):
+    """Create a base64 data URI link for a JSON object (so we avoid st.download_button)."""
+    s = json.dumps(obj, indent=2)
+    b64 = base64.b64encode(s.encode()).decode()
+    href = f'<a href="data:application/json;base64,{b64}" download="{filename}">{label}</a>'
+    st.markdown(href, unsafe_allow_html=True)
+
+def csv_download_link(df: pd.DataFrame, filename: str = "table.csv", label: str = "Download CSV"):
+    csv = df.to_csv(index=False)
+    b64 = base64.b64encode(csv.encode()).decode()
+    href = f'<a href="data:text/csv;base64,{b64}" download="{filename}">{label}</a>'
+    st.markdown(href, unsafe_allow_html=True)
+
+def plot_style(fig: go.Figure, title: Optional[str] = None, height: Optional[int] = None):
+    layout = dict(
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)',
+        margin=dict(l=24, r=24, t=40 if title else 8, b=24),
+        font=dict(color=MUTED),
+        title=dict(x=0.5, xanchor="center")
+    )
+    fig.update_layout(layout)
+    if title:
+        fig.update_layout(title_text=title)
+    if height:
+        fig.update_layout(height=height)
+    return fig
+
+def ensure_ai_dict(ai_in: Optional[Any]):
     if ai_in is None:
         return None
     if isinstance(ai_in, dict):
         return ai_in
     if isinstance(ai_in, str):
-        s = ai_in.strip()
         try:
-            parsed = json.loads(s)
+            parsed = json.loads(ai_in)
             if isinstance(parsed, dict):
                 return parsed
         except Exception:
-            return {"summary": s}
+            return {"summary": ai_in}
     return {"summary": str(ai_in)}
 
-def plot_style(fig: go.Figure, title: str = None, height: int = None):
-    if title:
-        fig.update_layout(title=dict(text=title, x=0.5, xanchor="center", font=dict(size=14)))
-    fig.update_layout(
-        paper_bgcolor='rgba(0,0,0,0)',
-        plot_bgcolor='rgba(0,0,0,0)',
-        margin=dict(l=20, r=20, t=60, b=40),
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
-    )
-    if height:
-        fig.update_layout(height=height)
-    return fig
+def safe_results(results: Optional[dict]) -> dict:
+    """Return a results dict with realistic mock defaults so nothing is empty."""
+    r = results.copy() if results else {}
+    r.setdefault("title", "Steel for New Building Frame")
+    r.setdefault("generated_by", "John Doe")
+    r.setdefault("generated_on", datetime.date.today().strftime("%d/%m/%Y"))
+    r.setdefault("executive_summary", {
+        "Global Warming Potential": 2288.0,
+        "Circularity Score": 50,
+        "Particulate Matter": 0.763,
+        "Water Consumption": 4.7,
+        "Overall Energy Demand": 26625.84
+    })
+    r.setdefault("goal_scope", {
+        "Intended Application": "Screening assessment for internal R&D",
+        "Intended Audience": "Engineering & sustainability teams",
+        "System Boundary": "Cradle-to-Gate",
+        "Comparative Assertion for Public": "No (screening-level)"
+    })
+    r.setdefault("data_quality", {
+        "Reliability": "5/5", "Completeness": "5/5", "Temporal": "5/5", "Geographical": "4/5", "Technological": "4/5",
+        "Aggregated ADQI": 4.51, "Result Uncertainty pct": 14
+    })
+    r.setdefault("supply_chain_hotspots", [
+        {"title": "Production Phase Global Warming Potential", "desc": "Highest environmental impact contributor", "share_pct": 65},
+        {"title": "Overall Energy Demand", "desc": "High energy intensity", "share_pct": 25},
+        {"title": "Circularity Score", "desc": "Opportunities to increase recycled content", "share_pct": 10},
+    ])
+    r.setdefault("material_flow", {
+        "labels": ["Raw Input", "Processing", "Manufacturing", "Product in Use", "End of Life", "Recycling", "Waste"],
+        "source": [0, 1, 2, 2, 3, 4],
+        "target": [1, 2, 3, 4, 5, 6],
+        "value": [100, 80, 70, 60, 20, 15]
+    })
+    r.setdefault("circularity", {
+        "Circularity Rate": 50,
+        "Recyclability Rate": 90,
+        "Recovery Efficiency": 92,
+        "Secondary Material Content": 10
+    })
+    r.setdefault("extended_metrics", {
+        "Resource Efficiency": "92%", "Extended Product Life": "110%", "Reuse Potential": "40/50",
+        "Material Recovery": "90%", "Closed-loop Potential": "75%", "Recycling Content": "10%", "Landfill Rate": "8%", "Energy Recovery": "2%"
+    })
+    r.setdefault("impact_list", [
+        ("Global Warming Potential", 2288.0, "kg CO₂-eq"),
+        ("Energy Demand", 26626.0, "MJ"),
+        ("Water Consumption", 4.7, "m³"),
+        ("Acidification Potential", 4.11, "kg SO₂-eq"),
+        ("Eutrophication", 1.14, "kg PO₄-eq"),
+        ("Photochemical Ozone", 2.29, "kg NMVOC-eq"),
+        ("Particulate Matter", 0.76, "kg PM2.5-eq"),
+        ("Abiotic Depletion (Fossil)", 29288, "MJ"),
+        ("Human Toxicity (Non-Cancer)", 2.29, "CTUh"),
+        ("Freshwater Ecotoxicity", 22.88, "CTUe"),
+        ("Land Use", 228.77, "m²·year")
+    ])
+    r.setdefault("gwp_breakdown", {"Production": 66, "Transport": 25, "Use Phase": 9})
+    r.setdefault("energy_breakdown", {"Direct Fuel": 24794.84, "Grid Electricity": 1831.00})
+    r.setdefault("primary_vs_recycled", [
+        {"Metric": "GWP (kg CO2-eq)", "Primary": 2485, "Recycled": 597},
+        {"Metric": "Energy (GJ)", "Primary": 28.77, "Recycled": 6.17},
+        {"Metric": "Water (m³)", "Primary": 5.0, "Recycled": 2.0},
+        {"Metric": "Acidification (kg SO2-eq)", "Primary": 4.40, "Recycled": 1.35},
+        {"Metric": "Eutrophication (kg PO4-eq)", "Primary": 1.24, "Recycled": 0.30},
+    ])
+    # Monte Carlo arrays for uncertainty dashboard
+    if "uncertainty" not in r:
+        rng = np.random.default_rng(123)
+        gwp_arr = rng.normal(loc=r["executive_summary"]["Global Warming Potential"], scale=100, size=1000)
+        energy_arr = rng.normal(loc=r["executive_summary"]["Overall Energy Demand"], scale=1500, size=1000)
+        water_arr = rng.normal(loc=r["executive_summary"]["Water Consumption"], scale=0.4, size=1000)
+        r["uncertainty"] = {"GWP": gwp_arr.tolist(), "Energy": energy_arr.tolist(), "Water": water_arr.tolist()}
+    return r
 
-def df_to_csv_download_link(df: pd.DataFrame, filename: str = "export.csv"):
-    csv = df.to_csv(index=False).encode('utf-8')
-    return st.download_button(label="Download CSV", data=csv, file_name=filename, mime="text/csv")
-
-# ---------- Main ----------
+# ---------------- Main rendering function ----------------
 def results_page(results: Optional[dict] = None, ai_text: Optional[Any] = None):
-    pass
-    results = results or {}
+    st.set_page_config(layout="wide", page_title="MetalliQ — Final LCA Report")
+    r = safe_results(results)
     ai_data = ensure_ai_dict(ai_text)
-
-    # Merge defaults (safe fallbacks)
-    # Try to reuse common keys from lca_simulation output if present
-    executive = results.get("executive_summary", {})
-    if not executive:
-        # sensible defaults if run_simulation wasn't executed
-        executive = {
-            "Global Warming Potential": 2293.0,
-            "Circularity Score": 50,
-            "Particulate Matter": 0.76,
-            "Water Consumption": 4.7,
-            "Production Phase GWP": 1490.0,
-            "Overall Energy Demand": 26454,
-            "Circular Score": 50,
-            "Supply Chain Hotspots": []
-        }
-
-    # Impact list default
-    impact_list = results.get("impact_data", [
-        ("Global Warming Potential", executive.get("Global Warming Potential", 2293.0), "kg CO2-eq"),
-        ("Energy Demand", executive.get("Overall Energy Demand", 26454), "MJ"),
-        ("Water Consumption", executive.get("Water Consumption", 4.7), "m3"),
-    ])
-
-    # Sankey / Material flow defaults
-    mf = results.get("material_flow_analysis", {
-        "labels": ["Metal Ore Extraction", "Manufacturing", "Transportation", "Use Phase", "End of Life", "Recycling", "Landfill"],
-        "source": [0, 0, 1, 2, 3, 4],
-        "target": [1, 2, 2, 3, 4, 5],
-        "value": [100, 70, 60, 50, 30, 12]
-    })
-
-    circularity = results.get("circularity_analysis", {
-        "Circularity Rate": 48,
-        "Recyclability Rate": 88,
-        "Recovery Efficiency": 90,
-        "Secondary Material Content": 12
-    })
-
-    extended_circ = results.get("extended_circularity_metrics", {
-        "Resource Efficiency": "92%",
-        "Extended Product Life": "110%",
-        "Reuse Potential": "40%",
-        "Material Recovery": "90%",
-        "Closed-loop Potential": "75%",
-        "Recycling Content": "10%",
-        "Landfill Rate": "8%",
-        "Energy Recovery": "2%"
-    })
-
-    gwp_breakdown = results.get("gwp_contribution_analysis", {"Production": 66, "Transport": 25, "Use Phase": 9})
-    energy_breakdown = results.get("energy_source_breakdown", {"Grid Electricity": 70, "Direct Fuel": 20000, "Renewables": 1454})
-
-    # Primary vs Recycled
-    pvr = results.get("primary_vs_recycled", {}).get("comparison_table", [
-        {"Metric": "Global Warming Potential (kg CO2-eq)", "Primary": 2200, "Recycled": 600},
-        {"Metric": "Energy Demand (MJ)", "Primary": 27000, "Recycled": 9800},
-        {"Metric": "Water Consumption (m3)", "Primary": 5.0, "Recycled": 1.4},
-    ])
-    df_pvr = pd.DataFrame(pvr)
-
-    # Uncertainty distributions (MonteCarlo arrays) fallback
-    gwp_arr = np.array(results.get("uncertainty_dashboard", {}).get("Global Warming Potential", []))
-    energy_arr = np.array(results.get("uncertainty_dashboard", {}).get("Energy Demand", []))
-    water_arr = np.array(results.get("uncertainty_dashboard", {}).get("Water Consumption", []))
-    if gwp_arr.size == 0:
-        gwp_arr = np.random.normal(loc=executive.get("Global Warming Potential", 2293.0), scale=100, size=1000)
-    if energy_arr.size == 0:
-        energy_arr = np.random.normal(loc=executive.get("Overall Energy Demand", 26454), scale=1500, size=1000)
-    if water_arr.size == 0:
-        water_arr = np.random.normal(loc=executive.get("Water Consumption", 4.7), scale=0.4, size=1000)
-
-    # PAGE TITLE
-    st.markdown(f"<div class='mq-neon'><div class='mq-title'>MetalliQ — Final LCA Report</div><div class='mq-sub'>ISO 14044-aligned interactive report, AI interpretation & scenario comparison</div></div>", unsafe_allow_html=True)
-
-    # ---------------- ISO 14044 Compliance ----------------
-    with st.container():
-        st.markdown("<div class='mq-neon'><div class='mq-title'>ISO 14044 Compliance</div>", unsafe_allow_html=True)
-        st.markdown("<div class='mq-card'><b>Conformance Level:</b> Screening-level alignment with ISO 14044 principles. For formal comparative assertions and public disclosure, follow the ISO critical review process and use site-specific primary data where required.</div>", unsafe_allow_html=True)
-        st.markdown("</div>", unsafe_allow_html=True)
-
-    # ---------------- Executive Summary ----------------
-    with st.container():
-        st.markdown("<div class='mq-neon'><div class='mq-title'>Executive Summary</div><div class='mq-sub'>Key aggregated indicators (Monte Carlo averages where available)</div>", unsafe_allow_html=True)
-        cols = st.columns(4)
-        try:
-            cols[0].markdown(f"<div class='mq-card'><div class='mq-small'>Global Warming Potential</div><div class='mq-metric'>{executive.get('Global Warming Potential'):.1f} <span class='mq-small'>kg CO₂-eq</span></div></div>", unsafe_allow_html=True)
-            cols[1].markdown(f"<div class='mq-card'><div class='mq-small'>Circularity Score</div><div class='mq-metric'>{executive.get('Circularity Score')} <span class='mq-small'>%</span></div></div>", unsafe_allow_html=True)
-            cols[2].markdown(f"<div class='mq-card'><div class='mq-small'>Particulate Matter</div><div class='mq-metric'>{executive.get('Particulate Matter'):.3g} <span class='mq-small'>kg PM2.5-eq</span></div></div>", unsafe_allow_html=True)
-            cols[3].markdown(f"<div class='mq-card'><div class='mq-small'>Water Consumption</div><div class='mq-metric'>{executive.get('Water Consumption')} <span class='mq-small'>m³</span></div></div>", unsafe_allow_html=True)
-        except Exception:
-            # defensive in case numeric conversions fail
-            st.write(cols[0].markdown if False else "")
-        st.markdown("</div>", unsafe_allow_html=True)
-
-    # ---------------- Goal & Scope ----------------
-    gs = results.get("goal_scope", {})
-    with st.container():
-        st.markdown("<div class='mq-neon'><div class='mq-title'>Goal & Scope (ISO 14044)</div><div class='mq-sub'>Study boundary, intended application & audience</div>", unsafe_allow_html=True)
-        st.markdown("<div class='mq-card'>", unsafe_allow_html=True)
-        st.write(gs or {"Intended Application": "Screening study", "System Boundary": "Cradle-to-Gate"})
-        st.markdown("</div></div>", unsafe_allow_html=True)
-
-    # ---------------- Data Quality & Uncertainty ----------------
-    dq = results.get("data_quality", {})
-    with st.container():
-        st.markdown("<div class='mq-neon'><div class='mq-title'>Data Quality & Uncertainty</div><div class='mq-sub'>Pedigree scores & aggregated uncertainty indicators</div>", unsafe_allow_html=True)
-        st.markdown("<div class='mq-card'>", unsafe_allow_html=True)
-        st.write(dq or {"Reliability": "N/A", "Completeness": "N/A"})
-        st.markdown("</div></div>", unsafe_allow_html=True)
-
-    # ---------------- Supply Chain Hotspots ----------------
-    with st.container():
-        st.markdown("<div class='mq-neon'><div class='mq-title'>Supply Chain Hotspots</div><div class='mq-sub'>Top contributors by impact share</div>", unsafe_allow_html=True)
-        sc = executive.get("Supply Chain Hotspots", [])
-        if sc:
-            for h in sc:
-                st.markdown(f"<div class='mq-card'><b>{h.get('title')}</b><div class='mq-small'>{h.get('description')}</div><div style='margin-top:6px;font-weight:800;color:#095a55'>{h.get('impact','')}% of total impact</div></div>", unsafe_allow_html=True)
+    # If no ai_data passed, prefer imported ai_data_example, otherwise fallback to default
+    if not ai_data:
+        if ai_data_example:
+            ai_data = ai_data_example
         else:
-            st.markdown("<div class='mq-card'><i>No hotspots identified in results.</i></div>", unsafe_allow_html=True)
-        st.markdown("</div>", unsafe_allow_html=True)
+            ai_data = {
+                "summary": "The analysis identifies the production phase as the primary GWP hotspot. Recommendations focus on recycled content and supplier energy mix.",
+                "findings": [
+                    {
+                        "title": "Mitigate High Global Warming Potential from Primary Steel Production",
+                        "priority": "High",
+                        "evidence": f"Production stage accounts for approx {r['supply_chain_hotspots'][0]['share_pct']}% of GWP.",
+                        "root_cause": "High fossil-fuel energy use in production and low recycled content.",
+                        "action_plan": [
+                            {"title": "Explore higher recycled-content steel", "effort": "Medium", "confidence": 90},
+                            {"title": "Engage suppliers on energy efficiency", "effort": "Medium", "confidence": 80},
+                        ],
+                    }
+                ],
+                # Always include ore_warning and ev_recommendation placeholders (user requested always show these)
+                "ore_warning": {"text": "Ore grade variability detected: low-grade ores may increase processing emissions.", "severity": "Warning"},
+                "ev_charging": {"text": "If transport uses electric vehicles, recommend energy-efficient charging during off-peak renewable supply windows.", "priority": "Advisory"}
+            }
 
-    # ---------------- Interactive Process Lifecycle ----------------
-    with st.container():
-        st.markdown("<div class='mq-neon'><div class='mq-title'>Interactive Process Lifecycle</div><div class='mq-sub'>Click a stage to view stage-specific metrics and AI notes</div>", unsafe_allow_html=True)
-        # small interactive selector from material flow labels if available
-        stages = mf.get("labels", ["Metal Ore Extraction", "Manufacturing", "Transportation", "Use Phase", "End of Life"])
-        selected = st.selectbox("Select Lifecycle Stage", stages, index=0)
-        # stage mock metrics: if results contain stage metrics, use them; otherwise compute proportional share
-        stage_metrics = results.get("stage_metrics", {}).get(selected, {})
-        if not stage_metrics:
-            # derive approximate numbers by evenly splitting GWP
-            total_gwp = executive.get("Global Warming Potential", 2293.0)
-            approx = {"GWP": round(total_gwp * (0.2 if selected == stages[0] else 0.15), 1),
-                      "Energy": round(executive.get("Overall Energy Demand", 26454) * 0.1, 1),
-                      "Water": round(executive.get("Water Consumption", 4.7) * 0.2, 3)}
-            stage_metrics = approx
-        st.markdown(f"<div class='mq-card'><b>Stage:</b> {selected} <br><b>GWP:</b> {stage_metrics.get('GWP')} kg CO₂-eq  •  <b>Energy:</b> {stage_metrics.get('Energy')} MJ  •  <b>Water:</b> {stage_metrics.get('Water')} m³</div>", unsafe_allow_html=True)
+    # ---- Top header and export links ----
+    st.markdown(
+        f"""
+        <div style="background:{CARD_BG};padding:20px;border-radius:10px;border:1px solid rgba(0,0,0,0.03)">
+            <div style="display:flex;justify-content:space-between;align-items:center;">
+                <div>
+                    <h1 style="margin:0;color:{TITLE};">{r['title']}</h1>
+                    <div style="color:{MUTED};font-size:14px">Generated on {r['generated_on']} by {r['generated_by']}</div>
+                </div>
+                <div style="display:flex;gap:10px;align-items:center;">
+                    <!-- replace download buttons with data-URI links below -->
+                </div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
 
-        # Stage-level AI (reuse ai_recommendation)
-        st.markdown("<div style='margin-top:8px;'>", unsafe_allow_html=True)
-        stage_ai = {
-            "summary": f"Stage-level interpretation for {selected}.",
-            "findings": [
-                {
-                    "title": f"{selected} - GWP hotspot",
-                    "priority": "High Priority" if stage_metrics.get("GWP", 0) > (executive.get("Global Warming Potential", 1) * 0.2) else "Medium Priority",
-                    "evidence": f"{selected} contributes approx {stage_metrics.get('GWP')} kg CO₂-eq",
-                    "root_cause": "Energy intensity and transport distances",
-                    "action_plan": [
-                        {"title": "Process optimization", "desc": "Implement heat recovery", "impact": "Lower energy/GWP", "effort": "Medium Effort", "confidence": 80}
-                    ]
-                }
-            ]
-        }
+    # provide JSON / CSV download links (no st.download_button)
+    st.markdown("**Export report:**")
+    json_download_link(r, filename="lca_report.json", label="📦 Download Full Report (JSON)")
+    # CSV of impact table
+    df_imp = pd.DataFrame(r["impact_list"], columns=["Impact Metric", "Value", "Unit"])
+    csv_download_link(df_imp, filename="detailed_impact_assessment.csv", label="📥 Download Impact Table (CSV)")
+
+    st.markdown("---")
+
+    # ---------- ISO Conformance ----------
+    st.markdown(f"""
+        <div style="background:{CARD_BG};padding:18px;border-radius:10px;border:1px solid rgba(0,120,115,0.06);">
+            <strong style="color:{ACCENT_DARK}">ISO 14044 Conformance</strong>
+            <div style="color:{MUTED};margin-top:6px">
+                This is a screening-level LCA broadly consistent with ISO 14044 principles for internal decision-making. For public comparative statements, a formal critical review is required.
+            </div>
+        </div>
+    """, unsafe_allow_html=True)
+
+    st.markdown("")
+
+    # ---------- Executive Summary cards ----------
+    exec_vals = r["executive_summary"]
+    c1, c2, c3, c4 = st.columns([1.5,1,1,1])
+    c1.markdown(f"<div style='background:{CARD_BG};padding:18px;border-radius:10px'><div style='font-size:13px;color:{MUTED}'>Global Warming Potential</div><div style='font-size:22px;color:{TITLE};font-weight:700'>{exec_vals['Global Warming Potential']:.0f} <span style='font-size:12px;color:{MUTED}'>kg CO₂-eq</span></div></div>", unsafe_allow_html=True)
+    c2.markdown(f"<div style='background:{CARD_BG};padding:18px;border-radius:10px'><div style='font-size:13px;color:{MUTED}'>Circularity Score</div><div style='font-size:22px;color:{TITLE};font-weight:700'>{exec_vals['Circularity Score']} <span style='font-size:12px;color:{MUTED}'>%</span></div></div>", unsafe_allow_html=True)
+    c3.markdown(f"<div style='background:{CARD_BG};padding:18px;border-radius:10px'><div style='font-size:13px;color:{MUTED}'>Particulate Matter</div><div style='font-size:22px;color:{TITLE};font-weight:700'>{exec_vals['Particulate Matter']:.3g} <span style='font-size:12px;color:{MUTED}'>kg PM2.5-eq</span></div></div>", unsafe_allow_html=True)
+    c4.markdown(f"<div style='background:{CARD_BG};padding:18px;border-radius:10px'><div style='font-size:13px;color:{MUTED}'>Water Consumption</div><div style='font-size:22px;color:{TITLE};font-weight:700'>{exec_vals['Water Consumption']} <span style='font-size:12px;color:{MUTED}'>m³</span></div></div>", unsafe_allow_html=True)
+
+    st.markdown("")
+
+    # ---------- Goal & Scope ----------
+    st.markdown("<div style='background:transparent;padding:6px'><h3 style='margin:6px 0;color:#0b6b66'>Goal & Scope (ISO 14044)</h3></div>", unsafe_allow_html=True)
+    gs = r["goal_scope"]
+    left, right = st.columns(2)
+    with left:
+        st.markdown(f"**Intended Application**  \n{gs['Intended Application']}")
+        st.markdown(f"**System Boundary**  \n{gs['System Boundary']}")
+    with right:
+        st.markdown(f"**Intended Audience**  \n{gs['Intended Audience']}")
+        st.markdown(f"**Comparative Assertion for Public**  \n{gs['Comparative Assertion for Public']}")
+
+    st.markdown("---")
+
+    # ---------- Data Quality & Uncertainty (ADQI) ----------
+    st.markdown("<h3 style='color:#0b6b66'>Data Quality & Uncertainty</h3>", unsafe_allow_html=True)
+    dq = r["data_quality"]
+    a, b = st.columns([2,1])
+    with a:
+        st.write(f"**Reliability Score:** {dq['Reliability']}  \n**Completeness Score:** {dq['Completeness']}  \n**Temporal Score:** {dq['Temporal']}  \n**Geographical Score:** {dq['Geographical']}  \n**Technological Score:** {dq['Technological']}")
+    with b:
+        st.markdown(f"<div style='background:{CARD_BG};padding:14px;border-radius:8px;text-align:center'> <div style='color:{MUTED}'>Aggregated Data Quality</div><div style='font-size:28px;color:{ACCENT_DARK};font-weight:700'>{dq['Aggregated ADQI']}</div><div style='color:{MUTED};margin-top:6px'>Result Uncertainty<br><strong>±{dq['Result Uncertainty pct']}%</strong></div></div>", unsafe_allow_html=True)
+
+    st.markdown("---")
+
+    # ---------- Supply Chain Hotspots ----------
+    st.markdown("<h3 style='color:#0b6b66'>Supply Chain Hotspots</h3>", unsafe_allow_html=True)
+    for i, item in enumerate(r["supply_chain_hotspots"]):
+        # highlight first card
+        border = f"border:2px solid rgba(255,150,20,0.22);background:linear-gradient(90deg, rgba(255,255,255,0.96), rgba(255,245,230,0.02));" if i == 0 else f"background:{CARD_BG};border:1px solid rgba(0,0,0,0.03);"
+        st.markdown(f"<div style='padding:12px;border-radius:8px;{border}display:flex;justify-content:space-between;align-items:center;margin-bottom:8px'><div><strong>{item['title']}</strong><div style='color:{MUTED};font-size:13px'>{item['desc']}</div></div><div style='font-weight:800;color:{ACCENT_DARK}'>{item['share_pct']}%<div style='color:{MUTED};font-size:12px'>of GWP Impact</div></div></div>", unsafe_allow_html=True)
+
+    st.markdown("---")
+
+    # ---------- Interactive Process Lifecycle ----------
+    st.markdown("<h3 style='color:#0b6b66'>Interactive Process Lifecycle</h3>", unsafe_allow_html=True)
+    mf_labels = r["material_flow"]["labels"]
+    st.markdown("<div style='background:{0};padding:12px;border-radius:12px'>{1}</div>".format(CARD_BG, ""), unsafe_allow_html=True)
+    cols = st.columns(len(mf_labels))
+    for idx, lbl in enumerate(mf_labels):
+        with cols[idx]:
+            st.write(f"<div style='text-align:center'><div style='width:64px;height:64px;border-radius:40px;border:2px solid {ACCENT};display:flex;align-items:center;justify-content:center;margin:auto;background:rgba(255,255,255,0.95)'>🔵</div><div style='font-size:13px;margin-top:6px;color:{MUTED}'>{lbl}</div></div>", unsafe_allow_html=True)
+    # stage selector shows stage metrics
+    sel = st.selectbox("Select stage to view stage-specific metrics", mf_labels, index=0)
+    # create mock stage metrics
+    total_gwp = r["executive_summary"]["Global Warming Potential"]
+    stage_share = 0.2 if sel == mf_labels[0] else (0.15 if sel == mf_labels[1] else 0.2 if sel == mf_labels[2] else 0.25 if sel == mf_labels[3] else 0.2)
+    stage_metrics = {"GWP": round(total_gwp * stage_share, 1), "Energy": round(r["executive_summary"]["Overall Energy Demand"] * stage_share, 1), "Water": round(r["executive_summary"]["Water Consumption"] * stage_share, 3)}
+    st.markdown(f"<div style='background:{CARD_BG};padding:12px;border-radius:8px'><strong>{sel}</strong> — GWP: <strong>{stage_metrics['GWP']}</strong> kg CO₂-eq • Energy: <strong>{stage_metrics['Energy']}</strong> MJ • Water: <strong>{stage_metrics['Water']}</strong> m³</div>", unsafe_allow_html=True)
+
+    st.markdown("---")
+
+    # ---------- AI-Generated Life Cycle Interpretation ----------
+    st.markdown("<h3 style='color:#0b6b66'>AI-Generated Life Cycle Interpretation</h3>", unsafe_allow_html=True)
+    ai_lifecycle_text = ai_data.get("lifecycle_interpretation", None) or ai_data.get("summary", "")
+    # if a long paragraph isn't available, use a default narrative (from your screenshot)
+    if not ai_lifecycle_text or len(ai_lifecycle_text.strip()) < 20:
+        ai_lifecycle_text = (
+            "The analysis clearly identifies the Global Warming Potential (GWP) from the production phase as the most significant environmental impact. "
+            "Mean GWP is approx 2288 kg CO₂-eq, with production contributing the majority of the impact. The Circularity Score of 50% indicates room for improvement in material recovery. "
+            "A Monte Carlo simulation estimates result uncertainty at approx ±14% for GWP (95% CI 2105–2472 kg CO₂-eq). These findings are suitable for internal R&D comparisons and directional guidance."
+        )
+    st.markdown(f"<div style='background:{CARD_BG};padding:16px;border-radius:10px;color:{MUTED}'>{ai_lifecycle_text}</div>", unsafe_allow_html=True)
+
+    st.markdown("---")
+
+    # ---------- Circularity Analysis + Sankey side-by-side ----------
+    st.markdown("<h3 style='color:#0b6b66'>Circularity Analysis & Material Flow</h3>", unsafe_allow_html=True)
+    left, right = st.columns([1,1.4])
+    with left:
+        circ = r["circularity"]
+        # gauge as donut using pie with hole and one slice colored
+        fig_gauge = go.Figure(data=[go.Pie(labels=["Circular", "Remaining"], values=[circ["Circularity Rate"], 100-circ["Circularity Rate"]], hole=0.7, marker=dict(colors=[ACCENT_DARK, "rgba(200,200,200,0.35)"]), textinfo='none')])
+        fig_gauge.add_annotation(dict(text=f"<b>{circ['Circularity Rate']}%</b><br><span style='font-size:12px;color:{MUTED}'>Circularity</span>", x=0.5, y=0.5, showarrow=False))
+        plot_style(fig_gauge, height=320)
+        st.plotly_chart(fig_gauge, use_container_width=True)
+        st.markdown(f"<div style='background:{CARD_BG};padding:10px;border-radius:8px'><div>Recyclability Rate: <strong>{circ['Recyclability Rate']}%</strong></div><div>Recovery Efficiency: <strong>{circ['Recovery Efficiency']}%</strong></div><div>Secondary Material Content: <strong>{circ['Secondary Material Content']}%</strong></div></div>", unsafe_allow_html=True)
+
+    with right:
+        # Sankey
+        mf = r["material_flow"]
         try:
-            ai_recommendation.display_ai_recommendations(stage_ai, extra_context={"stage": selected, "stage_metrics": stage_metrics})
-        except Exception:
-            st.write("AI stage interpretation unavailable.")
-        st.markdown("</div></div>", unsafe_allow_html=True)
-
-    # ---------------- AI Generated Life Cycle Interpretation (global) ----------------
-    with st.container():
-        st.markdown("<div class='mq-neon'><div class='mq-title'>AI Generated Life Cycle Interpretation</div><div class='mq-sub'>NLP-powered insights and recommended actions</div>", unsafe_allow_html=True)
-        if ai_data:
-            try:
-                extra = {"executive_summary": executive, "material_flow": mf}
-                ai_recommendation.display_ai_recommendations(ai_data, extra_context=extra)
-            except Exception:
-                st.error("Failed to render AI recommendations.")
-                st.write(ai_data.get("summary", str(ai_data)))
-        else:
-            st.markdown("<div class='mq-card'><i>No AI interpretation provided for this study.</i></div>", unsafe_allow_html=True)
-        st.markdown("</div>", unsafe_allow_html=True)
-
-    # ---------------- Material Flow (Sankey) ----------------
-    with st.container():
-        st.markdown("<div class='mq-neon'><div class='mq-title'>Material Flow (Sankey)</div><div class='mq-sub'>Process-level material transfers</div>", unsafe_allow_html=True)
-        try:
-            node = dict(label=mf["labels"], pad=18, thickness=18, line=dict(color="rgba(0,0,0,0.06)", width=0.5))
+            node = dict(label=mf["labels"], pad=15, thickness=14)
             link = dict(source=mf["source"], target=mf["target"], value=mf["value"])
-            sankey_fig = go.Figure(go.Sankey(node=node, link=link))
-            plot_style(sankey_fig, title="Material Flow Sankey", height=420)
-            st.plotly_chart(sankey_fig, use_container_width=True)
+            sankey = go.Figure(go.Sankey(node=node, link=link))
+            plot_style(sankey, title="Material Flow Sankey", height=380)
+            st.plotly_chart(sankey, use_container_width=True)
         except Exception as e:
-            st.error("Sankey diagram failed to render.")
-            st.exception(e)
-        st.markdown("</div>", unsafe_allow_html=True)
+            st.error("Sankey failed to render")
+            st.write(e)
 
-    # ---------------- Circularity Analysis ----------------
-    with st.container():
-        st.markdown("<div class='mq-neon'><div class='mq-title'>Circularity Analysis</div><div class='mq-sub'>High-level circularity metrics and progress bars</div>", unsafe_allow_html=True)
-        col1, col2 = st.columns([0.45, 0.55])
-        with col1:
-            circ_val = circularity.get("Circularity Rate", 50)
-            gauge = go.Figure(go.Indicator(mode="gauge+number", value=circ_val, number={"suffix":"%"}, gauge={"axis": {"range":[0,100]}, "bar":{"color":"#00897b"}}))
-            plot_style(gauge, title="Circularity Rate", height=300)
-            st.plotly_chart(gauge, use_container_width=True)
-        with col2:
-            st.markdown("<div class='mq-card'>", unsafe_allow_html=True)
-            st.markdown(f"**Recyclability Rate:** {circularity.get('Recyclability Rate', 'N/A')}%")
-            st.progress(int(circularity.get('Recyclability Rate', 0)))
-            st.markdown(f"**Recovery Efficiency:** {circularity.get('Recovery Efficiency', 'N/A')}%")
-            st.progress(int(circularity.get('Recovery Efficiency', 0)))
-            st.markdown(f"**Secondary Material Content:** {circularity.get('Secondary Material Content', 'N/A')}%")
-            st.progress(int(circularity.get('Secondary Material Content', 0)))
+    st.markdown("---")
+
+    # ---------- Extended Circularity Metrics ----------
+    st.markdown("<h3 style='color:#0b6b66'>Extended Circularity Metrics</h3>", unsafe_allow_html=True)
+    metrics = r["extended_metrics"]
+    # 4 columns grid
+    cols = st.columns(4)
+    keys = list(metrics.keys())
+    for i, k in enumerate(keys):
+        cols[i % 4].markdown(f"<div style='background:{CARD_BG};padding:14px;border-radius:8px;text-align:center'><div style='color:{MUTED}'>{k}</div><div style='font-size:20px;color:{ACCENT_DARK};font-weight:700'>{metrics[k]}</div></div>", unsafe_allow_html=True)
+
+    st.markdown("---")
+
+    # ---------- Key Impact Profiles ----------
+    st.markdown("<h3 style='color:#0b6b66'>Key Impact Profiles</h3>", unsafe_allow_html=True)
+    impact_df = pd.DataFrame(r["impact_list"], columns=["Impact Metric", "Value", "Unit"])
+    # pick subset of common categories for the big bar chart
+    top_keys = ["Global Warming Potential", "Energy Demand", "Water Consumption", "Eutrophication", "Acidification"]
+    df_bar = impact_df[impact_df["Impact Metric"].isin(top_keys)]
+    if df_bar.empty:
+        df_bar = impact_df.head(5)
+    fig_bar = px.bar(df_bar, x="Impact Metric", y="Value", text="Value")
+    plot_style(fig_bar, height=360)
+    st.plotly_chart(fig_bar, use_container_width=True)
+
+    st.markdown("---")
+
+    # ---------- GWP Contribution & Energy Source ----------
+    st.markdown("<div style='display:flex;gap:12px'>", unsafe_allow_html=True)
+    col_a, col_b = st.columns([1,1])
+    with col_a:
+        df_gwp = pd.DataFrame(list(r["gwp_breakdown"].items()), columns=["Category", "Share"])
+        pie = px.pie(df_gwp, names="Category", values="Share", hole=0.4)
+        plot_style(pie, "GWP Contribution Analysis", height=300)
+        st.plotly_chart(pie, use_container_width=True)
+    with col_b:
+        df_energy = pd.DataFrame(list(r["energy_breakdown"].items()), columns=["Source", "Value"])
+        bar = px.bar(df_energy, x="Value", y="Source", orientation="h", text="Value")
+        plot_style(bar, "Energy Source Breakdown (MJ)", height=300)
+        st.plotly_chart(bar, use_container_width=True)
+    st.markdown("</div>", unsafe_allow_html=True)
+
+    st.markdown("---")
+
+    # ---------- Detailed Impact Assessment (chart + table) ----------
+    st.markdown("<h3 style='color:#0b6b66'>Detailed Impact Assessment</h3>", unsafe_allow_html=True)
+    # Chart of impact metrics (horizontal)
+    df_chart = impact_df.copy()
+    df_chart["ValueNum"] = pd.to_numeric(df_chart["Value"], errors="coerce")
+    fig_imp = px.bar(df_chart, x="ValueNum", y="Impact Metric", orientation="h", text="ValueNum")
+    plot_style(fig_imp, height=480)
+    st.plotly_chart(fig_imp, use_container_width=True)
+    st.dataframe(impact_df, use_container_width=True, height=220)
+    csv_download_link(impact_df, filename="detailed_impacts.csv", label="📥 Download Detailed Impacts CSV")
+
+    st.markdown("---")
+
+    # ---------- Uncertainty Dashboard ----------
+    st.markdown("<h3 style='color:#0b6b66'>Uncertainty Dashboard</h3>", unsafe_allow_html=True)
+    unc = r["uncertainty"]
+    col_g, col_e, col_w = st.columns(3)
+    def hist_col(col, arr, label, unit):
+        arr = np.array(arr)
+        mean = np.mean(arr)
+        ci = np.percentile(arr, [2.5, 97.5])
+        fig = go.Figure()
+        fig.add_trace(go.Histogram(x=arr, nbinsx=30, marker=dict(color=ACCENT)))
+        fig.add_vline(x=mean, line_color=ACCENT_DARK, line_width=2)
+        fig.add_vline(x=ci[0], line_dash="dash", line_color=ACCENT_DARK)
+        fig.add_vline(x=ci[1], line_dash="dash", line_color=ACCENT_DARK)
+        plot_style(fig, title=f"{label} distribution", height=300)
+        col.plotly_chart(fig, use_container_width=True)
+        col.markdown(f"**Mean:** {mean:.2f} {unit}  •  **95% CI:** [{ci[0]:.2f}, {ci[1]:.2f}]")
+    hist_col(col_g, unc["GWP"], "Global Warming Potential", "kg CO₂-eq")
+    hist_col(col_e, unc["Energy"], "Energy Demand", "MJ")
+    hist_col(col_w, unc["Water"], "Water Consumption", "m³")
+
+    st.markdown("---")
+
+    # ---------- AI-Powered Insights & Recommendations (always show ore & ev warnings) ----------
+    st.markdown("<h3 style='color:#0b6b66'>AI-Powered Insights & Recommendations</h3>", unsafe_allow_html=True)
+    # If module provided a display function, prefer using it (keeps styling consistent)
+    try:
+        extra_ctx = {"executive_summary": r["executive_summary"], "supply_chain_hotspots": r["supply_chain_hotspots"]}
+        if ai_recommendation and hasattr(ai_recommendation, "display_ai_recommendations"):
+            # ensure ore_grade and ev recommendations exist in ai_data
+            if "ore_warning" not in ai_data:
+                ai_data["ore_warning"] = {"text": "Ore grade variability: potential emissions increase.", "severity": "Warning"}
+            if "ev_charging" not in ai_data:
+                ai_data["ev_charging"] = {"text": "Recommend off-peak charging during high renewable generation.", "priority": "Advisory"}
+            ai_recommendation.display_ai_recommendations(ai_data, extra_context=extra_ctx)
+        else:
+            # Render built-in styled AI card list
+            st.markdown(f"<div style='background:{CARD_BG};padding:14px;border-radius:10px'>", unsafe_allow_html=True)
+            st.markdown(f"**AI Summary:**  \n{ai_data.get('summary','No summary available.')}")
+            findings = ai_data.get("findings", [])
+            if not findings:
+                findings = [{
+                    "title": "Mitigate High Global Warming Potential from Primary Steel Production",
+                    "priority": "High",
+                    "evidence": "Production stage is dominant contributor to GWP.",
+                    "root_cause": "Energy-intensive primary steel production.",
+                    "action_plan": [
+                        {"title": "Increase recycled content", "effort": "Medium", "confidence": 90},
+                        {"title": "Supplier energy engagement", "effort": "Medium", "confidence": 80},
+                    ]
+                }]
+            for f in findings:
+                st.markdown(f"### {f['title']}  \n**Priority:** {f.get('priority','Medium')}")
+                st.markdown(f"**Evidence:** {f.get('evidence','-')}")
+                st.markdown(f"**Root Cause:** {f.get('root_cause','-')}")
+                st.markdown("**Action Plan:**")
+                for ap in f.get("action_plan", []):
+                    st.markdown(f"- {ap.get('title')}  • Effort: {ap.get('effort','N/A')}  • Confidence: {ap.get('confidence','N/A')}%")
+            # Always show ore grade & EV advice
+            ore = ai_data.get("ore_warning", {"text":"Ore grade warning not provided."})
+            ev = ai_data.get("ev_charging", {"text":"EV charging recommendations not provided."})
+            st.markdown("---")
+            st.markdown(f"**Ore Grade Warning:** {ore.get('text')}")
+            st.markdown(f"**EV Charging Recommendation:** {ev.get('text')}")
             st.markdown("</div>", unsafe_allow_html=True)
+    except Exception as e:
+        st.error("Failed to render AI recommendations.")
+        st.write(str(e))
 
-        # Extended metrics grid
-        st.markdown("<div style='margin-top:12px;'/>", unsafe_allow_html=True)
-        cols = st.columns(4)
-        items = list(extended_circ.items())
-        for i, (k, v) in enumerate(items):
-            cols[i % 4].markdown(f"<div class='mq-card'><b>{k}</b><div class='mq-small' style='margin-top:6px'>{v}</div></div>", unsafe_allow_html=True)
-        st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown("---")
 
-    # ---------------- Charts: GWP Contribution & Energy Breakdown ----------------
-    with st.container():
-        st.markdown("<div class='mq-neon'><div class='mq-title'>Key Charts</div><div class='mq-sub'>GWP contribution and energy source breakdown</div>", unsafe_allow_html=True)
-        # GWP pie
-        try:
-            df_gwp = pd.DataFrame(list(gwp_breakdown.items()), columns=["Category", "Share"])
-            pie = px.pie(df_gwp, names="Category", values="Share", hole=0.35)
-            plot_style(pie, title="GWP Contribution Analysis", height=340)
-            st.plotly_chart(pie, use_container_width=True)
-        except Exception:
-            st.write("GWP contribution chart not available.")
+    # ---------- Primary vs Recycled Scenario Comparison ----------
+    st.markdown("<h3 style='color:#0b6b66'>Primary vs. Recycled Scenario Comparison</h3>", unsafe_allow_html=True)
+    df_pvr = pd.DataFrame(r["primary_vs_recycled"])
+    st.dataframe(df_pvr, use_container_width=True)
+    csv_download_link(df_pvr, filename="primary_vs_recycled.csv", label="📥 Download Comparison CSV")
+    # grouped bar chart
+    try:
+        df_melt = df_pvr.melt(id_vars="Metric", value_vars=["Primary", "Recycled"], var_name="Scenario", value_name="Value")
+        fig_cmp = px.bar(df_melt, x="Metric", y="Value", color="Scenario", barmode="group", text="Value")
+        plot_style(fig_cmp, height=380)
+        st.plotly_chart(fig_cmp, use_container_width=True)
+    except Exception:
+        st.write("Comparison chart not available.")
 
-        # Energy breakdown bar
-        try:
-            df_energy = pd.DataFrame(list(energy_breakdown.items()), columns=["Source", "Value"])
-            bar = px.bar(df_energy, x="Source", y="Value", text="Value")
-            plot_style(bar, title="Energy Source Breakdown", height=320)
-            st.plotly_chart(bar, use_container_width=True)
-        except Exception:
-            st.write("Energy breakdown chart not available.")
-        st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown("---")
 
-    # ---------------- Detailed Impact Assessment ----------------
-    with st.container():
-        st.markdown("<div class='mq-neon'><div class='mq-title'>Detailed Impact Assessment</div><div class='mq-sub'>Table & chart views for all reported impact metrics</div>", unsafe_allow_html=True)
-        df_imp = pd.DataFrame(impact_list, columns=["Impact Metric", "Value", "Unit"])
-        # Chart: numeric values only
-        numeric = df_imp.copy()
-        numeric["ValueNum"] = pd.to_numeric(numeric["Value"], errors='coerce')
-        numeric_chart = numeric.dropna(subset=["ValueNum"])
-        if not numeric_chart.empty:
-            fig = px.bar(numeric_chart, x="Impact Metric", y="ValueNum", text="ValueNum")
-            plot_style(fig, title="Impact Metrics Chart", height=380)
-            st.plotly_chart(fig, use_container_width=True)
-        st.dataframe(df_imp, use_container_width=True)
-        df_to_csv_download_link(df_imp, filename="detailed_impact_assessment.csv")
-        st.markdown("</div>", unsafe_allow_html=True)
+    st.markdown("<div style='color:rgba(0,0,0,0.6);font-size:12px'>Generated by MetalliQ · Screening-level LCA. For formal comparative reporting follow ISO 14044 critical review processes.</div>", unsafe_allow_html=True)
 
-    # ---------------- Uncertainty Dashboard ----------------
-    with st.container():
-        st.markdown("<div class='mq-neon'><div class='mq-title'>Uncertainty Dashboard</div><div class='mq-sub'>Monte Carlo distributions and 95% CI</div>", unsafe_allow_html=True)
-        c1, c2, c3 = st.columns(3)
-        def hist_col(col, arr, label, unit):
-            mean = float(np.mean(arr))
-            ci = np.percentile(arr, [2.5, 97.5])
-            fig = go.Figure()
-            fig.add_trace(go.Histogram(x=arr, nbinsx=30, marker=dict(color="#aee6de"), showlegend=False))
-            fig.add_vline(x=mean, line_color="#145c59", line_width=3)
-            fig.add_vline(x=ci[0], line_dash="dash", line_color="#145c59")
-            fig.add_vline(x=ci[1], line_dash="dash", line_color="#145c59")
-            plot_style(fig, title=f"{label} distribution", height=300)
-            col.plotly_chart(fig, use_container_width=True)
-            col.markdown(f"**Mean:** {mean:.2f} {unit}  •  **95% CI:** [{ci[0]:.2f}, {ci[1]:.2f}]")
-        hist_col(c1, gwp_arr, "Global Warming Potential", "kg CO₂-eq")
-        hist_col(c2, energy_arr, "Energy Demand", "MJ")
-        hist_col(c3, water_arr, "Water Consumption", "m³")
-        st.markdown("</div>", unsafe_allow_html=True)
-
-    # ---------------- Primary vs Recycled Scenario Comparison ----------------
-    with st.container():
-        st.markdown("<div class='mq-neon'><div class='mq-title'>Primary vs Recycled Scenario Comparison</div><div class='mq-sub'>Detailed comparison table + charts</div>", unsafe_allow_html=True)
-        st.dataframe(df_pvr, use_container_width=True)
-        df_to_csv_download_link(df_pvr, filename="primary_vs_recycled_comparison.csv")
-        # Comparison chart: show Primary vs Recycled for numeric columns
-        numeric_cols = [c for c in df_pvr.columns if c != "Metric"]
-        try:
-            df_chart = df_pvr.melt(id_vars="Metric", value_vars=numeric_cols, var_name="Scenario", value_name="Value")
-            fig_cmp = px.bar(df_chart, x="Metric", y="Value", color="Scenario", barmode="group", text="Value")
-            plot_style(fig_cmp, title="Primary vs Recycled — Comparison", height=380)
-            st.plotly_chart(fig_cmp, use_container_width=True)
-        except Exception:
-            st.write("Comparison chart unavailable.")
-        st.markdown("</div>", unsafe_allow_html=True)
-
-    # Footer note
-    st.markdown("<div style='margin-top:14px;color:#5f7f7b;font-size:0.9rem;'>Generated by MetalliQ · Screening-level LCA. For regulatory/comparative reporting follow ISO 14044 critical review steps.</div>", unsafe_allow_html=True)
-
-# If executed directly (for testing)
+# If executed directly, run a demo render
 if __name__ == "__main__":
-    # quick debug/demo when running this file directly
-    demo_results = {}
-    results_page(demo_results, ai_text=ai_recommendation.ai_data_example if hasattr(ai_recommendation, 'ai_data_example') else {"summary":"Demo AI"})
+    results_page(None, None)
