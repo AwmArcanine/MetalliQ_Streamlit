@@ -221,15 +221,19 @@ def results_page(results: Optional[dict] = None, ai_text: Optional[Any] = None):
 
     # ---------- Goal & Scope ----------
     st.markdown("<div style='background:transparent;padding:6px'><h3 style='margin:6px 0;color:#0b6b66'>Goal & Scope (ISO 14044)</h3></div>", unsafe_allow_html=True)
-    gs = r["goal_scope"]
+    gs = r.get("goal_scope", {})  # <-- safe access, won't raise KeyError
+
     left, right = st.columns(2)
     with left:
-        st.markdown(f"**Intended Application**  \n{gs['Intended Application']}")
-        st.markdown(f"**System Boundary**  \n{gs['System Boundary']}")
+        intended_app_text = gs.get("Intended Application", r.get("executive_summary", {}).get("Intended Application", "Screening assessment for internal R&D"))
+        st.markdown(f"**Intended Application**  \n{intended_app_text}")
+        system_boundary_text = gs.get("System Boundary", "Cradle-to-Gate")
+        st.markdown(f"**System Boundary**  \n{system_boundary_text}")
     with right:
-        st.markdown(f"**Intended Audience**  \n{gs['Intended Audience']}")
-        st.markdown(f"**Comparative Assertion for Public**  \n{gs['Comparative Assertion for Public']}")
-
+        intended_audience_text = gs.get("Intended Audience", "Internal engineering and sustainability departments")
+        st.markdown(f"**Intended Audience**  \n{intended_audience_text}")
+        comp_assertion = gs.get("Comparative Assertion for Public", gs.get("comparative_assertion", "No"))
+        st.markdown(f"**Comparative Assertion for Public**  \n{comp_assertion}")
     st.markdown("---")
 
     # ---------- Data Quality & Uncertainty (ADQI) ----------
