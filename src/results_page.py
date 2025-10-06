@@ -63,10 +63,7 @@ def df_to_csv_download_link(df: pd.DataFrame, filename: str = "export.csv"):
 
 # ---------- Main ----------
 def results_page(results: Optional[dict] = None, ai_text: Optional[Any] = None):
-    """
-    Render final LCA report. Safe to call even if 'results' is None or partial.
-    """
-    st.set_option('deprecation.showPyplotGlobalUse', False)
+    pass
     results = results or {}
     ai_data = ensure_ai_dict(ai_text)
 
