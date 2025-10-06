@@ -127,7 +127,8 @@ bar.style.width = "0%";
 </script>
 """, unsafe_allow_html=True)
 
-st.title("AI-Powered Metals Sustainability Study ⚙️")
+def full_lca_study_form():
+    st.title("AI-Powered Metals Sustainability Study ⚙️")
 
 with st.container():
     st.markdown("<div class='card'><h3>🎯 Goal & Scope Definition (ISO 14044)</h3><hr>", unsafe_allow_html=True)
