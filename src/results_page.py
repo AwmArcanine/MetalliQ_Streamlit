@@ -34,14 +34,11 @@ MUTED = "#6a7f7c"
 TITLE = "#083a38"
 
 # ---------------- Helpers ----------------
-def json_download_link(obj: Any, filename: str = "report.json", label: str = "Download JSON"):
-    """Create a base64 data URI link for a JSON object (so we avoid st.download_button)."""
-    s = json.dumps(obj, indent=2)
-    b64 = base64.b64encode(s.encode()).decode()
-    href = f'<a href="data:application/json;base64,{b64}" download="{filename}">{label}</a>'
-    st.markdown(href, unsafe_allow_html=True)
-
-def csv_download_link(df: pd.DataFrame, filename: str = "table.csv", label: str = "Download CSV"):
+def csv_download_link(df, filename: str = "table.csv", label: str = "Download CSV"):
+    """
+    Create a base64 download link for a pandas DataFrame (no st.download_button used).
+    Usage: csv_download_link(df, filename="my.csv", label="Download CSV")
+    """
     csv = df.to_csv(index=False)
     b64 = base64.b64encode(csv.encode()).decode()
     href = f'<a href="data:text/csv;base64,{b64}" download="{filename}">{label}</a>'
@@ -197,17 +194,6 @@ def results_page(results: Optional[dict] = None, ai_text: Optional[Any] = None):
         """,
         unsafe_allow_html=True
     )
-
-    # Dummy PDF export button (no actual PDF functionality)
-    if st.button("Export PDF (dummy)"):
-        st.info("PDF export is a placeholder in this build. Real PDF export is not implemented here.")
-
-    # provide JSON / CSV download links (no st.download_button)
-    st.markdown("**Export report:**")
-    json_download_link(r, filename="lca_report.json", label="📦 Download Full Report (JSON)")
-    # CSV of impact table
-    df_imp = pd.DataFrame(r["impact_list"], columns=["Impact Metric", "Value", "Unit"])
-    csv_download_link(df_imp, filename="detailed_impact_assessment.csv", label="📥 Download Impact Table (CSV)")
 
     st.markdown("---")
 
@@ -367,16 +353,91 @@ def results_page(results: Optional[dict] = None, ai_text: Optional[Any] = None):
 
     st.markdown("---")
 
-    # ---------- Detailed Impact Assessment (chart + table) ----------
+   # ---------- Detailed Impact Assessment (chart + table) ----------
     st.markdown("<h3 style='color:#0b6b66'>Detailed Impact Assessment</h3>", unsafe_allow_html=True)
-    # Chart of impact metrics (horizontal)
-    df_chart = impact_df.copy()
-    df_chart["ValueNum"] = pd.to_numeric(df_chart["Value"], errors="coerce")
-    fig_imp = px.bar(df_chart, x="ValueNum", y="Impact Metric", orientation="h", text="ValueNum")
+
+    # -- Use mock direct data for the full list of requested impact metrics --
+    impact_names = [
+        "Global Warming Potential",
+        "Acidification Potential",
+        "Photochemical Ozone Creation",
+        "Abiotic Depletion (Fossil)",
+        "Fresh Water Ecotoxicity",
+        "Energy Demand",
+        "Eutrophication Demand",
+        "Particulate Matter Formation",
+        "Human Toxicity (Cancer)",
+        "Ionizing Radiation",
+        "Water Consumption",
+        "Ozone Depletion Potential",
+        "Abiotic Depletion (Elements)",
+        "Human Toxicity (Non-Cancer)",
+        "Land Use"
+    ]
+
+    # plausible mock values (adjust if you want different magnitudes)
+    mock_values = {
+        "Global Warming Potential": 2288.0,           # kg CO2-eq
+        "Acidification Potential": 4.11,              # kg SO2-eq
+        "Photochemical Ozone Creation": 2.29,         # kg NMVOC-eq
+        "Abiotic Depletion (Fossil)": 29288.0,        # MJ
+        "Fresh Water Ecotoxicity": 22.88,             # CTUe
+        "Energy Demand": 26626.0,                     # MJ
+        "Eutrophication Demand": 1.14,                # kg PO4-eq
+        "Particulate Matter Formation": 0.763,        # kg PM2.5-eq
+        "Human Toxicity (Cancer)": 0.012,             # CTUh
+        "Ionizing Radiation": 0.00035,                # kBq U235-eq (example)
+        "Water Consumption": 4.7,                     # m3
+        "Ozone Depletion Potential": 0.00005,         # kg CFC-11-eq
+        "Abiotic Depletion (Elements)": 0.0012,       # kg Sb-eq (example)
+        "Human Toxicity (Non-Cancer)": 2.29,          # CTUh
+        "Land Use": 228.77                             # m2·year
+    }
+
+    # units mapping
+    units = {
+        "Global Warming Potential": "kg CO₂-eq",
+        "Acidification Potential": "kg SO₂-eq",
+        "Photochemical Ozone Creation": "kg NMVOC-eq",
+        "Abiotic Depletion (Fossil)": "MJ",
+        "Fresh Water Ecotoxicity": "CTUe",
+        "Energy Demand": "MJ",
+        "Eutrophication Demand": "kg PO₄-eq",
+        "Particulate Matter Formation": "kg PM2.5-eq",
+        "Human Toxicity (Cancer)": "CTUh",
+        "Ionizing Radiation": "kBq U235-eq",
+        "Water Consumption": "m³",
+        "Ozone Depletion Potential": "kg CFC-11-eq",
+        "Abiotic Depletion (Elements)": "kg Sb-eq",
+        "Human Toxicity (Non-Cancer)": "CTUh",
+        "Land Use": "m²·year"
+    }
+
+    # Build DataFrame from the mock values
+    impact_rows = []
+    for name in impact_names:
+        val = mock_values.get(name, 0.0)
+        unit = units.get(name, "")
+        impact_rows.append({"Impact Metric": name, "Value": val, "Unit": unit})
+    impact_df = pd.DataFrame(impact_rows)
+
+    # Chart: horizontal bar sorted by value (descending)
+    impact_df["ValueNum"] = pd.to_numeric(impact_df["Value"], errors="coerce")
+    impact_df_sorted = impact_df.sort_values("ValueNum", ascending=True)  # ascending True for horizontal bar bottom->top
+    fig_imp = px.bar(
+        impact_df_sorted,
+        x="ValueNum",
+        y="Impact Metric",
+        orientation="h",
+        text="ValueNum",
+        labels={"ValueNum": "Value", "Impact Metric": "Impact Metric"}
+    )
     plot_style(fig_imp, height=480)
     st.plotly_chart(fig_imp, use_container_width=True)
-    st.dataframe(impact_df, use_container_width=True, height=220)
-    csv_download_link(impact_df, filename="detailed_impacts.csv", label="📥 Download Detailed Impacts CSV")
+
+    # Show the table and provide a CSV download link (no external file required)
+    st.dataframe(impact_df.drop(columns=["ValueNum"]), use_container_width=True, height=260)
+    csv_download_link(impact_df.drop(columns=["ValueNum"]), filename="detailed_impacts_mock.csv", label="📥 Download Detailed Impacts CSV")
 
     st.markdown("---")
 
