@@ -120,8 +120,8 @@ section[data-testid="stSidebar"] {
 
 /* Buttons / Active States */
 .nav-active {
-    background: linear-gradient(90deg, #006D77 0%, #00A896 100%) !important;
-    color: teal !important;
+    background: linear-gradient(90deg, #006D77 0%, #00A896 100%) important;
+    color: "#005252" important;
     font-weight: 700;
     border-left: 4px solid #00A896;
 }
