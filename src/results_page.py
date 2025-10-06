@@ -353,7 +353,7 @@ def results_page(results: Optional[dict] = None, ai_text: Optional[Any] = None):
     st.markdown("<h3 style='color:#0b6b66'>Supply Chain Hotspots</h3>", unsafe_allow_html=True)
     for i, item in enumerate(r["supply_chain_hotspots"]):
         # highlight first card
-        border = f"border:2px solid rgba(255,150,20,0.22);background:linear-gradient(90deg, rgba(255,255,255,0.30), rgba(255,245,230,0.02));" if i == 0 else f"background:{CARD_BG};border:1px solid rgba(0,0,0,0.03);"
+        border = f"border:4px solid rgba(255,150,20,0.22);background:linear-gradient(90deg, rgba(255,255,255,0.30), rgba(255,245,230,0.02));" if i == 0 else f"background:{CARD_BG};border:1px solid rgba(0,0,0,0.03);"
         st.markdown(f"<div style='padding:12px;border-radius:8px;{border}display:flex;justify-content:space-between;align-items:center;margin-bottom:8px'><div><strong>{item['title']}</strong><div style='color:{MUTED};font-size:13px'>{item['desc']}</div></div><div style='font-weight:800;color:{ACCENT_DARK}'>{item['share_pct']}%<div style='color:{MUTED};font-size:12px'>of GWP Impact</div></div></div>", unsafe_allow_html=True)
 
     st.markdown("---")
@@ -424,7 +424,7 @@ def results_page(results: Optional[dict] = None, ai_text: Optional[Any] = None):
     cols = st.columns(4)
     keys = list(metrics.keys())
     for i, k in enumerate(keys):
-        cols[i % 4].markdown(f"<div style='background:{CARD_BG};padding:14px;border-radius:8px;text-align:center'><div style='color:{MUTED}'>{k}</div><div style='font-size:20px;color:{ACCENT_DARK};font-weight:700'>{metrics[k]}</div></div>", unsafe_allow_html=True)
+        cols[i % 4].markdown(f"<div style='background:{CARD_BG};padding:14px;margin:10px;border-radius:8px;text-align:center'><div style='color:{MUTED}'>{k}</div><div style='font-size:20px;color:{ACCENT_DARK};font-weight:700'>{metrics[k]}</div></div>", unsafe_allow_html=True)
 
     st.markdown("---")
 
