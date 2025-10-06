@@ -31,7 +31,7 @@ ACCENT = "#0f8f88"
 ACCENT_DARK = "#0c6f66"
 CARD_BG = "rgba(255,255,255,0.30)"
 MUTED = "#fcfcfc"
-TITLE = "#083a38"
+TITLE = "#11ebe4"
 
 # ---------------- Helpers ----------------
 def csv_download_link(df, filename: str = "table.csv", label: str = "Download CSV"):
@@ -203,6 +203,7 @@ def results_page(results: Optional[dict] = None, ai_text: Optional[Any] = None):
         border-radius: 12px !important;
         padding: 14px !important;
         transition: all 0.3s ease-in-out;
+        gap:8px;
     }
     .card-override:hover {
         background: rgba(255, 255, 255, 0.24) !important;
