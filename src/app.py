@@ -20,13 +20,17 @@ st.set_page_config(
 )
 
 
-# ===================== LOAD EXTERNAL CSS =====================
-def load_css(file_path: str):
-    with open(file_path, "r") as f:
-        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+from pathlib import Path
 
-# Load sidebar styles only (doesn't affect other pages)
-load_css("app.css")
+# ===================== LOAD EXTERNAL CSS SAFELY =====================
+def load_css(file_path: str):
+    css_path = Path(__file__).parent / file_path  # ensures correct relative path
+    if css_path.exists():
+        with open(css_path, "r", encoding="utf-8") as f:
+            st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+    else:
+        st.warning(f"⚠️ CSS file not found: {css_path.name}. Using default theme.")
+
 
 
 # ===================== MAIN APP =====================
