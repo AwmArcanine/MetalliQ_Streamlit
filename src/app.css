@@ -1,12 +1,41 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
 
-/* Sidebar only */
+/* Sidebar layout */
 section[data-testid="stSidebar"] {
     background: linear-gradient(180deg, #0A2C33 0%, #003F46 60%, #00494D 100%);
     padding: 0 !important;
     font-family: 'Poppins', sans-serif;
     box-shadow: 3px 0 14px rgba(0, 109, 119, 0.35);
+    color: #FFFFFF !important;
 }
+
+/* Sidebar text */
+section[data-testid="stSidebar"] * {
+    color: #FFFFFF !important;
+}
+
+/* App title glow */
+.sidebar-header h2 {
+    color: #B9FFF4 !important;
+    text-shadow: 0px 0px 14px #00E0C7;
+}
+
+/* Subtext color */
+.sidebar-header p {
+    color: #9FE3D8 !important;
+}
+
+/* Radio buttons and labels */
+div[role="radiogroup"] label div[data-testid="stMarkdownContainer"] p {
+    color: #FFFFFF !important;
+    font-weight: 500;
+}
+
+/* Hide footer and menu */
+footer, #MainMenu {
+    visibility: hidden;
+}
+
 
 /* Hide Streamlit footer & menu */
 footer, #MainMenu {
