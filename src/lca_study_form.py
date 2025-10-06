@@ -1,65 +1,10 @@
 import streamlit as st
 import time
+import traceback
 from lca_simulation import run_simulation
 from results_page import results_page
-# from ai_recommendation import ai_data_example
-import traceback
 
-# --- MetalliQ Neon-Teal Theme for LCA Study Form ---
-
-MATERIALS = [
-    "Steel", "Stainless Steel", "Aluminum", "Copper", "Zinc", "Lead",
-    "Chromium", "Nickel", "Magnesium", "Tin", "Titanium"
-]
-
-CATEGORY_APPS = [
-    "Construction", "Automotive", "Aerospace", "Electrical & Electronics",
-    "Packaging", "Railways", "Defence", "Consumer Goods", "Power Transmission"
-]
-
-INDIA_REGIONS = [
-    "North India", "South India", "East India", "West India", "Central India", "North-East India",
-    "Maharashtra", "Odisha", "Gujarat", "Jharkhand", "Tamil Nadu", "Chhattisgarh",
-    "Karnataka", "West Bengal", "Andhra Pradesh", "Rajasthan", "Punjab", "Uttar Pradesh", "Telangana"
-]
-
-ALLOY_COMPLEXITY = [
-    "Ferritic", "Austenitic", "Martensitic", "High Carbon", "Low Alloy", "Medium Alloy", "High Alloy"
-]
-
-COATINGS = [
-    "Galvanized (Zinc)", "Anodized (Aluminum)", "Painted/Epoxy", "Chromium plated", "Nickel plated",
-    "Phosphate", "Tin plating", "Powder coated", "None"
-]
-
-PRODUCTION_PROCESSES = [
-    "Blast Furnace", "Electric Arc Furnace", "DRI (Direct Reduced Iron)", "Bauxite Refining",
-    "Smelting", "Rolling Mill", "Casting", "Forging", "Extrusion"
-]
-
-FUEL_TYPES = [
-    "Diesel", "Petrol", "LPG", "CNG", "Bio-Diesel", "Coal", "Natural Gas", "Electricity"
-]
-
-CHARGING_POWER = [
-    "Grid Electricity", "Solar", "Wind", "Biomass", "Hydro", "Battery Swapping"
-]
-
-GRID_MIX = [
-    "Western Grid", "Northern Grid", "Eastern Grid", "Southern Grid", "Central Grid",
-    "North-Eastern Grid", "Maharashtra State Grid", "Tamil Nadu State Grid", "Gujarat State Grid"
-]
-
-WATER_SOURCES = [
-    "Municipal Supply", "Groundwater", "Ganga River", "Yamuna River", "Godavari River", "Brahmaputra River",
-    "Rainwater", "Recycled/Reuse"
-]
-
-WASTE_METHODS = [
-    "Landfill", "Chemical Precipitation", "Incineration", "Recycling", "Pyrometallurgical Processing",
-    "Biological Treatment", "Coagulation/Flocculation"
-]
-
+# --- Material, Region & Autofill Data ---
 ORE_AUTOFILLS = {
     "Odisha": {"concentration": 55, "type": "Hematite"},
     "Maharashtra": {"concentration": 46, "type": "Magnetite"},
@@ -82,351 +27,187 @@ ORE_AUTOFILLS = {
     "North-East India": {"concentration": 40, "type": "Goethite"},
 }
 
-def full_lca_study_form():
-    st.markdown("""
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Poppins:wght@400;500;600&display=swap');
+# --- Themed Style ---
+st.markdown("""
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600&family=Poppins:wght@400;500;600&display=swap');
 
-        body, .stApp {
-            background: linear-gradient(135deg, #00494D 0%, #006D77 40%, #83C5BE 100%) !important;
-            color: #E0FFFF;
-            font-family: 'Poppins', sans-serif;
-        }
+/* Background */
+body, .stApp {
+    background: linear-gradient(135deg, #003C43 0%, #006D77 40%, #83C5BE 100%) !important;
+    color: #E0FBFC;
+    font-family: 'Poppins', sans-serif;
+    overflow-x: hidden;
+}
 
-        /* --- Form Container --- */
-        .stForm {
-            border: 1.8px solid rgba(0, 239, 255, 0.6);
-            border-radius: 16px !important;
-            background: rgba(255, 255, 255, 0.05);
-            box-shadow: 0 0 25px rgba(0, 239, 255, 0.2);
-            padding: 20px !important;
-        }
+/* Fade-in animation */
+@keyframes fadeIn {
+    from {opacity: 0; transform: translateY(15px);}
+    to {opacity: 1; transform: translateY(0);}
+}
 
-        /* --- Headings --- */
-        h1, h2, h3 {
-            font-family: 'Orbitron', sans-serif;
-            color: #00EFFF !important;
-            text-shadow: 0 0 18px rgba(0,239,255,0.8);
-        }
-        h3 {
-            margin-top: 35px !important;
-        }
+/* Card Style */
+.card {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(124, 244, 227, 0.25);
+    border-radius: 18px;
+    padding: 20px 25px;
+    box-shadow: 0 8px 25px rgba(0, 109, 119, 0.4);
+    margin-bottom: 25px;
+    animation: fadeIn 0.7s ease forwards;
+}
 
-        /* --- Labels and Field Text --- */
-        label, p, span, div, .stMarkdown {
-            color: #E0FFFF !important;
-        }
+/* Section Headers */
+.card h3 {
+    font-family: 'Orbitron', sans-serif;
+    color: #02C39A !important;
+    text-shadow: 0 0 15px rgba(124, 244, 227, 0.7);
+    margin-bottom: 8px;
+}
+.card hr {
+    border: 0;
+    height: 2px;
+    background: linear-gradient(90deg, rgba(124,244,227,0.7), rgba(255,255,255,0));
+    margin-bottom: 18px;
+}
 
-        /* --- Input Fields --- */
-        input, textarea {
-            background: rgba(255,255,255,0.1) !important;
-            color: #033E3E !important;
-            border: 1px solid rgba(0,239,255,0.3) !important;
-            border-radius: 10px !important;
-            font-size: 0.95rem !important;
-        }
-        input:focus, textarea:focus {
-            outline: none !important;
-            border-color: #00EFFF !important;
-            box-shadow: 0 0 10px rgba(0,239,255,0.4);
-        }
-        /* --- FIX for SELECTBOX TEXT COLOR --- */
-        div[data-baseweb="select"] > div {
-            background-color: rgba(255,255,255,0.1) !important;
-            border: 1px solid rgba(0,239,255,0.3) !important;
-            border-radius: 10px !important;
-            color: #033E3E !important;
-        }
-        div[data-baseweb="select"] > div:hover {
-            border-color: #00EFFF !important;
-        }
-        div[data-baseweb="select"] > div > div {
-            color: #033E3E !important; /* selected text color */
-        }
-        div[data-baseweb="popover"] li {
-            background-color: rgba(0,73,77,0.9) !important;
-            color: #033E3E !important; /* dropdown option text color */
-        }
-        div[data-baseweb="popover"] li:hover {
-            background-color: rgba(0,239,255,0.2) !important;
-            color: #033E3E !important;
-        }
-        /* --- Neon Button (Run Analysis) --- */
-        div.stButton > button, div[data-testid="baseButton-secondary"] button {
-            background: linear-gradient(90deg, #00EFFF 0%, #00B8CC 100%) !important;
-            color: #033E3E !important;
-            border-radius: 12px !important;
-            font-weight: 700 !important;
-            border: none !important;
-            padding: 0.7em 2.6em !important;
-            font-size: 1.05rem !important;
-            transition: all 0.3s ease-in-out;
-            box-shadow: 0 0 15px rgba(0,239,255,0.3);
-        }
-        div.stButton > button:hover {
-            background: linear-gradient(90deg, #00B8CC 0%, #00EFFF 100%) !important;
-            box-shadow: 0 0 30px rgba(0,239,255,0.6);
-            transform: scale(1.04);
-        }
+/* Inputs */
+input, textarea {
+    background: rgba(255,255,255,0.1) !important;
+    color: #E0FBFC !important;
+    border: 1px solid rgba(124,244,227,0.3) !important;
+    border-radius: 10px !important;
+}
+input:focus, textarea:focus {
+    outline: none !important;
+    border-color: #02C39A !important;
+    box-shadow: 0 0 10px rgba(124,244,227,0.4);
+}
 
-        /* --- Radio, Slider, etc --- */
-        .stRadio > label, .stSlider, .stSelectbox {
-            color: #E0FFFF !important;
-        }
-        .stSlider > div > div {
-            background: linear-gradient(90deg, #00EFFF, #00B8CC) !important;
-        }
+/* Selectboxes */
+div[data-baseweb="select"] > div {
+    background-color: rgba(255,255,255,0.1) !important;
+    color: #E0FBFC !important;
+    border-radius: 10px !important;
+}
 
-        /* --- Section Captions --- */
-        caption, .stCaption {
-            color: #A7FAFF !important;
-            font-size: 0.85rem;
-        }
-    </style>
-    """, unsafe_allow_html=True)
+/* Button */
+div.stButton > button {
+    background: linear-gradient(90deg, #00A896 0%, #02C39A 100%) !important;
+    color: #033E3E !important;
+    font-weight: 700 !important;
+    border-radius: 10px !important;
+    border: none !important;
+    padding: 0.7em 2.6em !important;
+    box-shadow: 0 0 15px rgba(124,244,227,0.4);
+    transition: all 0.3s ease-in-out;
+}
+div.stButton > button:hover {
+    transform: scale(1.03);
+    box-shadow: 0 0 25px rgba(124,244,227,0.7);
+}
 
-    st.title("AI-Powered Metals Sustainability")
+/* Progress Bar */
+#progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 6px;
+    width: 0%;
+    background: linear-gradient(90deg, #02C39A, #00A896, #83C5BE);
+    box-shadow: 0 0 15px rgba(124,244,227,0.7);
+    transition: width 0.4s ease;
+    z-index: 9999;
+}
+</style>
+<div id="progress-bar"></div>
+<script>
+let bar = document.getElementById("progress-bar");
+bar.style.width = "0%";
+</script>
+""", unsafe_allow_html=True)
 
-    # ---------------------------
-    # Start the form (only UI widgets inside this block)
-    # ---------------------------
-    with st.form("lca_full_study"):
-        # -------- SECTION 1 --------
-        st.markdown("### 🎯 Goal & Scope Definition (ISO 14044)")
-        col1, col2 = st.columns(2)
-        with col1:
-            intended_app = st.text_input(
-                "Intended Application",
-                value="Screening assessment for internal R&D purposes to compare material choices."
-            )
-            system_boundary = st.selectbox(
-                "System Boundary",
-                ["Cradle-to-Gate", "Cradle-to-Grave", "Gate-to-Gate", "Cradle-to-Cradle"],
-                index=0
-            )
-        with col2:
-            intended_audience = st.text_input(
-                "Intended Audience", value="Internal engineering and sustainability departments.")
-            comparative_assertion = st.radio(
-                "Comparative Assertion for Public Disclosure?",
-                ["No", "Yes"], horizontal=True, index=0
-            )
-        study_limitations = st.text_area(
-            "Study Limitations",
-            value="This analysis relies on industry-average data from recent Indian/International LCA datasets. Results are for design guidance; site-specific emissions are not included."
-        )
+st.title("AI-Powered Metals Sustainability Study ⚙️")
 
-        # -------- SECTION 2 --------
-        st.markdown("### 🏗️ Project & Material")
-        col1, col2 = st.columns(2)
-        with col1:
-            project_name = st.text_input("Project Name", value="New Building Frame")
-            category = st.selectbox(
-                "Category / Application",
-                ["Packaging", "Structural", "Automotive", "Construction", "Aerospace", "Railways", "Defence", "Electronics", "Power Transmission", "Other"],
-                index=0
-            )
-        with col2:
-            material = st.selectbox(
-                "Material",
-                ["Aluminum", "Steel", "Copper", "Zinc", "Lead", "Nickel", "Magnesium", "Titanium", "Stainless Steel", "Other"],
-                index=0
-            )
+with st.container():
+    st.markdown("<div class='card'><h3>🎯 Goal & Scope Definition (ISO 14044)</h3><hr>", unsafe_allow_html=True)
+    intended_app = st.text_input("Intended Application", "Compare material choices for internal R&D")
+    system_boundary = st.selectbox("System Boundary", ["Cradle-to-Gate", "Cradle-to-Grave", "Gate-to-Gate", "Cradle-to-Cradle"])
+    intended_audience = st.text_input("Intended Audience", "Internal engineering and sustainability departments.")
+    comparative_assertion = st.radio("Comparative Assertion for Public Disclosure?", ["No", "Yes"], horizontal=True)
+    study_limitations = st.text_area("Study Limitations", "Uses industry-average datasets; site-specific data not included.")
+    st.markdown("</div>", unsafe_allow_html=True)
 
-            analysis_region = st.selectbox(
-                "Analysis Region",
-                list(ORE_AUTOFILLS.keys()) + ["China", "EU", "USA", "Other Asia", "Global - Average", "Other"],
-                index=0,
-                key="region"
-            )
+with st.container():
+    st.markdown("<div class='card'><h3>🏗️ Project & Material</h3><hr>", unsafe_allow_html=True)
+    col1, col2 = st.columns(2)
+    with col1:
+        project_name = st.text_input("Project Name", "New Building Frame")
+        category = st.selectbox("Category / Application", ["Construction", "Automotive", "Aerospace", "Packaging", "Other"])
+    with col2:
+        material = st.selectbox("Material", ["Steel", "Aluminum", "Copper", "Nickel", "Titanium"])
+        region = st.selectbox("Analysis Region", list(ORE_AUTOFILLS.keys()) + ["China", "EU", "USA"], index=0)
 
-            # Instant autofill logic
-            if analysis_region in ORE_AUTOFILLS:
-                st.session_state["ore_conc"] = ORE_AUTOFILLS[analysis_region]["concentration"]
-                st.session_state["ore_type"] = ORE_AUTOFILLS[analysis_region]["type"]
-            else:
-                st.session_state.setdefault("ore_conc", 45.0)
-                st.session_state.setdefault("ore_type", "Bauxite")
+    if region in ORE_AUTOFILLS:
+        st.session_state["ore_conc"] = ORE_AUTOFILLS[region]["concentration"]
+        st.session_state["ore_type"] = ORE_AUTOFILLS[region]["type"]
+    else:
+        st.session_state.setdefault("ore_conc", 50)
+        st.session_state.setdefault("ore_type", "Bauxite")
 
-            # Editable autofilled fields
-            ore_conc = st.number_input(
-                "Metal Ore Concentration (%)",
-                min_value=0.0,
-                max_value=100.0,
-                value=float(st.session_state.get("ore_conc", 50.0)),
-                step=0.5,
-                key="ore_conc_input",
-            )
-            ore_type = st.text_input(
-                "Type of Ore (Optional)",
-                value=st.session_state["ore_type"],
-                key="ore_type_input",
-            )
-            coatings = st.selectbox(
-                "Coatings / Additives",
-                ["None", "Anodized", "Painted/Epoxy", "Chromium plated", "Nickel plated", "Powder coated", "Galvanized Zinc", "Other"],
-                index=0
-            )
+    ore_conc = st.number_input("Metal Ore Concentration (%)", min_value=0.0, max_value=100.0,
+                               value=float(st.session_state["ore_conc"]), step=0.5)
+    ore_type = st.text_input("Type of Ore", st.session_state["ore_type"])
+    st.markdown("</div>", unsafe_allow_html=True)
 
-        # -------- SECTION 3 --------
-        st.markdown("### ♻️ Lifecycle Stages")
-        col1, col2 = st.columns(2)
-        with col1:
-            functional_unit = st.text_input("Functional Unit", value="1 ton of product")
-            sec_material_content = st.number_input("Secondary Material Content (%)", min_value=0.0, max_value=100.0, value=10.0, step=0.1)
-        with col2:
-            production_process = st.selectbox(
-                "Production Process",
-                ["Primary Route (BF-BOF)", "Secondary Route (EAF)", "Bauxite Refining", "DRI - Coal", "DRI - Gas", "Smelting", "Casting", "Forging", "Powder Metallurgy", "Other"],
-                index=2
-            )
-            use_duration = st.text_input("Use Phase Duration (years)", value="35")
-            end_life_scenario = st.selectbox(
-                "End of Life Cycle Scenario",
-                ["90% Recycled", "50% Recycled / 50% Landfill", "100% Landfill", "Other"],
-                index=0
-            )
+with st.container():
+    st.markdown("<div class='card'><h3>♻️ Lifecycle Stages</h3><hr>", unsafe_allow_html=True)
+    functional_unit = st.text_input("Functional Unit", "1 ton of product")
+    sec_material_content = st.number_input("Secondary Material Content (%)", 0.0, 100.0, 10.0)
+    production_process = st.selectbox("Production Process", ["Primary Route", "Secondary Route", "Smelting", "Casting"])
+    end_life_scenario = st.selectbox("End of Life Cycle Scenario", ["90% Recycled", "50% Recycled", "Landfill"])
+    st.markdown("</div>", unsafe_allow_html=True)
 
-        # -------- SECTION 4 --------
-        st.markdown("### 🚚 Transportation Stages")
-        st.caption("*Example: mine → concentrator → plant*")
+with st.container():
+    st.markdown("<div class='card'><h3>📊 Data Quality & Uncertainty</h3><hr>", unsafe_allow_html=True)
+    reliability = st.slider("Reliability", 1, 5, 4)
+    completeness = st.slider("Completeness", 1, 5, 4)
+    temporal = st.slider("Temporal Correlation", 1, 5, 4)
+    geographical = st.slider("Geographical Correlation", 1, 5, 4)
+    technological = st.slider("Technological Correlation", 1, 5, 4)
+    st.markdown("</div>", unsafe_allow_html=True)
 
-        st.markdown("#### Stage 1")
-        col1, col2, col3, col4 = st.columns(4)
-        with col1:
-            transport1_stage = st.text_input("Stage Name", value="Mine to Concentrator")
-        with col2:
-            transport1_mode = st.selectbox("Mode", ["Truck", "Train", "Ship", "Other"], index=0, key="mode1")
-        with col3:
-            transport1_fuel = st.selectbox("Fuel Type", ["Diesel", "Electric", "Petrol", "Other"], index=0, key="fuel1")
-        with col4:
-            transport1_dist = st.number_input("Distance (km)", min_value=0.0, value=75.0, step=1.0, key="dist1")
-
-        st.markdown("#### Stage 2")
-        col1, col2, col3, col4 = st.columns(4)
-        with col1:
-            transport2_stage = st.text_input("Stage Name", value="Concentrator to Plant")
-        with col2:
-            transport2_mode = st.selectbox("Mode", ["Train", "Truck", "Ship", "Other"], index=0, key="mode2")
-        with col3:
-            transport2_fuel = st.selectbox("Fuel Type", ["Diesel", "Electric", "Other"], index=1, key="fuel2")
-        with col4:
-            transport2_dist = st.number_input("Distance (km)", min_value=0.0, value=250.0, step=1.0, key="dist2")
-
-        # -------- SECTION 5 --------
-        st.markdown("### ⚙️ Advanced Parameters")
-        grid_elec_mix = st.selectbox(
-            "Grid Electricity Mix",
-            ["India - Grid Average", "India - Eastern Region (Coal Heavy)", "India - Western Region", "India - Southern Region", "India - Northern Region", "International Best", "Other"],
-            index=0
-        )
-        water_source = st.selectbox("Water Source", ["Surface", "Groundwater", "Municipal", "Rainwater", "Other"], index=0)
-        proceff = st.number_input("Process Energy Efficiency (%)", min_value=0.0, max_value=100.0, value=85.0, step=0.1)
-        lifetime_ext = st.number_input("Product Lifetime Extension (Years)", min_value=0, max_value=200, value=5, step=1)
-        waste_method = st.selectbox(
-            "Waste Treatment Method",
-            ["Recycling", "Controlled Landfill", "Open Landfill", "Incineration", "Composting", "Other"], index=0
-        )
-
-        # -------- SECTION 6 --------
-        st.markdown("### 📊 Data Quality Assessment & Uncertainty (Pedigree Matrix)")
-        reliability = st.slider("Reliability", 1, 5, 4)
-        completeness = st.slider("Completeness", 1, 5, 4)
-        temporal = st.slider("Temporal Correlation", 1, 5, 4)
-        geographical = st.slider("Geographical Correlation", 1, 5, 4)
-        technological = st.slider("Technological Correlation", 1, 5, 4)
-
-        # Submit button inside the form (correct)
-        submitted = st.form_submit_button("Run Analysis")
-
-    # ---------------------------
-    # Outside the form block: handle submission, run simulation, show results.
-    # ---------------------------
-    if submitted:
-        # Collect form data into a dict (safe: variables are defined by the widgets above)
-        form_data = {
-            "intended_app": intended_app,
-            "intended_audience": intended_audience,
-            "system_boundary": system_boundary,
-            "study_limitations": study_limitations,
-            "comparative_assertion": comparative_assertion,
-            "project_name": project_name,
-            "category": category,
-            "material": material,
-            "region": analysis_region,
-            "ore_type": ore_type,
-            "ore_conc": ore_conc,
-            "coatings": coatings,
-            "functional_unit": functional_unit,
-            "sec_material_content": sec_material_content,
-            "production_process": production_process,
-            "use_duration": use_duration,
-            "end_life_scenario": end_life_scenario,
-            "transport1_stage": transport1_stage,
-            "transport1_mode": transport1_mode,
-            "transport1_fuel": transport1_fuel,
-            "transport1_dist": transport1_dist,
-            "transport2_stage": transport2_stage,
-            "transport2_mode": transport2_mode,
-            "transport2_fuel": transport2_fuel,
-            "transport2_dist": transport2_dist,
-            "grid_elec_mix": grid_elec_mix,
-            "water_source": water_source,
-            "proceff": proceff,
-            "lifetime_ext": lifetime_ext,
-            "waste_method": waste_method,
-            "reliability": reliability,
-            "completeness": completeness,
-            "temporal": temporal,
-            "geographical": geographical,
-            "technological": technological
-        }
-
-        # Save to session
-        st.session_state["lca_form_data"] = form_data
-
-        try:
-            # Run simulation outside the form (so form context is closed)
-            with st.spinner("Running LCA simulation... Please wait ⏳"):
-                results = run_simulation(form_data)
-                st.session_state["lca_results"] = results
-                # ensure results contains data_quality built from form sliders (so UI has expected keys)
-                if isinstance(results, dict):
-                    results.setdefault("data_quality", {})
-                    dq = results["data_quality"]
-                    # prefer values returned by simulation, otherwise use form inputs (show as "X/5")
-                    dq.setdefault("Reliability", f"{reliability}/5")
-                    dq.setdefault("Completeness", f"{completeness}/5")
-                    dq.setdefault("Temporal", f"{temporal}/5")
-                    dq.setdefault("Geographical", f"{geographical}/5")
-                    dq.setdefault("Technological", f"{technological}/5")
-
-                    # compute aggregated ADQI numeric mean if the simulation didn't provide one
-                    try:
-                        numeric_vals = [float(reliability), float(completeness), float(temporal), float(geographical), float(technological)]
-                        adqi_val = round(sum(numeric_vals) / len(numeric_vals), 2)
-                    except Exception:
-                        adqi_val = dq.get("Aggregated ADQI", dq.get("aggregated_adqi", 4.0))
-                    dq.setdefault("Aggregated ADQI", adqi_val)
-
-                    # default uncertainty (percent)
-                    dq.setdefault("Result Uncertainty pct", dq.get("result_uncertainty_pct", 14))
-
-
-            # Provide a brief progress animation
-            progress_bar = st.progress(0)
-            for i in range(101):
-                time.sleep(0.02)
-                progress_bar.progress(i)
-            st.success("✅ LCA Simulation completed successfully!")
-
-            # Extract AI text if available and pass to results_page
-            ai_text = results.get("ai_lifecycle_interpretation", "") if isinstance(results, dict) else ""
-            st.markdown("<hr>", unsafe_allow_html=True)
-
-            # Call the results page OUTSIDE the form context
-            results_page(results, ai_text)
-
-        except Exception as e:
-            st.error(f"❌ Simulation failed: {e}")
-            st.text(traceback.format_exc())
+if st.button("Run Analysis"):
+    try:
+        st.markdown("<script>document.getElementById('progress-bar').style.width='10%';</script>", unsafe_allow_html=True)
+        with st.spinner("Running LCA simulation..."):
+            results = run_simulation({
+                "intended_app": intended_app,
+                "intended_audience": intended_audience,
+                "system_boundary": system_boundary,
+                "study_limitations": study_limitations,
+                "comparative_assertion": comparative_assertion,
+                "project_name": project_name,
+                "category": category,
+                "material": material,
+                "region": region,
+                "ore_type": ore_type,
+                "ore_conc": ore_conc,
+                "functional_unit": functional_unit,
+                "sec_material_content": sec_material_content,
+                "production_process": production_process,
+                "end_life_scenario": end_life_scenario,
+                "reliability": reliability,
+                "completeness": completeness,
+                "temporal": temporal,
+                "geographical": geographical,
+                "technological": technological
+            })
+        for i in range(11, 101, 5):
+            st.markdown(f"<script>document.getElementById('progress-bar').style.width='{i}%';</script>", unsafe_allow_html=True)
+            time.sleep(0.05)
+        st.success("✅ Simulation Complete!")
+        results_page(results, results.get("ai_life_cycle_interpretation", ""))
+    except Exception as e:
+        st.error(f"❌ Simulation failed: {e}")
+        st.text(traceback.format_exc())
