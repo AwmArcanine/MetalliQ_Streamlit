@@ -1,4 +1,5 @@
 import streamlit as st
+import time
 from lca_simulation import run_simulation
 # --- MetalliQ Neon-Teal Theme for LCA Study Form ---
 def full_lca_study_form():
@@ -265,6 +266,9 @@ def full_lca_study_form():
                 results = run_simulation(form_data)
                 st.session_state["lca_results"] = results
                 st.success("✅ LCA Simulation completed successfully!")
-                st.balloons()
+                progress_bar = st.progress(0)
+                for i in range(101):
+                    time.sleep(0.05)
+                    progress_bar.progress(i)
             except Exception as e:
                 st.error(f"❌ Simulation failed: {e}")
