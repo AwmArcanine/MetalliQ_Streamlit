@@ -262,8 +262,8 @@ def full_lca_study_form():
                 "Metal Ore Concentration (%)",
                 min_value=0.0,
                 max_value=100.0,
-                value=st.session_state["ore_conc"],
-                step=0.1,
+                value=float(st.session_state.get("ore_conc", 50.0)),
+                step=0.5,
                 key="ore_conc_input",
             )
             ore_type = st.text_input(
