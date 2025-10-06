@@ -73,7 +73,7 @@ def full_lca_study_form():
         /* --- Neon Button (Run Analysis) --- */
         div.stButton > button, div[data-testid="baseButton-secondary"] button {
             background: linear-gradient(90deg, #00EFFF 0%, #00B8CC 100%) !important;
-            color: #002B36 !important;
+            color: #033E3E !important;
             border-radius: 12px !important;
             font-weight: 700 !important;
             border: none !important;
