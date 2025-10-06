@@ -5,6 +5,7 @@ Final results page for MetalliQ LCA platform (Plotly-based)
 - Mock-data safe: nothing is left empty
 - Integrates ai_recommendation display when available; otherwise renders built-in AI block
 - Always shows Ore Grade warning and EV charging recommendations in AI Insights
+- Contains a dummy "Export PDF" button (no actual PDF export)
 """
 
 import streamlit as st
@@ -189,13 +190,17 @@ def results_page(results: Optional[dict] = None, ai_text: Optional[Any] = None):
                     <div style="color:{MUTED};font-size:14px">Generated on {r['generated_on']} by {r['generated_by']}</div>
                 </div>
                 <div style="display:flex;gap:10px;align-items:center;">
-                    <!-- replace download buttons with data-URI links below -->
+                    <!-- Dummy PDF export button will be rendered below by Streamlit -->
                 </div>
             </div>
         </div>
         """,
         unsafe_allow_html=True
     )
+
+    # Dummy PDF export button (no actual PDF functionality)
+    if st.button("Export PDF (dummy)"):
+        st.info("PDF export is a placeholder in this build. Real PDF export is not implemented here.")
 
     # provide JSON / CSV download links (no st.download_button)
     st.markdown("**Export report:**")
