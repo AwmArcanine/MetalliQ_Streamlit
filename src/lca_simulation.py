@@ -52,7 +52,7 @@ def run_simulation(inputs, num_runs=1000):
 
         # --- Executive Summary (mock representative metrics) ---
         executive_summary = {
-            "GWP": round(summary["Global Warming Potential"]["mean"], 2),
+            "Global Warming Potential": round(summary["Global Warming Potential"]["mean"], 2),
             "Circularity Score": random.randint(45, 70),
             "Particulate Matter": round(summary["Particulate Matter"]["mean"], 3),
             "Water Consumption": round(summary["Water Consumption"]["mean"], 2),
