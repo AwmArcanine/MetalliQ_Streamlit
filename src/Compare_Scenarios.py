@@ -19,7 +19,7 @@ def compare_scenarios_page():
     .section-title {
         font-size: 1.35em;
         font-weight: 800;
-        color: #00494D;
+        color: #00FFFF;
         border-left: 4px solid #00A896;
         padding-left: 8px;
         margin-top: 25px;
