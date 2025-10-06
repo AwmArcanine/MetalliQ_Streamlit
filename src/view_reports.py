@@ -189,7 +189,6 @@ def view_reports_page():
     df = pd.DataFrame(reports)
 
     # ---------- MAIN CONTENT ----------
-    st.markdown("<div class='report-container'>", unsafe_allow_html=True)
     st.markdown("<div class='report-title'>📄 All Reports</div>", unsafe_allow_html=True)
     st.markdown("<div class='report-caption'>Browse all your generated LCA and scenario reports. Click to view any report in detail.</div>", unsafe_allow_html=True)
 
