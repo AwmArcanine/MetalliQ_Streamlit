@@ -50,7 +50,17 @@ def plot_style(fig: go.Figure, title: Optional[str] = None, height: Optional[int
         plot_bgcolor='rgba(0,0,0,0)',
         margin=dict(l=24, r=24, t=40 if title else 8, b=24),
         font=dict(color=MUTED),
-        title=dict(x=0.5, xanchor="center")
+        title=dict(x=0.5, xanchor="center"),
+        xaxis=dict(
+            color="white",           # ✅ X-axis labels white
+            title_font=dict(color="white"),
+            tickfont=dict(color="white")
+        ),
+        yaxis=dict(
+            color="white",           # ✅ Y-axis labels white
+            title_font=dict(color="white"),
+            tickfont=dict(color="white")
+        )
     )
     fig.update_layout(layout)
     if title:
@@ -58,6 +68,7 @@ def plot_style(fig: go.Figure, title: Optional[str] = None, height: Optional[int
     if height:
         fig.update_layout(height=height)
     return fig
+
 
 def ensure_ai_dict(ai_in: Optional[Any]):
     if ai_in is None:
@@ -188,6 +199,10 @@ def results_page(results: Optional[dict] = None, ai_text: Optional[Any] = None):
       /* tooltips/plot text */
       .plotly .main-svg text {
         fill: #083a38 !important;
+      }
+
+      .plotly text{
+        fill:white !important;
       }
 
       /* small card shading override for readability */
